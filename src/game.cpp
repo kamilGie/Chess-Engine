@@ -2,5 +2,6 @@
 
 void Game::Draw(){
     chessboard.Draw();
-    piece.Draw();
+    horse.Draw();
+    horse.Move();
 }

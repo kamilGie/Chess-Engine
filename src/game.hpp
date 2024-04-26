@@ -4,10 +4,11 @@
 #include <iostream>
 #include "chessboard.hpp"
 #include "piece.hpp"
+#include "pieces.cpp"
 
 class Game {
    public:
     Chessboard chessboard = Chessboard();
-    Piece piece = Piece(2, 2);
+    Horse horse = Horse(1,1,WHITE);
     void Draw();
 };
