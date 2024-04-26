@@ -8,7 +8,7 @@ class Horse : public Piece {
     }
 
     void Draw() override {
-        DrawText("Horse",position.x*cellSize,position.y*cellSize,50,color);
+        DrawText("Horse",position.x*cellSize,position.y*cellSize,20,color);
     }
 
 };
@@ -21,7 +21,7 @@ class Pawn : public Piece {
     }
 
     void Draw() override {
-        DrawText("pawn",position.x*cellSize,position.y*cellSize,50,color);
+        DrawText("pawn",position.x*cellSize,position.y*cellSize,20,color);
     }
 
 };
@@ -34,7 +34,7 @@ class Rook : public Piece {
     }
 
     void Draw() override {
-        DrawText("Rook",position.x*cellSize,position.y*cellSize,50,color);
+        DrawText("Rook",position.x*cellSize,position.y*cellSize,20,color);
     }
 
 };
@@ -47,7 +47,7 @@ class Bishop : public Piece {
     }
 
     void Draw() override {
-        DrawText("Bishop",position.x*cellSize,position.y*cellSize,50,color);
+        DrawText("Bishop",position.x*cellSize,position.y*cellSize,20,color);
     }
 
 };
@@ -60,7 +60,7 @@ class Queen : public Piece {
     }
 
     void Draw() override {
-        DrawText("Queen",position.x*cellSize,position.y*cellSize,50,color);
+        DrawText("Queen",position.x*cellSize,position.y*cellSize,20,color);
     }
 
 };
@@ -73,7 +73,7 @@ class King : public Piece {
     }
 
     void Draw() override {
-        DrawText("King",position.x*cellSize,position.y*cellSize,50,color);
+        DrawText("King",position.x*cellSize,position.y*cellSize,20,color);
     }
 
 };
