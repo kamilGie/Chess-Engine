@@ -4,16 +4,13 @@
 Chessboard::Chessboard() {}
 
 void Chessboard::Draw() {
-    DrawRectangle(0, 0, cellSize * cellCount, cellSize * cellCount, DARKBROWN);
+    DrawRectangle(0, 0, cellSize * cellCount, cellSize * cellCount, BEIGE);
 
-    bool flag = true;
     for (int row = 0; row < cellCount; row++) {
         for (int column = 0; column < cellCount; column++) {
-            if (flag) {
-                DrawRectangle(row * cellSize, column * cellSize, cellSize, cellSize, BEIGE);
+            if ((row+column)%2) {
+                DrawRectangle(row * cellSize, column * cellSize, cellSize, cellSize, DARKBROWN);
             }
-            flag = !flag;
         }
-        flag = !flag;
     }
 }
