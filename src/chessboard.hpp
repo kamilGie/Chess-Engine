@@ -1,10 +1,12 @@
-class Chessboard{
-    public:
+#pragma once
+
+class Chessboard {
+   public:
     Chessboard();
     void Draw();
-    int cellSize;
-    int cellCount;
+    int cellCount = 8;
+    int cellSize = 100;
     int grid[8][8];
 
-    private:
+   private:
 };

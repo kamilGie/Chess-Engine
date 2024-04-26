@@ -1,11 +1,7 @@
 #include "chessboard.hpp"
-
 #include <raylib.h>
 
-Chessboard::Chessboard() {
-    cellSize = 100;
-    cellCount = 8;
-}
+Chessboard::Chessboard() {}
 
 void Chessboard::Draw() {
     DrawRectangle(0, 0, cellSize * cellCount, cellSize * cellCount, DARKBROWN);

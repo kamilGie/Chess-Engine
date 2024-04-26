@@ -1,23 +1,21 @@
-#include <iostream>
 #include <raylib.h>
-#include "chessboard.hpp"
+#include <iostream>
+#include "game.hpp"
 
 using namespace std;
 
-int main () {
+int main() {
+    const int windowWidth = 800;
+    const int windowHeight = 800;
 
-    Chessboard chessboard = Chessboard();
-
-    InitWindow(chessboard.cellSize*chessboard.cellCount, chessboard.cellSize*chessboard.cellCount, "chess");
+    InitWindow(windowHeight, windowWidth, "chess");
     SetTargetFPS(120);
 
+    Game game;
 
-    while (!WindowShouldClose()){
+    while (!WindowShouldClose()) {
         BeginDrawing();
-
-        ClearBackground(BLACK);
-        chessboard.Draw();
-
+        game.Draw();
         EndDrawing();
     }
 
