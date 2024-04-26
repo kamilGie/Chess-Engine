@@ -16,7 +16,7 @@ FetchContent_Declare(
 set(BUILD_EXAMPLES OFF CACHE  INTERNAL "")
 FetchContent_MakeAvailable(raylib)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/chessboard.cpp)
 
 target_link_libraries(${PROJECT_NAME} raylib)
 
