@@ -4,11 +4,11 @@
 
 class Piece{
     public:
-    Piece(float column,float row,Color color);
-    virtual ~Piece()=default;
+    Piece(float column,float row);
+    ~Piece();
     Vector2 position;
+    Texture2D texture;
     int cellSize=100;
-    virtual void Draw()=0;
+    void Draw();
     virtual void Move()=0;
-    Color color;
 };
