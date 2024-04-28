@@ -1,9 +1,9 @@
 #include "game.hpp"
 
-#include <iostream>
-#include <algorithm>
 #include <raymath.h>
 
+#include <algorithm>
+#include <iostream>
 
 int cellSize = 100;
 
@@ -43,32 +43,49 @@ Game::~Game() {
 }
 
 void Game::Move() {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        int x = GetMouseX() / cellSize;
+        int y = GetMouseY() / cellSize;
 
-    if(clickedPiece!=nullptr){
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-            clickedPiece->position.x=GetMouseX()/cellSize;
-            clickedPiece->position.y=GetMouseY()/cellSize;
-            clickedPiece=nullptr;
+        if (clickedPiece) {
+            for (auto piece : blackPieces) {
+                if (Vector2Equals(piece->position, {(float)x, (float)y})) {
+                    auto it = std::find(blackPieces.begin(), blackPieces.end(), piece);
+                    if (it != blackPieces.end()) {
+                        blackPieces.erase(it);
+                    }
+                }
+            }
+
+            clickedPiece->position = {(float)x, (float)y};
+            clickedPiece = nullptr;
+            whiteTurn = !whiteTurn;
+        } else if (whiteTurn) {
+            for (auto piece : whitePieces) {
+                if (Vector2Equals(piece->position, {(float)x, (float)y})) {
+                    clickedPiece = piece;
+                    break;
+                }
+            }
+        } else {
+            for (auto piece : blackPieces) {
+                if (Vector2Equals(piece->position, {(float)x, (float)y})) {
+                    clickedPiece = piece;
+                    break;
+                }
+            }
         }
     }
-    else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        int x = GetMouseX()/cellSize;
-        int y = GetMouseY()/cellSize;
-        for (auto piece : whitePieces) {
-            if(Vector2Equals(piece->position,{(float)x,(float)y})){
-                clickedPiece=piece;
-            }
-         }
-    }
-
 }
-
 
 void Game::Draw() {
     chessboard.Draw();
 
     Move();
 
+    if (clickedPiece != nullptr) {
+        DrawRectangle(clickedPiece->position.x * cellSize, clickedPiece->position.y * cellSize, cellSize, cellSize, ORANGE);
+    }
 
     for (auto blackP : blackPieces) {
         blackP->Draw();

@@ -18,6 +18,7 @@ class Game {
     std::vector <Piece*> blackPieces;
     std::vector <Piece*> whitePieces;
     Piece*  clickedPiece=nullptr;
+    bool whiteTurn=true;
     void Move();
     void Draw();
 };
