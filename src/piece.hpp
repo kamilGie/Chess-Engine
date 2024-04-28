@@ -1,14 +1,14 @@
 #pragma once
 #include <raylib.h>
 
+extern int cellSize;
 
 class Piece{
     public:
     Piece(float column,float row);
-    ~Piece();
+    virtual ~Piece()=default;
     Vector2 position;
     Texture2D texture;
-    int cellSize=100;
     void Draw();
     virtual void Move()=0;
 };

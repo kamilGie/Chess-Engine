@@ -1,5 +1,6 @@
 #include "piece.hpp"
 
+extern int cellSize;
 
 // ### KING ### //
 
@@ -17,6 +18,7 @@ class KingBlack : public King {
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
     }
+    ~KingBlack() { UnloadTexture(texture); }
 };
 
 class KingWhite : public King {
@@ -26,6 +28,7 @@ class KingWhite : public King {
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
     }
+    ~KingWhite() { UnloadTexture(texture); }
 };
 
 
@@ -45,6 +48,7 @@ class QueenBlack : public Queen {
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
     }
+    ~QueenBlack() { UnloadTexture(texture); }
 };
 
 class QueenWhite : public Queen {
@@ -54,6 +58,7 @@ class QueenWhite : public Queen {
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
     }
+    ~QueenWhite() { UnloadTexture(texture); }
 };
 
 
@@ -64,6 +69,7 @@ class Rook : public Piece {
     Rook(float column, float row) : Piece(column, row){};
     virtual ~Rook()=default;
     void Move() override { }
+    
 };
 
 class RookBlack : public Rook {
@@ -73,6 +79,7 @@ class RookBlack : public Rook {
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
     }
+    ~RookBlack() { UnloadTexture(texture); }
 };
 
 class RookWhite : public Rook {
@@ -82,6 +89,7 @@ class RookWhite : public Rook {
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
     }
+    ~RookWhite() { UnloadTexture(texture); }
 };
 
 
@@ -101,6 +109,7 @@ class HorseBlack : public Horse {
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
     }
+    ~HorseBlack() { UnloadTexture(texture); }
 };
 
 class HorseWhite : public Horse {
@@ -110,6 +119,7 @@ class HorseWhite : public Horse {
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
     }
+    ~HorseWhite() { UnloadTexture(texture); }
 };
 
 
@@ -129,6 +139,7 @@ class BishopBlack : public Bishop {
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
     }
+    ~BishopBlack() { UnloadTexture(texture); }
 };
 
 class BishopWhite : public Bishop {
@@ -138,6 +149,7 @@ class BishopWhite : public Bishop {
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
     }
+    ~BishopWhite() { UnloadTexture(texture); }
 };
 
 
@@ -157,6 +169,7 @@ class PawnBlack : public Pawn {
         UnloadImage(image);
     }
     void Move() override { } 
+    ~PawnBlack() { UnloadTexture(texture); }
 };
 
 class PawnWhite : public Pawn {
@@ -167,4 +180,5 @@ class PawnWhite : public Pawn {
         UnloadImage(image);
     }
     void Move() override { } 
+    ~PawnWhite() { UnloadTexture(texture); }
 };
