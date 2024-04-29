@@ -70,6 +70,8 @@ Game::~Game() {
 
 
 void Game::MakeMove(int x, int y) {
+        lastMove[0]=clickedPiece->position;
+        lastMove[1]={(float)x, (float)y};
         chessboard.grid[y][x] = clickedPiece;
         chessboard.grid[(int)clickedPiece->position.y][(int)clickedPiece->position.x] = nullptr;
         clickedPiece->position = {(float)x, (float)y};
@@ -91,8 +93,6 @@ void Game::WhiteMove(int x, int y) {
                 blackPieces.erase(std::find(blackPieces.begin(), blackPieces.end(), chessboard.grid[y][x]));
             }
         }
-        MakeMove(x,y);
-
     } else if (chessboard.grid[y][x] && chessboard.grid[y][x]->whiteColor()) {
         clickedPiece = chessboard.grid[y][x];
     }
@@ -134,6 +134,9 @@ void Game::Draw() {
     if (clickedPiece) {
         DrawRectangle(clickedPiece->position.x * cellSize, clickedPiece->position.y * cellSize, cellSize, cellSize, ORANGE);
     }
+    DrawRectangle(lastMove[0].x * cellSize, lastMove[0].y  * cellSize, cellSize, cellSize, GOLD);
+    DrawRectangle(lastMove[1].x * cellSize, lastMove[1].y  * cellSize, cellSize, cellSize, GOLD);
+    
 
     for (auto blackP : blackPieces) {
         blackP->Draw();
