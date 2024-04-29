@@ -68,34 +68,70 @@ Game::~Game() {
     CloseAudioDevice();
 }
 
+
+void Game::MakeMove(int x, int y) {
+        chessboard.grid[y][x] = clickedPiece;
+        chessboard.grid[(int)clickedPiece->position.y][(int)clickedPiece->position.x] = nullptr;
+        clickedPiece->position = {(float)x, (float)y};
+        clickedPiece = nullptr;
+
+        whiteTurn = !whiteTurn;
+        PlaySound(moveSound);
+}
+
+void Game::WhiteMove(int x, int y) {
+    if (clickedPiece) {
+        if (chessboard.grid[y][x]) {
+            if (chessboard.grid[y][x]->whiteColor()) {
+                clickedPiece = chessboard.grid[y][x];
+                return;
+            } else {
+                PlaySound(captureSound);
+                delete chessboard.grid[y][x];
+                blackPieces.erase(std::find(blackPieces.begin(), blackPieces.end(), chessboard.grid[y][x]));
+            }
+        }
+        MakeMove(x,y);
+
+    } else if (chessboard.grid[y][x] && chessboard.grid[y][x]->whiteColor()) {
+        clickedPiece = chessboard.grid[y][x];
+    }
+}
+
+void Game::BlackMove(int x, int y) {
+    if (clickedPiece) {
+        if (chessboard.grid[y][x]) {
+            if (!chessboard.grid[y][x]->whiteColor()) {
+                clickedPiece = chessboard.grid[y][x];
+                return;
+            } else {
+                PlaySound(captureSound);
+                delete chessboard.grid[y][x];
+                whitePieces.erase(std::find(whitePieces.begin(), whitePieces.end(), chessboard.grid[y][x]));
+            }
+        }
+        MakeMove(x,y);
+
+    } else if (chessboard.grid[y][x] && !chessboard.grid[y][x]->whiteColor()) {
+        clickedPiece = chessboard.grid[y][x];
+    }
+}
+
 void Game::Move() {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         int x = GetMouseX() / cellSize;
         int y = GetMouseY() / cellSize;
+
+        whiteTurn ? WhiteMove(x, y) : BlackMove(x, y);
+
         chessboard.ShowSquares();
-
-        if (clickedPiece) {
-            chessboard.grid[y][x] = clickedPiece;
-            chessboard.grid[(int)clickedPiece->position.y][(int)clickedPiece->position.x] = nullptr;
-
-            clickedPiece->position = {(float)x, (float)y};
-            clickedPiece = nullptr;
-            whiteTurn = !whiteTurn;
-            
-            PlaySound(moveSound);
-        } else if (whiteTurn) {
-            clickedPiece = chessboard.grid[y][x];
-
-        } else {
-            clickedPiece = chessboard.grid[y][x];
-        }
     }
 }
 
 void Game::Draw() {
     chessboard.Draw();
 
-    if (clickedPiece != nullptr) {
+    if (clickedPiece) {
         DrawRectangle(clickedPiece->position.x * cellSize, clickedPiece->position.y * cellSize, cellSize, cellSize, ORANGE);
     }
 

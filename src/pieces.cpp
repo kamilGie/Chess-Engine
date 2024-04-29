@@ -15,11 +15,13 @@ class King : public Piece {
 class KingBlack : public King {
    public:
     KingBlack(float column, float row) : King(column, row, "kingBlack") {}
+    bool whiteColor() override {return false;}
 };
 
 class KingWhite : public King {
    public:
     KingWhite(float column, float row) : King(column, row, "kingWhite") {}
+    bool whiteColor() override {return true;}
 };
 
 // ### QUEEN ### //
@@ -35,11 +37,13 @@ class Queen : public Piece {
 class QueenBlack : public Queen {
    public:
     QueenBlack(float column, float row) : Queen(column, row, "QueenBlack") {}
+    bool whiteColor() override {return false;}
 };
 
 class QueenWhite : public Queen {
    public:
     QueenWhite(float column, float row) : Queen(column, row, "QueenWhite") {}
+    bool whiteColor() override {return true;}
 };
 
 // ### ROOK ### //
@@ -55,11 +59,13 @@ class Rook : public Piece {
 class RookBlack : public Rook {
    public:
     RookBlack(float column, float row) : Rook(column, row, "RookBlack") {}
+    bool whiteColor() override {return false;}
 };
 
 class RookWhite : public Rook {
    public:
     RookWhite(float column, float row) : Rook(column, row, "RookWhite") {}
+    bool whiteColor() override {return true;}
 };
 
 // ### HORSE ###//
@@ -75,11 +81,13 @@ class Horse : public Piece {
 class HorseBlack : public Horse {
    public:
     HorseBlack(float column, float row) : Horse(column, row, "/HorseBlack") {}
+    bool whiteColor() override {return false;}
 };
 
 class HorseWhite : public Horse {
    public:
     HorseWhite(float column, float row) : Horse(column, row, "HorseWhite") {}
+    bool whiteColor() override {return true;}
 };
 
 // ### BISHOP ### //
@@ -95,11 +103,13 @@ class Bishop : public Piece {
 class BishopBlack : public Bishop {
    public:
     BishopBlack(float column, float row) : Bishop(column, row, "BishopBlack") {}
+    bool whiteColor() override {return false;}
 };
 
 class BishopWhite : public Bishop {
    public:
     BishopWhite(float column, float row) : Bishop(column, row, "BishopWhite") {}
+    bool whiteColor() override {return true;}
 };
 
 // ### PAWN ### //
@@ -115,10 +125,12 @@ class PawnBlack : public Pawn {
    public:
     PawnBlack(float column, float row) : Pawn(column, row, "pawnBlack") {}
     void Move() override {}
+    bool whiteColor() override {return false;}
 };
 
 class PawnWhite : public Pawn {
    public:
     PawnWhite(float column, float row) : Pawn(column, row, "pawnWhite") {}
     void Move() override {}
+    bool whiteColor() override {return true;}
 };

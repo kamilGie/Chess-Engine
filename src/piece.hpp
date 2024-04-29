@@ -13,4 +13,5 @@ class Piece {
     void Draw();
     virtual void Move() = 0;
     virtual int getValue() = 0;
+    virtual bool whiteColor() = 0;
 };

@@ -27,5 +27,8 @@ class Game {
     Sound captureSound;
     bool whiteTurn = true;
     void Move();
+    void WhiteMove(int x,int y);
+    void BlackMove(int x,int y);
+    void MakeMove(int x,int y);
     void Draw();
 };
