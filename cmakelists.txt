@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 include(FetchContent)
-set(RAYLIB_VERIOSN 4.5.0)
+set(RAYLIB_VERIOSN 5.0)
 FetchContent_Declare(
      raylib URL https://github.com/raysan5/raylib/archive/refs/tags/${RAYLIB_VERIOSN}.tar.gz  
      FIND_PACKAGE_ARGS ${RAYLIB_VERIOSN})

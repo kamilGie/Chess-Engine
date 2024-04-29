@@ -23,6 +23,8 @@ class Game {
     std::vector<Piece*> blackPieces;
     std::vector<Piece*> whitePieces;
     Piece* clickedPiece = nullptr;
+    Sound moveSound;
+    Sound captureSound;
     bool whiteTurn = true;
     void Move();
     void Draw();

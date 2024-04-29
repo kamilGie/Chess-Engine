@@ -48,6 +48,10 @@ Game::Game() {
             chessboard.grid[i][j] = nullptr;
         }
     }
+
+    InitAudioDevice();
+    moveSound = LoadSound("Sounds/move.mp3");
+    captureSound = LoadSound("Sounds/capture.mp3");
 }
 
 Game::~Game() {
@@ -58,6 +62,10 @@ Game::~Game() {
     for (auto piece : whitePieces) {
         delete piece;
     }
+
+    UnloadSound(moveSound);
+    UnloadSound(captureSound);
+    CloseAudioDevice();
 }
 
 void Game::Move() {
@@ -73,7 +81,8 @@ void Game::Move() {
             clickedPiece->position = {(float)x, (float)y};
             clickedPiece = nullptr;
             whiteTurn = !whiteTurn;
-
+            
+            PlaySound(moveSound);
         } else if (whiteTurn) {
             clickedPiece = chessboard.grid[y][x];
 
