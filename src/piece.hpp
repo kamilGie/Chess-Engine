@@ -1,12 +1,13 @@
 #pragma once
 #include <raylib.h>
+#include <string>
 
 extern int cellSize;
 
 class Piece {
    public:
-    Piece(float column, float row);
-    virtual ~Piece() = default;
+    Piece(float column, float row, const std::string& pieceName);
+    virtual ~Piece();
     Vector2 position;
     Texture2D texture;
     void Draw();
