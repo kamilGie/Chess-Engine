@@ -78,19 +78,23 @@ void Game::processEvent() {
 
 void Game::handleMouseClick(int x, int y) {
     bool isPieceClick = chessboard.grid[y][x];
-    bool isOwnPieceClick = isPieceClick && chessboard.grid[y][x]->whiteColor() == whiteTurn;
+    bool isOwnPieceClick = isPieceClick && chessboard.grid[y][x]->whiteColor() == isWhiteTurn;
 
     if (isOwnPieceClick) {
         clickedPiece = chessboard.grid[y][x];
         return;
     } 
 
-    if (clickedPiece) {
+    if (clickedPiece && IsLegalMove(x,y)) {
         if (isPieceClick) {
             CapturePiece(x, y);
         }
         MakeMove(x, y);
     }
+}
+
+bool Game::IsLegalMove(int x,int y){
+    return true;
 }
 
 void Game::CapturePiece(int x, int y) {
@@ -100,12 +104,14 @@ void Game::CapturePiece(int x, int y) {
 }
 
 void Game::MakeMove(int x, int y) {
+    lastMovePositions[0]={clickedPiece->position.y,clickedPiece->position.x};
+    lastMovePositions[1]={(float)y,(float)x};
     chessboard.grid[y][x] = clickedPiece;
     chessboard.grid[(int)clickedPiece->position.y][(int)clickedPiece->position.x] = nullptr;
     clickedPiece->position = {(float)x, (float)y};
     clickedPiece = nullptr;
 
-    whiteTurn = !whiteTurn;
+    isWhiteTurn = !isWhiteTurn;
     PlaySound(moveSound);
 }
 
@@ -113,8 +119,13 @@ void Game::Draw() {
     chessboard.Draw();
 
     if (clickedPiece) {
-        DrawRectangle(clickedPiece->position.x * cellSize, clickedPiece->position.y * cellSize, cellSize, cellSize, ORANGE);
+        Color clickedPieceBackground = ((int)clickedPiece->position.x + (int)clickedPiece->position.y) % 2 ? Color{245,245,154,255}:Color{189,201,94,255};
+        DrawRectangle(clickedPiece->position.x * cellSize, clickedPiece->position.y * cellSize, cellSize, cellSize, clickedPieceBackground);
     }
+    Color clickedPieceBackground = ((int)lastMovePositions[0].x + (int) lastMovePositions[0].y ) % 2 ? Color{245,245,154,255}:Color{189,201,94,255};
+    DrawRectangle(lastMovePositions[0].y * cellSize, lastMovePositions[0].x * cellSize, cellSize, cellSize, clickedPieceBackground);
+    clickedPieceBackground = ((int)lastMovePositions[1].x + (int) lastMovePositions[1].y ) % 2 ? Color{245,245,154,255}:Color{189,201,94,255};
+    DrawRectangle(lastMovePositions[1].y * cellSize, lastMovePositions[1].x * cellSize, cellSize, cellSize, clickedPieceBackground);
 
     for (auto p : pieces) {
         p->Draw();

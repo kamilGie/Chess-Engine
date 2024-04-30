@@ -24,10 +24,13 @@ class Game {
     Piece* clickedPiece = nullptr;
     Sound moveSound;
     Sound captureSound;
-    bool whiteTurn = true;
+    bool isWhiteTurn = true;
+    Vector2 lastMovePositions[2]{{9,9},{9,9}};
+
     void processEvent();
     void handleMouseClick(int x,int y);
     void MakeMove(int x,int y);
     void CapturePiece(int x,int y);
+    bool IsLegalMove(int x,int y);
     void Draw();
 };
