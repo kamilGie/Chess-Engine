@@ -3,45 +3,45 @@
 int cellSize = 100;
 
 Game::Game() {
-    blackPieces.push_back(new KingBlack(0, 3));
-    chessboard.grid[0][3] = blackPieces.back();
-    blackPieces.push_back(new QueenBlack(0, 4));
-    chessboard.grid[0][4] = blackPieces.back();
-    blackPieces.push_back(new RookBlack(0, 0));
-    chessboard.grid[0][0] = blackPieces.back();
-    blackPieces.push_back(new RookBlack(0, 7));
-    chessboard.grid[0][7] = blackPieces.back();
-    blackPieces.push_back(new HorseBlack(0, 1));
-    chessboard.grid[0][1] = blackPieces.back();
-    blackPieces.push_back(new HorseBlack(0, 6));
-    chessboard.grid[0][6] = blackPieces.back();
-    blackPieces.push_back(new BishopBlack(0, 2));
-    chessboard.grid[0][2] = blackPieces.back();
-    blackPieces.push_back(new BishopBlack(0, 5));
-    chessboard.grid[0][5] = blackPieces.back();
+    pieces.push_back(new KingBlack(0, 3));
+    chessboard.grid[0][3] = pieces.back();
+    pieces.push_back(new QueenBlack(0, 4));
+    chessboard.grid[0][4] = pieces.back();
+    pieces.push_back(new RookBlack(0, 0));
+    chessboard.grid[0][0] = pieces.back();
+    pieces.push_back(new RookBlack(0, 7));
+    chessboard.grid[0][7] = pieces.back();
+    pieces.push_back(new HorseBlack(0, 1));
+    chessboard.grid[0][1] = pieces.back();
+    pieces.push_back(new HorseBlack(0, 6));
+    chessboard.grid[0][6] = pieces.back();
+    pieces.push_back(new BishopBlack(0, 2));
+    chessboard.grid[0][2] = pieces.back();
+    pieces.push_back(new BishopBlack(0, 5));
+    chessboard.grid[0][5] = pieces.back();
 
-    whitePieces.push_back(new KingWhite(7, 3));
-    chessboard.grid[7][3] = whitePieces.back();
-    whitePieces.push_back(new QueenWhite(7, 4));
-    chessboard.grid[7][4] = whitePieces.back();
-    whitePieces.push_back(new RookWhite(7, 0));
-    chessboard.grid[7][0] = whitePieces.back();
-    whitePieces.push_back(new RookWhite(7, 7));
-    chessboard.grid[7][7] = whitePieces.back();
-    whitePieces.push_back(new HorseWhite(7, 1));
-    chessboard.grid[7][1] = whitePieces.back();
-    whitePieces.push_back(new HorseWhite(7, 6));
-    chessboard.grid[7][6] = whitePieces.back();
-    whitePieces.push_back(new BishopWhite(7, 2));
-    chessboard.grid[7][2] = whitePieces.back();
-    whitePieces.push_back(new BishopWhite(7, 5));
-    chessboard.grid[7][5] = whitePieces.back();
+    pieces.push_back(new KingWhite(7, 3));
+    chessboard.grid[7][3] = pieces.back();
+    pieces.push_back(new QueenWhite(7, 4));
+    chessboard.grid[7][4] = pieces.back();
+    pieces.push_back(new RookWhite(7, 0));
+    chessboard.grid[7][0] = pieces.back();
+    pieces.push_back(new RookWhite(7, 7));
+    chessboard.grid[7][7] = pieces.back();
+    pieces.push_back(new HorseWhite(7, 1));
+    chessboard.grid[7][1] = pieces.back();
+    pieces.push_back(new HorseWhite(7, 6));
+    chessboard.grid[7][6] = pieces.back();
+    pieces.push_back(new BishopWhite(7, 2));
+    chessboard.grid[7][2] = pieces.back();
+    pieces.push_back(new BishopWhite(7, 5));
+    chessboard.grid[7][5] = pieces.back();
 
     for (int i = 0; i < 8; ++i) {
-        blackPieces.push_back(new PawnBlack(1, i));
-        chessboard.grid[1][i] = blackPieces.back();
-        whitePieces.push_back(new PawnWhite(6, i));
-        chessboard.grid[6][i] = whitePieces.back();
+        pieces.push_back(new PawnBlack(1, i));
+        chessboard.grid[1][i] = pieces.back();
+        pieces.push_back(new PawnWhite(6, i));
+        chessboard.grid[6][i] = pieces.back();
     }
     for (int i = 2; i < 6; ++i) {
         for (int j = 0; j < 8; ++j) {
@@ -55,12 +55,8 @@ Game::Game() {
 }
 
 Game::~Game() {
-    for (auto piece : blackPieces) {
-        delete piece;
-    }
-
-    for (auto piece : whitePieces) {
-        delete piece;
+    for (auto p : pieces) {
+        delete p;
     }
 
     UnloadSound(moveSound);
@@ -68,64 +64,49 @@ Game::~Game() {
     CloseAudioDevice();
 }
 
-
-void Game::MakeMove(int x, int y) {
-        lastMove[0]=clickedPiece->position;
-        lastMove[1]={(float)x, (float)y};
-        chessboard.grid[y][x] = clickedPiece;
-        chessboard.grid[(int)clickedPiece->position.y][(int)clickedPiece->position.x] = nullptr;
-        clickedPiece->position = {(float)x, (float)y};
-        clickedPiece = nullptr;
-
-        whiteTurn = !whiteTurn;
-        PlaySound(moveSound);
+void Game::Run() {
+    processEvent();
+    Draw();
 }
 
-void Game::WhiteMove(int x, int y) {
-    if (clickedPiece) {
-        if (chessboard.grid[y][x]) {
-            if (chessboard.grid[y][x]->whiteColor()) {
-                clickedPiece = chessboard.grid[y][x];
-                return;
-            } else {
-                PlaySound(captureSound);
-                delete chessboard.grid[y][x];
-                blackPieces.erase(std::find(blackPieces.begin(), blackPieces.end(), chessboard.grid[y][x]));
-            }
-        }
-    } else if (chessboard.grid[y][x] && chessboard.grid[y][x]->whiteColor()) {
-        clickedPiece = chessboard.grid[y][x];
-    }
-}
-
-void Game::BlackMove(int x, int y) {
-    if (clickedPiece) {
-        if (chessboard.grid[y][x]) {
-            if (!chessboard.grid[y][x]->whiteColor()) {
-                clickedPiece = chessboard.grid[y][x];
-                return;
-            } else {
-                PlaySound(captureSound);
-                delete chessboard.grid[y][x];
-                whitePieces.erase(std::find(whitePieces.begin(), whitePieces.end(), chessboard.grid[y][x]));
-            }
-        }
-        MakeMove(x,y);
-
-    } else if (chessboard.grid[y][x] && !chessboard.grid[y][x]->whiteColor()) {
-        clickedPiece = chessboard.grid[y][x];
-    }
-}
-
-void Game::Move() {
+void Game::processEvent() {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        int x = GetMouseX() / cellSize;
-        int y = GetMouseY() / cellSize;
-
-        whiteTurn ? WhiteMove(x, y) : BlackMove(x, y);
-
+        handleMouseClick(GetMouseX() / cellSize, GetMouseY() / cellSize);
         chessboard.ShowSquares();
     }
+}
+
+void Game::handleMouseClick(int x, int y) {
+    bool isPieceClick = chessboard.grid[y][x];
+    bool isOwnPieceClick = isPieceClick && chessboard.grid[y][x]->whiteColor() == whiteTurn;
+
+    if (isOwnPieceClick) {
+        clickedPiece = chessboard.grid[y][x];
+        return;
+    } 
+
+    if (clickedPiece) {
+        if (isPieceClick) {
+            CapturePiece(x, y);
+        }
+        MakeMove(x, y);
+    }
+}
+
+void Game::CapturePiece(int x, int y) {
+    PlaySound(captureSound);
+    delete chessboard.grid[y][x];
+    pieces.erase(std::find(pieces.begin(), pieces.end(), chessboard.grid[y][x]));
+}
+
+void Game::MakeMove(int x, int y) {
+    chessboard.grid[y][x] = clickedPiece;
+    chessboard.grid[(int)clickedPiece->position.y][(int)clickedPiece->position.x] = nullptr;
+    clickedPiece->position = {(float)x, (float)y};
+    clickedPiece = nullptr;
+
+    whiteTurn = !whiteTurn;
+    PlaySound(moveSound);
 }
 
 void Game::Draw() {
@@ -134,20 +115,8 @@ void Game::Draw() {
     if (clickedPiece) {
         DrawRectangle(clickedPiece->position.x * cellSize, clickedPiece->position.y * cellSize, cellSize, cellSize, ORANGE);
     }
-    DrawRectangle(lastMove[0].x * cellSize, lastMove[0].y  * cellSize, cellSize, cellSize, GOLD);
-    DrawRectangle(lastMove[1].x * cellSize, lastMove[1].y  * cellSize, cellSize, cellSize, GOLD);
-    
 
-    for (auto blackP : blackPieces) {
-        blackP->Draw();
+    for (auto p : pieces) {
+        p->Draw();
     }
-
-    for (auto whiteP : whitePieces) {
-        whiteP->Draw();
-    }
-}
-
-void Game::Run() {
-    Move();
-    Draw();
 }

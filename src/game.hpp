@@ -20,15 +20,14 @@ class Game {
 
    private:
     Chessboard chessboard = Chessboard();
-    std::vector<Piece*> blackPieces;
-    std::vector<Piece*> whitePieces;
+    std::vector<Piece*> pieces;
     Piece* clickedPiece = nullptr;
     Sound moveSound;
     Sound captureSound;
     bool whiteTurn = true;
-    void Move();
-    void WhiteMove(int x,int y);
-    void BlackMove(int x,int y);
+    void processEvent();
+    void handleMouseClick(int x,int y);
     void MakeMove(int x,int y);
+    void CapturePiece(int x,int y);
     void Draw();
 };
