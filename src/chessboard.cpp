@@ -17,7 +17,7 @@ void Chessboard::Draw() {
 void Chessboard::ShowSquares() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            std::cout << (grid[i][j] ? grid[i][j]->getValue() : 0) << " ";
+            std::cout << (grid[j][i] ? grid[j][i]->getValue() : 0) << " ";
         }
         std::cout << std::endl;
     }

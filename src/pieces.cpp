@@ -82,20 +82,30 @@ class Horse : public Piece {
     virtual ~Horse() = default;
     void Move() override {}
     int getValue() override { return 3; }
+    std::array<Vector2, 8> PossibleMoves{{{1, 2}, {2, 1}, {-2, 1}, {1, -2}, {-1, 2}, {2, -1}, {-1, -2}, {-2, -1}}};
+
+    void SetLegalMoves(Piece* grid[][8]) override {
+    
+        legalMoves.clear();
+
+        for(Vector2 move : PossibleMoves){
+            if(position.x+move.x>=0 && position.x+move.x<8 && position.y+move.y>=0 && position.y+move.y<8 && (!grid[(int)position.x+(int)move.x][(int)position.y+(int)move.y] || grid[(int)position.x+(int)move.x][(int)position.y+(int)move.y]->whiteColor()!=whiteColor())){
+                legalMoves.push_back(Vector2Add(move,position));
+            }
+        }
+    }
 };
 
 class HorseBlack : public Horse {
    public:
     HorseBlack(float column, float row) : Horse(column, row, "/HorseBlack") {}
     bool whiteColor() override { return false; }
-    void SetLegalMoves(Piece* grid[][8]) override {}
 };
 
 class HorseWhite : public Horse {
    public:
     HorseWhite(float column, float row) : Horse(column, row, "HorseWhite") {}
     bool whiteColor() override { return true; }
-    void SetLegalMoves(Piece* grid[][8]) override {}
 };
 
 // ### BISHOP ### //
@@ -138,18 +148,19 @@ class PawnBlack : public Pawn {
     bool whiteColor() override { return false; }
     void SetLegalMoves(Piece* grid[][8]) override {
         legalMoves.clear();
-        if(position.y==7)return;
+        if (position.y == 7) return;
 
         if (!grid[(int)position.x][(int)position.y + 1]) {
             legalMoves.push_back({position.x, position.y + 1});
-            if (position.y==1 && !grid[(int)position.x][(int)position.y + 2]) {
+            if (position.y == 1 && !grid[(int)position.x][(int)position.y + 2]) {
                 legalMoves.push_back({position.x, position.y + 2});
             }
         }
-        if (position.x>0 &&  grid[(int)position.x - 1][(int)position.y + 1] && grid[(int)position.x - 1][(int)position.y + 1]->whiteColor()) {
+
+        if (position.x > 0 && grid[(int)position.x - 1][(int)position.y + 1] && grid[(int)position.x - 1][(int)position.y + 1]->whiteColor()) {
             legalMoves.push_back({position.x - 1, position.y + 1});
         }
-        if (position.x<8 && grid[(int)position.x + 1][(int)position.y + 1] && grid[(int)position.x + 1][(int)position.y + 1]->whiteColor()) {
+        if (position.x < 7 && grid[(int)position.x + 1][(int)position.y + 1] && grid[(int)position.x + 1][(int)position.y + 1]->whiteColor()) {
             legalMoves.push_back({position.x + 1, position.y + 1});
         }
     }
@@ -162,18 +173,18 @@ class PawnWhite : public Pawn {
     bool whiteColor() override { return true; }
     void SetLegalMoves(Piece* grid[][8]) override {
         legalMoves.clear();
-        if(position.y==0)return;
+        if (position.y == 0) return;
 
         if (!grid[(int)position.x][(int)position.y - 1]) {
             legalMoves.push_back({position.x, position.y - 1});
-            if (position.y==6 && !grid[(int)position.x][(int)position.y - 2]) {
+            if (position.y == 6 && !grid[(int)position.x][(int)position.y - 2]) {
                 legalMoves.push_back({position.x, position.y - 2});
             }
         }
-        if (position.x>0 && grid[(int)position.x - 1][(int)position.y - 1] && !grid[(int)position.x - 1][(int)position.y - 1]->whiteColor()) {
+        if (position.x > 0 && grid[(int)position.x - 1][(int)position.y - 1] && !grid[(int)position.x - 1][(int)position.y - 1]->whiteColor()) {
             legalMoves.push_back({position.x - 1, position.y - 1});
         }
-        if (position.x<8  && grid[(int)position.x + 1][(int)position.y - 1] && !grid[(int)position.x + 1][(int)position.y - 1]->whiteColor()) {
+        if (position.x < 7 && grid[(int)position.x + 1][(int)position.y - 1] && !grid[(int)position.x + 1][(int)position.y - 1]->whiteColor()) {
             legalMoves.push_back({position.x + 1, position.y - 1});
         }
     }

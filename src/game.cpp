@@ -119,7 +119,9 @@ void Game::MakeMove(int x, int y) {
     isWhiteTurn = !isWhiteTurn;
     PlaySound(moveSound);
 
+    
     CalculateLegalMoves();
+    
 }
 
 void Game::CalculateLegalMoves() {
