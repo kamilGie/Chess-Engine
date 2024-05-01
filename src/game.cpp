@@ -52,6 +52,7 @@ Game::Game() {
     InitAudioDevice();
     moveSound = LoadSound("Sounds/move.mp3");
     captureSound = LoadSound("Sounds/capture.mp3");
+    CalculateLegalMoves();
 }
 
 Game::~Game() {
@@ -94,7 +95,11 @@ void Game::handleMouseClick(int x, int y) {
 }
 
 bool Game::IsLegalMove(int x, int y) {
-    return true;
+    for(auto move : clickedPiece->legalMoves){
+        if(Vector2Equals(move ,{(float)x,(float)y}))
+        return true;
+    }
+    return false;
 }
 
 void Game::CapturePiece(int x, int y) {
@@ -125,7 +130,7 @@ void Game::CalculateLegalMoves() {
 
 void Game::Draw() {
     chessboard.Draw();
-    
+
     DrawRectangle(lastMovePositions[0].y * cellSize, lastMovePositions[0].x * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[0].x, lastMovePositions[0].y));
     DrawRectangle(lastMovePositions[1].y * cellSize, lastMovePositions[1].x * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[1].x, lastMovePositions[1].y));
 
