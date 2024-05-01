@@ -140,16 +140,16 @@ class PawnBlack : public Pawn {
         legalMoves.clear();
         if(position.y==7)return;
 
-        if (!grid[(int)position.y + 1][(int)position.x]) {
+        if (!grid[(int)position.x][(int)position.y + 1]) {
             legalMoves.push_back({position.x, position.y + 1});
-            if (position.y==1 && !grid[(int)position.y + 2][(int)position.x]) {
+            if (position.y==1 && !grid[(int)position.x][(int)position.y + 2]) {
                 legalMoves.push_back({position.x, position.y + 2});
             }
         }
-        if (position.x>0 &&  grid[(int)position.y + 1][(int)position.x - 1] && grid[(int)position.y + 1][(int)position.x - 1]->whiteColor()) {
+        if (position.x>0 &&  grid[(int)position.x - 1][(int)position.y + 1] && grid[(int)position.x - 1][(int)position.y + 1]->whiteColor()) {
             legalMoves.push_back({position.x - 1, position.y + 1});
         }
-        if (position.x<8 && grid[(int)position.y + 1][(int)position.x + 1] && grid[(int)position.y + 1][(int)position.x + 1]->whiteColor()) {
+        if (position.x<8 && grid[(int)position.x + 1][(int)position.y + 1] && grid[(int)position.x + 1][(int)position.y + 1]->whiteColor()) {
             legalMoves.push_back({position.x + 1, position.y + 1});
         }
     }
@@ -164,16 +164,16 @@ class PawnWhite : public Pawn {
         legalMoves.clear();
         if(position.y==0)return;
 
-        if (!grid[(int)position.y - 1][(int)position.x]) {
+        if (!grid[(int)position.x][(int)position.y - 1]) {
             legalMoves.push_back({position.x, position.y - 1});
-            if (position.y==6 && !grid[(int)position.y - 2][(int)position.x]) {
+            if (position.y==6 && !grid[(int)position.x][(int)position.y - 2]) {
                 legalMoves.push_back({position.x, position.y - 2});
             }
         }
-        if (position.x>0 && grid[(int)position.y - 1][(int)position.x - 1] && !grid[(int)position.y - 1][(int)position.x - 1]->whiteColor()) {
+        if (position.x>0 && grid[(int)position.x - 1][(int)position.y - 1] && !grid[(int)position.x - 1][(int)position.y - 1]->whiteColor()) {
             legalMoves.push_back({position.x - 1, position.y - 1});
         }
-        if (position.x<8  && grid[(int)position.y - 1][(int)position.x + 1] && !grid[(int)position.y - 1][(int)position.x + 1]->whiteColor()) {
+        if (position.x<8  && grid[(int)position.x + 1][(int)position.y - 1] && !grid[(int)position.x + 1][(int)position.y - 1]->whiteColor()) {
             legalMoves.push_back({position.x + 1, position.y - 1});
         }
     }

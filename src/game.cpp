@@ -3,49 +3,49 @@
 int cellSize = 100;
 
 Game::Game() {
-    pieces.push_back(new KingBlack(0, 3));
-    chessboard.grid[0][3] = pieces.back();
-    pieces.push_back(new QueenBlack(0, 4));
-    chessboard.grid[0][4] = pieces.back();
-    pieces.push_back(new RookBlack(0, 0));
+    pieces.push_back(new KingBlack(3,0));
+    chessboard.grid[3][0] = pieces.back();
+    pieces.push_back(new QueenBlack(4,0));
+    chessboard.grid[4][0] = pieces.back();
+    pieces.push_back(new RookBlack(0,0));
     chessboard.grid[0][0] = pieces.back();
-    pieces.push_back(new RookBlack(0, 7));
-    chessboard.grid[0][7] = pieces.back();
-    pieces.push_back(new HorseBlack(0, 1));
-    chessboard.grid[0][1] = pieces.back();
-    pieces.push_back(new HorseBlack(0, 6));
-    chessboard.grid[0][6] = pieces.back();
-    pieces.push_back(new BishopBlack(0, 2));
-    chessboard.grid[0][2] = pieces.back();
-    pieces.push_back(new BishopBlack(0, 5));
-    chessboard.grid[0][5] = pieces.back();
-
-    pieces.push_back(new KingWhite(7, 3));
-    chessboard.grid[7][3] = pieces.back();
-    pieces.push_back(new QueenWhite(7, 4));
-    chessboard.grid[7][4] = pieces.back();
-    pieces.push_back(new RookWhite(7, 0));
+    pieces.push_back(new RookBlack(7,0));
     chessboard.grid[7][0] = pieces.back();
-    pieces.push_back(new RookWhite(7, 7));
+    pieces.push_back(new HorseBlack(1,0));
+    chessboard.grid[1][0] = pieces.back();
+    pieces.push_back(new HorseBlack(6,0));
+    chessboard.grid[6][0] = pieces.back();
+    pieces.push_back(new BishopBlack(2,0));
+    chessboard.grid[2][0] = pieces.back();
+    pieces.push_back(new BishopBlack(5,0));
+    chessboard.grid[5][0] = pieces.back();
+
+    pieces.push_back(new KingWhite(3,7));
+    chessboard.grid[3][7] = pieces.back();
+    pieces.push_back(new QueenWhite(4,7));
+    chessboard.grid[4][7] = pieces.back();
+    pieces.push_back(new RookWhite(0,7));
+    chessboard.grid[0][7] = pieces.back();
+    pieces.push_back(new RookWhite(7,7));
     chessboard.grid[7][7] = pieces.back();
-    pieces.push_back(new HorseWhite(7, 1));
-    chessboard.grid[7][1] = pieces.back();
-    pieces.push_back(new HorseWhite(7, 6));
-    chessboard.grid[7][6] = pieces.back();
-    pieces.push_back(new BishopWhite(7, 2));
-    chessboard.grid[7][2] = pieces.back();
-    pieces.push_back(new BishopWhite(7, 5));
-    chessboard.grid[7][5] = pieces.back();
+    pieces.push_back(new HorseWhite(1,7));
+    chessboard.grid[1][7] = pieces.back();
+    pieces.push_back(new HorseWhite(6,7));
+    chessboard.grid[6][7] = pieces.back();
+    pieces.push_back(new BishopWhite(2,7));
+    chessboard.grid[2][7] = pieces.back();
+    pieces.push_back(new BishopWhite(5,7));
+    chessboard.grid[5][7] = pieces.back();
 
     for (int i = 0; i < 8; ++i) {
-        pieces.push_back(new PawnBlack(1, i));
-        chessboard.grid[1][i] = pieces.back();
-        pieces.push_back(new PawnWhite(6, i));
-        chessboard.grid[6][i] = pieces.back();
+        pieces.push_back(new PawnBlack(i,1));
+        chessboard.grid[i][1] = pieces.back();
+        pieces.push_back(new PawnWhite(i,6));
+        chessboard.grid[i][6] = pieces.back();
     }
     for (int i = 2; i < 6; ++i) {
         for (int j = 0; j < 8; ++j) {
-            chessboard.grid[i][j] = nullptr;
+            chessboard.grid[j][i] = nullptr;
         }
     }
 
@@ -78,11 +78,11 @@ void Game::processEvent() {
 }
 
 void Game::handleMouseClick(int x, int y) {
-    bool isPieceClick = chessboard.grid[y][x];
-    bool isOwnPieceClick = isPieceClick && chessboard.grid[y][x]->whiteColor() == isWhiteTurn;
+    bool isPieceClick = chessboard.grid[x][y];
+    bool isOwnPieceClick = isPieceClick && chessboard.grid[x][y]->whiteColor() == isWhiteTurn;
 
     if (isOwnPieceClick) {
-        clickedPiece = chessboard.grid[y][x];
+        clickedPiece = chessboard.grid[x][y];
         return;
     }
 
@@ -104,15 +104,15 @@ bool Game::IsLegalMove(int x, int y) {
 
 void Game::CapturePiece(int x, int y) {
     PlaySound(captureSound);
-    delete chessboard.grid[y][x];
-    pieces.erase(std::find(pieces.begin(), pieces.end(), chessboard.grid[y][x]));
+    delete chessboard.grid[x][y];
+    pieces.erase(std::find(pieces.begin(), pieces.end(), chessboard.grid[x][y]));
 }
 
 void Game::MakeMove(int x, int y) {
-    lastMovePositions[0] = {clickedPiece->position.y, clickedPiece->position.x};
-    lastMovePositions[1] = {(float)y, (float)x};
-    chessboard.grid[y][x] = clickedPiece;
-    chessboard.grid[(int)clickedPiece->position.y][(int)clickedPiece->position.x] = nullptr;
+    lastMovePositions[0] = {clickedPiece->position.x, clickedPiece->position.y};
+    lastMovePositions[1] = {(float)x, (float)y};
+    chessboard.grid[x][y] = clickedPiece;
+    chessboard.grid[(int)clickedPiece->position.x][(int)clickedPiece->position.y] = nullptr;
     clickedPiece->position = {(float)x, (float)y};
     clickedPiece = nullptr;
 
@@ -131,13 +131,13 @@ void Game::CalculateLegalMoves() {
 void Game::Draw() {
     chessboard.Draw();
 
-    DrawRectangle(lastMovePositions[0].y * cellSize, lastMovePositions[0].x * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[0].x, lastMovePositions[0].y));
-    DrawRectangle(lastMovePositions[1].y * cellSize, lastMovePositions[1].x * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[1].x, lastMovePositions[1].y));
+    DrawRectangle(lastMovePositions[0].x * cellSize, lastMovePositions[0].y * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[0].x, lastMovePositions[0].y));
+    DrawRectangle(lastMovePositions[1].x * cellSize, lastMovePositions[1].y * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[1].x, lastMovePositions[1].y));
 
     if (clickedPiece) {
         DrawRectangle(clickedPiece->position.x * cellSize, clickedPiece->position.y * cellSize, cellSize, cellSize, SetClickedColor(clickedPiece->position.x, clickedPiece->position.y));
         for (auto move : clickedPiece->legalMoves) {
-            if (chessboard.grid[(int)move.y][(int)move.x])
+            if (chessboard.grid[(int)move.x][(int)move.y])
                 DrawRing({move.x * cellSize + cellSize / 2, move.y * cellSize + cellSize / 2},40, 50, 0, 360, 32, Fade(BLACK, 0.1f));
             else
                 DrawCircle(move.x * cellSize + cellSize / 2, move.y * cellSize + cellSize / 2, 17, Fade(BLACK, 0.1f));

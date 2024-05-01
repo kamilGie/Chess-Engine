@@ -1,6 +1,6 @@
 #include "piece.hpp"
 
-Piece::Piece(float column, float row, const std::string& pieceName) : position(Vector2{row, column}) {
+Piece::Piece(float column, float row, const std::string& pieceName) : position(Vector2{column, row}) {
     std::string fullPath = "Graphics/" + pieceName + ".png";
     Image image = LoadImage(fullPath.c_str());
     texture = LoadTextureFromImage(image);
