@@ -9,6 +9,7 @@
 #include "chessboard.hpp"
 #include "piece.hpp"
 #include "pieces.cpp"
+#include "colors.hpp"
 
 extern int cellSize;
 

@@ -119,13 +119,10 @@ void Game::Draw() {
     chessboard.Draw();
 
     if (clickedPiece) {
-        Color clickedPieceBackground = ((int)clickedPiece->position.x + (int)clickedPiece->position.y) % 2 ? Color{245,245,154,255}:Color{189,201,94,255};
-        DrawRectangle(clickedPiece->position.x * cellSize, clickedPiece->position.y * cellSize, cellSize, cellSize, clickedPieceBackground);
+        DrawRectangle(clickedPiece->position.x * cellSize, clickedPiece->position.y * cellSize, cellSize, cellSize, SetClickedColor(clickedPiece->position.x,clickedPiece->position.y));
     }
-    Color clickedPieceBackground = ((int)lastMovePositions[0].x + (int) lastMovePositions[0].y ) % 2 ? Color{245,245,154,255}:Color{189,201,94,255};
-    DrawRectangle(lastMovePositions[0].y * cellSize, lastMovePositions[0].x * cellSize, cellSize, cellSize, clickedPieceBackground);
-    clickedPieceBackground = ((int)lastMovePositions[1].x + (int) lastMovePositions[1].y ) % 2 ? Color{245,245,154,255}:Color{189,201,94,255};
-    DrawRectangle(lastMovePositions[1].y * cellSize, lastMovePositions[1].x * cellSize, cellSize, cellSize, clickedPieceBackground);
+    DrawRectangle(lastMovePositions[0].y * cellSize, lastMovePositions[0].x * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[0].x ,lastMovePositions[0].y));
+    DrawRectangle(lastMovePositions[1].y * cellSize, lastMovePositions[1].x * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[1].x ,lastMovePositions[1].y));
 
     for (auto p : pieces) {
         p->Draw();
