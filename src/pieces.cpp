@@ -10,20 +10,29 @@ class King : public Piece {
     virtual ~King() = default;
     void Move() override {}
     int getValue() override { return 20; }
+    std::array<Vector2, 8> PossibleMoves{{{1, 1}, {0, 1}, {1, 0}, {-1, 0}, {0, -1}, {-1, 1}, {1, -1}, {-1, -1}}};
+
+    void SetLegalMoves(Piece* grid[][8]) override {
+        legalMoves.clear();
+
+        for(Vector2 move : PossibleMoves){
+            if(position.x+move.x>=0 && position.x+move.x<8 && position.y+move.y>=0 && position.y+move.y<8 && (!grid[(int)position.x+(int)move.x][(int)position.y+(int)move.y] || grid[(int)position.x+(int)move.x][(int)position.y+(int)move.y]->whiteColor()!=whiteColor())){
+                legalMoves.push_back(Vector2Add(move,position));
+            }
+        }
+    }
 };
 
 class KingBlack : public King {
    public:
     KingBlack(float column, float row) : King(column, row, "kingBlack") {}
     bool whiteColor() override { return false; }
-    void SetLegalMoves(Piece* grid[][8]) override {}
 };
 
 class KingWhite : public King {
    public:
     KingWhite(float column, float row) : King(column, row, "kingWhite") {}
     bool whiteColor() override { return true; }
-    void SetLegalMoves(Piece* grid[][8]) override {}
 };
 
 // ### QUEEN ### //
