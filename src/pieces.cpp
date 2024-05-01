@@ -1,5 +1,7 @@
-#include "piece.hpp"
+#include "piece_interfaces.hpp"
 
+#define ORTHOGONAL_MOVES {1, 0}, {0, 1}, {-1, 0}, {0, -1}
+#define DIAGONALLY_MOVES {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
 extern int cellSize;
 
 // ### KING ### //
@@ -10,7 +12,7 @@ class King : public Piece {
     virtual ~King() = default;
     void Move() override {}
     int getValue() override { return 20; }
-    std::array<Vector2, 8> PossibleMoves{{{1, 1}, {0, 1}, {1, 0}, {-1, 0}, {0, -1}, {-1, 1}, {1, -1}, {-1, -1}}};
+    std::array<Vector2, 8> PossibleMoves{{ORTHOGONAL_MOVES, DIAGONALLY_MOVES}};
 
     void SetLegalMoves(Piece* grid[][8]) override {
         legalMoves.clear();
@@ -37,9 +39,9 @@ class KingWhite : public King {
 
 // ### QUEEN ### //
 
-class Queen : public Piece {
+class Queen : public LongRangePiece {
    public:
-    Queen(float column, float row, const std::string& pieceName) : Piece(column, row, pieceName){};
+    Queen(float column, float row, const std::string& pieceName) : LongRangePiece(column, row, pieceName,{{ORTHOGONAL_MOVES, DIAGONALLY_MOVES}}){};
     virtual ~Queen() = default;
     void Move() override {}
     int getValue() override { return 10; }
@@ -49,60 +51,22 @@ class QueenBlack : public Queen {
    public:
     QueenBlack(float column, float row) : Queen(column, row, "QueenBlack") {}
     bool whiteColor() override { return false; }
-    void SetLegalMoves(Piece* grid[][8]) override {}
 };
 
 class QueenWhite : public Queen {
    public:
     QueenWhite(float column, float row) : Queen(column, row, "QueenWhite") {}
     bool whiteColor() override { return true; }
-    void SetLegalMoves(Piece* grid[][8]) override {}
 };
 
 // ### ROOK ### //
 
-class Rook : public Piece {
+class Rook : public LongRangePiece {
    public:
-    Rook(float column, float row, const std::string& pieceName) : Piece(column, row, pieceName){};
+    Rook(float column, float row, const std::string& pieceName) : LongRangePiece(column, row, pieceName,{ORTHOGONAL_MOVES}){};
     virtual ~Rook() = default;
     void Move() override {}
     int getValue() override { return 5; }
-    void SetLegalMoves(Piece* grid[][8]) override {
-        legalMoves.clear();
-
-        for (int i = position.x + 1; i < 8; i++) {
-            if (!grid[i][(int)position.y] || grid[i][(int)position.y]->whiteColor() != whiteColor()) {
-                legalMoves.push_back({(float)i, position.y});
-            }
-            if (grid[i][(int)position.y]) {
-                break;
-            }
-        }
-        for (int i = position.x - 1; i >= 0; i--) {
-            if (!grid[i][(int)position.y] || grid[i][(int)position.y]->whiteColor() != whiteColor()) {
-                legalMoves.push_back({(float)i, position.y});
-            }
-            if (grid[i][(int)position.y]) {
-                break;
-            }
-        }
-        for (int i = position.y + 1; i < 8; i++) {
-            if (!grid[(int)position.x][i] || grid[(int)position.x][i]->whiteColor() != whiteColor()) {
-                legalMoves.push_back({position.x, (float)i});
-            }
-            if (grid[(int)position.x][i]) {
-                break;
-            }
-        }
-        for (int i = position.y - 1; i >= 0; i--) {
-            if (!grid[(int)position.x][i] || grid[(int)position.x][i]->whiteColor() != whiteColor()) {
-                legalMoves.push_back({position.x, (float)i});
-            }
-            if (grid[(int)position.x][i]) {
-                break;
-            }
-        }
-    }
 };
 
 class RookBlack : public Rook {
@@ -152,9 +116,9 @@ class HorseWhite : public Horse {
 
 // ### BISHOP ### //
 
-class Bishop : public Piece {
+class Bishop : public LongRangePiece {
    public:
-    Bishop(float column, float row, const std::string& pieceName) : Piece(column, row, pieceName){};
+    Bishop(float column, float row, const std::string& pieceName) : LongRangePiece(column, row, pieceName,{DIAGONALLY_MOVES}){};
     virtual ~Bishop() = default;
     void Move() override {}
     int getValue() override { return 3; }
@@ -164,14 +128,12 @@ class BishopBlack : public Bishop {
    public:
     BishopBlack(float column, float row) : Bishop(column, row, "BishopBlack") {}
     bool whiteColor() override { return false; }
-    void SetLegalMoves(Piece* grid[][8]) override {}
 };
 
 class BishopWhite : public Bishop {
    public:
     BishopWhite(float column, float row) : Bishop(column, row, "BishopWhite") {}
     bool whiteColor() override { return true; }
-    void SetLegalMoves(Piece* grid[][8]) override {}
 };
 
 // ### PAWN ### //

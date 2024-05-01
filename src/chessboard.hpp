@@ -1,7 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include <iostream>
-#include "piece.hpp"
+#include "piece_interfaces.hpp"
 #include "colors.hpp"
 
 extern int cellSize;
