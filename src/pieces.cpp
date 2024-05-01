@@ -15,9 +15,9 @@ class King : public Piece {
     void SetLegalMoves(Piece* grid[][8]) override {
         legalMoves.clear();
 
-        for(Vector2 move : PossibleMoves){
-            if(position.x+move.x>=0 && position.x+move.x<8 && position.y+move.y>=0 && position.y+move.y<8 && (!grid[(int)position.x+(int)move.x][(int)position.y+(int)move.y] || grid[(int)position.x+(int)move.x][(int)position.y+(int)move.y]->whiteColor()!=whiteColor())){
-                legalMoves.push_back(Vector2Add(move,position));
+        for (Vector2 move : PossibleMoves) {
+            if (position.x + move.x >= 0 && position.x + move.x < 8 && position.y + move.y >= 0 && position.y + move.y < 8 && (!grid[(int)position.x + (int)move.x][(int)position.y + (int)move.y] || grid[(int)position.x + (int)move.x][(int)position.y + (int)move.y]->whiteColor() != whiteColor())) {
+                legalMoves.push_back(Vector2Add(move, position));
             }
         }
     }
@@ -67,20 +67,54 @@ class Rook : public Piece {
     virtual ~Rook() = default;
     void Move() override {}
     int getValue() override { return 5; }
+    void SetLegalMoves(Piece* grid[][8]) override {
+        legalMoves.clear();
+
+        for (int i = position.x + 1; i < 8; i++) {
+            if (!grid[i][(int)position.y] || grid[i][(int)position.y]->whiteColor() != whiteColor()) {
+                legalMoves.push_back({(float)i, position.y});
+            }
+            if (grid[i][(int)position.y]) {
+                break;
+            }
+        }
+        for (int i = position.x - 1; i >= 0; i--) {
+            if (!grid[i][(int)position.y] || grid[i][(int)position.y]->whiteColor() != whiteColor()) {
+                legalMoves.push_back({(float)i, position.y});
+            }
+            if (grid[i][(int)position.y]) {
+                break;
+            }
+        }
+        for (int i = position.y + 1; i < 8; i++) {
+            if (!grid[(int)position.x][i] || grid[(int)position.x][i]->whiteColor() != whiteColor()) {
+                legalMoves.push_back({position.x, (float)i});
+            }
+            if (grid[(int)position.x][i]) {
+                break;
+            }
+        }
+        for (int i = position.y - 1; i >= 0; i--) {
+            if (!grid[(int)position.x][i] || grid[(int)position.x][i]->whiteColor() != whiteColor()) {
+                legalMoves.push_back({position.x, (float)i});
+            }
+            if (grid[(int)position.x][i]) {
+                break;
+            }
+        }
+    }
 };
 
 class RookBlack : public Rook {
    public:
     RookBlack(float column, float row) : Rook(column, row, "RookBlack") {}
     bool whiteColor() override { return false; }
-    void SetLegalMoves(Piece* grid[][8]) override {}
 };
 
 class RookWhite : public Rook {
    public:
     RookWhite(float column, float row) : Rook(column, row, "RookWhite") {}
     bool whiteColor() override { return true; }
-    void SetLegalMoves(Piece* grid[][8]) override {}
 };
 
 // ### HORSE ###//
@@ -94,12 +128,11 @@ class Horse : public Piece {
     std::array<Vector2, 8> PossibleMoves{{{1, 2}, {2, 1}, {-2, 1}, {1, -2}, {-1, 2}, {2, -1}, {-1, -2}, {-2, -1}}};
 
     void SetLegalMoves(Piece* grid[][8]) override {
-    
         legalMoves.clear();
 
-        for(Vector2 move : PossibleMoves){
-            if(position.x+move.x>=0 && position.x+move.x<8 && position.y+move.y>=0 && position.y+move.y<8 && (!grid[(int)position.x+(int)move.x][(int)position.y+(int)move.y] || grid[(int)position.x+(int)move.x][(int)position.y+(int)move.y]->whiteColor()!=whiteColor())){
-                legalMoves.push_back(Vector2Add(move,position));
+        for (Vector2 move : PossibleMoves) {
+            if (position.x + move.x >= 0 && position.x + move.x < 8 && position.y + move.y >= 0 && position.y + move.y < 8 && (!grid[(int)position.x + (int)move.x][(int)position.y + (int)move.y] || grid[(int)position.x + (int)move.x][(int)position.y + (int)move.y]->whiteColor() != whiteColor())) {
+                legalMoves.push_back(Vector2Add(move, position));
             }
         }
     }
