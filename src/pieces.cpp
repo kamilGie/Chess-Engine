@@ -16,12 +16,14 @@ class KingBlack : public King {
    public:
     KingBlack(float column, float row) : King(column, row, "kingBlack") {}
     bool whiteColor() override {return false;}
+    void SetLegalMoves(Piece* grid[][8]) override { }
 };
 
 class KingWhite : public King {
    public:
     KingWhite(float column, float row) : King(column, row, "kingWhite") {}
     bool whiteColor() override {return true;}
+    void SetLegalMoves(Piece* grid[][8]) override { }
 };
 
 // ### QUEEN ### //
@@ -38,12 +40,14 @@ class QueenBlack : public Queen {
    public:
     QueenBlack(float column, float row) : Queen(column, row, "QueenBlack") {}
     bool whiteColor() override {return false;}
+    void SetLegalMoves(Piece* grid[][8]) override { }
 };
 
 class QueenWhite : public Queen {
    public:
     QueenWhite(float column, float row) : Queen(column, row, "QueenWhite") {}
     bool whiteColor() override {return true;}
+    void SetLegalMoves(Piece* grid[][8]) override { }
 };
 
 // ### ROOK ### //
@@ -60,12 +64,14 @@ class RookBlack : public Rook {
    public:
     RookBlack(float column, float row) : Rook(column, row, "RookBlack") {}
     bool whiteColor() override {return false;}
+    void SetLegalMoves(Piece* grid[][8]) override { }
 };
 
 class RookWhite : public Rook {
    public:
     RookWhite(float column, float row) : Rook(column, row, "RookWhite") {}
     bool whiteColor() override {return true;}
+    void SetLegalMoves(Piece* grid[][8]) override { }
 };
 
 // ### HORSE ###//
@@ -82,12 +88,14 @@ class HorseBlack : public Horse {
    public:
     HorseBlack(float column, float row) : Horse(column, row, "/HorseBlack") {}
     bool whiteColor() override {return false;}
+    void SetLegalMoves(Piece* grid[][8]) override { }
 };
 
 class HorseWhite : public Horse {
    public:
     HorseWhite(float column, float row) : Horse(column, row, "HorseWhite") {}
     bool whiteColor() override {return true;}
+    void SetLegalMoves(Piece* grid[][8]) override { }
 };
 
 // ### BISHOP ### //
@@ -104,12 +112,14 @@ class BishopBlack : public Bishop {
    public:
     BishopBlack(float column, float row) : Bishop(column, row, "BishopBlack") {}
     bool whiteColor() override {return false;}
+    void SetLegalMoves(Piece* grid[][8]) override { }
 };
 
 class BishopWhite : public Bishop {
    public:
     BishopWhite(float column, float row) : Bishop(column, row, "BishopWhite") {}
     bool whiteColor() override {return true;}
+    void SetLegalMoves(Piece* grid[][8]) override { }
 };
 
 // ### PAWN ### //
@@ -126,6 +136,7 @@ class PawnBlack : public Pawn {
     PawnBlack(float column, float row) : Pawn(column, row, "pawnBlack") {}
     void Move() override {}
     bool whiteColor() override {return false;}
+    void SetLegalMoves(Piece* grid[][8]) override { }
 };
 
 class PawnWhite : public Pawn {
@@ -133,4 +144,5 @@ class PawnWhite : public Pawn {
     PawnWhite(float column, float row) : Pawn(column, row, "pawnWhite") {}
     void Move() override {}
     bool whiteColor() override {return true;}
+    void SetLegalMoves(Piece* grid[][8]) override { legalMoves.push_back({2,2}); legalMoves.push_back({0,0});}
 };

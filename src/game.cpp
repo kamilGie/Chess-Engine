@@ -83,9 +83,9 @@ void Game::handleMouseClick(int x, int y) {
     if (isOwnPieceClick) {
         clickedPiece = chessboard.grid[y][x];
         return;
-    } 
+    }
 
-    if (clickedPiece && IsLegalMove(x,y)) {
+    if (clickedPiece && IsLegalMove(x, y)) {
         if (isPieceClick) {
             CapturePiece(x, y);
         }
@@ -93,7 +93,7 @@ void Game::handleMouseClick(int x, int y) {
     }
 }
 
-bool Game::IsLegalMove(int x,int y){
+bool Game::IsLegalMove(int x, int y) {
     return true;
 }
 
@@ -104,8 +104,8 @@ void Game::CapturePiece(int x, int y) {
 }
 
 void Game::MakeMove(int x, int y) {
-    lastMovePositions[0]={clickedPiece->position.y,clickedPiece->position.x};
-    lastMovePositions[1]={(float)y,(float)x};
+    lastMovePositions[0] = {clickedPiece->position.y, clickedPiece->position.x};
+    lastMovePositions[1] = {(float)y, (float)x};
     chessboard.grid[y][x] = clickedPiece;
     chessboard.grid[(int)clickedPiece->position.y][(int)clickedPiece->position.x] = nullptr;
     clickedPiece->position = {(float)x, (float)y};
@@ -113,16 +113,31 @@ void Game::MakeMove(int x, int y) {
 
     isWhiteTurn = !isWhiteTurn;
     PlaySound(moveSound);
+
+    CalculateLegalMoves();
+}
+
+void Game::CalculateLegalMoves() {
+    for (auto p : pieces) {
+        p->SetLegalMoves(chessboard.grid);
+    }
 }
 
 void Game::Draw() {
     chessboard.Draw();
+    
+    DrawRectangle(lastMovePositions[0].y * cellSize, lastMovePositions[0].x * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[0].x, lastMovePositions[0].y));
+    DrawRectangle(lastMovePositions[1].y * cellSize, lastMovePositions[1].x * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[1].x, lastMovePositions[1].y));
 
     if (clickedPiece) {
-        DrawRectangle(clickedPiece->position.x * cellSize, clickedPiece->position.y * cellSize, cellSize, cellSize, SetClickedColor(clickedPiece->position.x,clickedPiece->position.y));
+        DrawRectangle(clickedPiece->position.x * cellSize, clickedPiece->position.y * cellSize, cellSize, cellSize, SetClickedColor(clickedPiece->position.x, clickedPiece->position.y));
+        for (auto move : clickedPiece->legalMoves) {
+            if (chessboard.grid[(int)move.y][(int)move.x])
+                DrawRing({move.x * cellSize + cellSize / 2, move.y * cellSize + cellSize / 2},40, 50, 0, 360, 32, Fade(BLACK, 0.1f));
+            else
+                DrawCircle(move.x * cellSize + cellSize / 2, move.y * cellSize + cellSize / 2, 17, Fade(BLACK, 0.1f));
+        }
     }
-    DrawRectangle(lastMovePositions[0].y * cellSize, lastMovePositions[0].x * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[0].x ,lastMovePositions[0].y));
-    DrawRectangle(lastMovePositions[1].y * cellSize, lastMovePositions[1].x * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[1].x ,lastMovePositions[1].y));
 
     for (auto p : pieces) {
         p->Draw();

@@ -7,9 +7,9 @@
 #include <vector>
 
 #include "chessboard.hpp"
+#include "colors.hpp"
 #include "piece.hpp"
 #include "pieces.cpp"
-#include "colors.hpp"
 
 extern int cellSize;
 
@@ -20,18 +20,20 @@ class Game {
     ~Game();
 
    private:
+    void processEvent();
+    void handleMouseClick(int x, int y);
+    void MakeMove(int x, int y);
+    void CapturePiece(int x, int y);
+    bool IsLegalMove(int x, int y);
+    void Draw();
+    void CalculateLegalMoves(); 
+
+   private:
     Chessboard chessboard = Chessboard();
     std::vector<Piece*> pieces;
     Piece* clickedPiece = nullptr;
     Sound moveSound;
     Sound captureSound;
     bool isWhiteTurn = true;
-    Vector2 lastMovePositions[2]{{9,9},{9,9}};
-
-    void processEvent();
-    void handleMouseClick(int x,int y);
-    void MakeMove(int x,int y);
-    void CapturePiece(int x,int y);
-    bool IsLegalMove(int x,int y);
-    void Draw();
+    Vector2 lastMovePositions[2]{{9, 9}, {9, 9}};
 };

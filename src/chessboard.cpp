@@ -3,12 +3,12 @@
 Chessboard::Chessboard() {}
 
 void Chessboard::Draw() {
-    DrawRectangle(0, 0, cellSize * cellCount, cellSize * cellCount, {122,147,101,255});
+    DrawRectangle(0, 0, cellSize * cellCount, cellSize * cellCount, Green);
 
     for (int row = 0; row < cellCount; row++) {
         for (int column = 0; column < cellCount; column++) {
             if ((row + column) % 2) {
-                DrawRectangle(row * cellSize, column * cellSize, cellSize, cellSize, {234,236,211,255});
+                DrawRectangle(row * cellSize, column * cellSize, cellSize, cellSize, White);
             }
         }
     }

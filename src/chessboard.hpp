@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include <iostream>
 #include "piece.hpp"
+#include "colors.hpp"
 
 extern int cellSize;
 
