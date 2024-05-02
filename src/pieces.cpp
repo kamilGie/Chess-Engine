@@ -5,27 +5,27 @@
 #define DIAGONALLY_MOVES \
     {1, 1}, {1, -1}, {-1, 1}, { -1, -1 }
 #define L_SHAPED_MOVES \
-    {1, 2}, {2, 1}, {-2, 1}, {1, -2}, {-1, 2}, {2, -1}, {-1, -2}, {-2, -1}
-
+    {1, 2}, {2, 1}, {-2, 1}, {1, -2}, {-1, 2}, {2, -1}, {-1, -2}, { -2, -1 }
 
 // ### KING ### //
 
 class King : public LimitedRangePiece {
    public:
-    King(float column, float row, const std::string& pieceName) : LimitedRangePiece(column, row, pieceName,{ORTHOGONAL_MOVES, DIAGONALLY_MOVES} ){};
+    King(float column, float row, const std::string& pieceName) : LimitedRangePiece(column, row, pieceName, {ORTHOGONAL_MOVES, DIAGONALLY_MOVES}){};
     virtual ~King() = default;
     int getValue() override { return 20; }
 };
 
+#include <iostream>
 class KingBlack : public King {
    public:
-    KingBlack(float column, float row) : King(column, row, "kingBlack") {}
+    KingBlack(float column=3, float row=0) : King(column, row, "kingBlack") {std::cout<<"ODPALAM SIE "<< column<<" "<<row<<std::endl;}
     bool whiteColor() override { return false; }
 };
 
 class KingWhite : public King {
    public:
-    KingWhite(float column, float row) : King(column, row, "kingWhite") {}
+    KingWhite(float column=3, float row=7) : King(column, row, "kingWhite") {}
     bool whiteColor() override { return true; }
 };
 
@@ -40,13 +40,13 @@ class Queen : public LongRangePiece {
 
 class QueenBlack : public Queen {
    public:
-    QueenBlack(float column, float row) : Queen(column, row, "QueenBlack") {}
+    QueenBlack(float column=4, float row=0) : Queen(column, row, "QueenBlack") {}
     bool whiteColor() override { return false; }
 };
 
 class QueenWhite : public Queen {
    public:
-    QueenWhite(float column, float row) : Queen(column, row, "QueenWhite") {}
+    QueenWhite(float column=4, float row=7) : Queen(column, row, "QueenWhite") {}
     bool whiteColor() override { return true; }
 };
 
@@ -61,13 +61,13 @@ class Rook : public LongRangePiece {
 
 class RookBlack : public Rook {
    public:
-    RookBlack(float column, float row) : Rook(column, row, "RookBlack") {}
+    RookBlack(float column, float row=0) : Rook(column, row, "RookBlack") {}
     bool whiteColor() override { return false; }
 };
 
 class RookWhite : public Rook {
    public:
-    RookWhite(float column, float row) : Rook(column, row, "RookWhite") {}
+    RookWhite(float column, float row=7) : Rook(column, row, "RookWhite") {}
     bool whiteColor() override { return true; }
 };
 
@@ -75,20 +75,20 @@ class RookWhite : public Rook {
 
 class Horse : public LimitedRangePiece {
    public:
-    Horse(float column, float row, const std::string& pieceName) : LimitedRangePiece(column, row, pieceName,{L_SHAPED_MOVES} ){};
+    Horse(float column, float row, const std::string& pieceName) : LimitedRangePiece(column, row, pieceName, {L_SHAPED_MOVES}){};
     virtual ~Horse() = default;
     int getValue() override { return 3; }
 };
 
 class HorseBlack : public Horse {
    public:
-    HorseBlack(float column, float row) : Horse(column, row, "/HorseBlack") {}
+    HorseBlack(float column, float row=0) : Horse(column, row, "/HorseBlack") {}
     bool whiteColor() override { return false; }
 };
 
 class HorseWhite : public Horse {
    public:
-    HorseWhite(float column, float row) : Horse(column, row, "HorseWhite") {}
+    HorseWhite(float column, float row=7) : Horse(column, row, "HorseWhite") {}
     bool whiteColor() override { return true; }
 };
 
@@ -103,13 +103,13 @@ class Bishop : public LongRangePiece {
 
 class BishopBlack : public Bishop {
    public:
-    BishopBlack(float column, float row) : Bishop(column, row, "BishopBlack") {}
+    BishopBlack(float column, float row=0) : Bishop(column, row, "BishopBlack") {}
     bool whiteColor() override { return false; }
 };
 
 class BishopWhite : public Bishop {
    public:
-    BishopWhite(float column, float row) : Bishop(column, row, "BishopWhite") {}
+    BishopWhite(float column, float row=7) : Bishop(column, row, "BishopWhite") {}
     bool whiteColor() override { return true; }
 };
 
@@ -120,51 +120,32 @@ class Pawn : public Piece {
     Pawn(float column, float row, const std::string& pieceName) : Piece(column, row, pieceName){};
     virtual ~Pawn() = default;
     int getValue() override { return 1; }
+
+    void SetLegalMoves(Piece* grid[][8]) override {
+        legalMoves.clear();
+
+        if (position.y == 7 || position.y == 0) return;
+        int moveDirection = whiteColor() ? -1 : 1;
+        int x = position.x;
+        int y = position.y + moveDirection;
+        if (!grid[x][y]) {
+            addLegalMove(x, y);
+            bool isFirstMove = whiteColor() ? 6 == position.y : 1 == position.y;
+            if (isFirstMove && !grid[x][y + moveDirection]) addLegalMove(x, y + moveDirection);
+        }
+        if (x > 0 && grid[x - 1][y] && grid[x - 1][y]->whiteColor() != whiteColor()) addLegalMove(x - 1, y);
+        if (x < 7 && grid[x + 1][y] && grid[x + 1][y]->whiteColor() != whiteColor()) addLegalMove(x + 1, y);
+    }
 };
 
 class PawnBlack : public Pawn {
    public:
     PawnBlack(float column, float row) : Pawn(column, row, "pawnBlack") {}
     bool whiteColor() override { return false; }
-    void SetLegalMoves(Piece* grid[][8]) override {
-        legalMoves.clear();
-        if (position.y == 7) return;
-
-        if (!grid[(int)position.x][(int)position.y + 1]) {
-            legalMoves.push_back({position.x, position.y + 1});
-            if (position.y == 1 && !grid[(int)position.x][(int)position.y + 2]) {
-                legalMoves.push_back({position.x, position.y + 2});
-            }
-        }
-
-        if (position.x > 0 && grid[(int)position.x - 1][(int)position.y + 1] && grid[(int)position.x - 1][(int)position.y + 1]->whiteColor()) {
-            legalMoves.push_back({position.x - 1, position.y + 1});
-        }
-        if (position.x < 7 && grid[(int)position.x + 1][(int)position.y + 1] && grid[(int)position.x + 1][(int)position.y + 1]->whiteColor()) {
-            legalMoves.push_back({position.x + 1, position.y + 1});
-        }
-    }
 };
 
 class PawnWhite : public Pawn {
    public:
     PawnWhite(float column, float row) : Pawn(column, row, "pawnWhite") {}
     bool whiteColor() override { return true; }
-    void SetLegalMoves(Piece* grid[][8]) override {
-        legalMoves.clear();
-        if (position.y == 0) return;
-
-        if (!grid[(int)position.x][(int)position.y - 1]) {
-            legalMoves.push_back({position.x, position.y - 1});
-            if (position.y == 6 && !grid[(int)position.x][(int)position.y - 2]) {
-                legalMoves.push_back({position.x, position.y - 2});
-            }
-        }
-        if (position.x > 0 && grid[(int)position.x - 1][(int)position.y - 1] && !grid[(int)position.x - 1][(int)position.y - 1]->whiteColor()) {
-            legalMoves.push_back({position.x - 1, position.y - 1});
-        }
-        if (position.x < 7 && grid[(int)position.x + 1][(int)position.y - 1] && !grid[(int)position.x + 1][(int)position.y - 1]->whiteColor()) {
-            legalMoves.push_back({position.x + 1, position.y - 1});
-        }
-    }
 };

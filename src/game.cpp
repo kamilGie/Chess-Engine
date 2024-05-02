@@ -3,52 +3,7 @@
 int cellSize = 100;
 
 Game::Game() {
-    pieces.push_back(new KingBlack(3,0));
-    chessboard.grid[3][0] = pieces.back();
-    pieces.push_back(new QueenBlack(4,0));
-    chessboard.grid[4][0] = pieces.back();
-    pieces.push_back(new RookBlack(0,0));
-    chessboard.grid[0][0] = pieces.back();
-    pieces.push_back(new RookBlack(7,0));
-    chessboard.grid[7][0] = pieces.back();
-    pieces.push_back(new HorseBlack(1,0));
-    chessboard.grid[1][0] = pieces.back();
-    pieces.push_back(new HorseBlack(6,0));
-    chessboard.grid[6][0] = pieces.back();
-    pieces.push_back(new BishopBlack(2,0));
-    chessboard.grid[2][0] = pieces.back();
-    pieces.push_back(new BishopBlack(5,0));
-    chessboard.grid[5][0] = pieces.back();
-
-    pieces.push_back(new KingWhite(3,7));
-    chessboard.grid[3][7] = pieces.back();
-    pieces.push_back(new QueenWhite(4,7));
-    chessboard.grid[4][7] = pieces.back();
-    pieces.push_back(new RookWhite(0,7));
-    chessboard.grid[0][7] = pieces.back();
-    pieces.push_back(new RookWhite(7,7));
-    chessboard.grid[7][7] = pieces.back();
-    pieces.push_back(new HorseWhite(1,7));
-    chessboard.grid[1][7] = pieces.back();
-    pieces.push_back(new HorseWhite(6,7));
-    chessboard.grid[6][7] = pieces.back();
-    pieces.push_back(new BishopWhite(2,7));
-    chessboard.grid[2][7] = pieces.back();
-    pieces.push_back(new BishopWhite(5,7));
-    chessboard.grid[5][7] = pieces.back();
-
-    for (int i = 0; i < 8; ++i) {
-        pieces.push_back(new PawnBlack(i,1));
-        chessboard.grid[i][1] = pieces.back();
-        pieces.push_back(new PawnWhite(i,6));
-        chessboard.grid[i][6] = pieces.back();
-    }
-    for (int i = 2; i < 6; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            chessboard.grid[j][i] = nullptr;
-        }
-    }
-
+    InitPieces();
     InitAudioDevice();
     moveSound = LoadSound("Sounds/move.mp3");
     captureSound = LoadSound("Sounds/capture.mp3");
@@ -63,6 +18,36 @@ Game::~Game() {
     UnloadSound(moveSound);
     UnloadSound(captureSound);
     CloseAudioDevice();
+}
+
+void Game::InitPieces() {
+    addPiece(new RookBlack(0));
+    addPiece(new HorseBlack(1));
+    addPiece(new BishopBlack(2));
+    addPiece(new KingBlack(3));
+    addPiece(new QueenBlack(4));
+    addPiece(new BishopBlack(5));
+    addPiece(new HorseBlack(6));
+    addPiece(new RookBlack(7));
+
+    addPiece(new RookWhite(0));
+    addPiece(new HorseWhite(1));
+    addPiece(new BishopWhite(2));
+    addPiece(new KingWhite(3));
+    addPiece(new QueenWhite(4));
+    addPiece(new BishopWhite(5));
+    addPiece(new HorseWhite(6));
+    addPiece(new RookWhite(7));
+
+    for (int i = 0; i < 8; ++i) {
+        addPiece(new PawnBlack(i, 1));
+        addPiece(new PawnWhite(i, 6));
+    }
+}
+
+void Game::addPiece(Piece* piece) {
+    pieces.push_back(piece);
+    chessboard.grid[(int)piece->position.x][(int)piece->position.y] = pieces.back();
 }
 
 void Game::Run() {
@@ -94,12 +79,8 @@ void Game::handleMouseClick(int x, int y) {
     }
 }
 
-bool Game::IsLegalMove(int x, int y) {
-    for(auto move : clickedPiece->legalMoves){
-        if(Vector2Equals(move ,{(float)x,(float)y}))
-        return true;
-    }
-    return false;
+bool Game::IsLegalMove(float x, float y) {
+    return std::any_of(clickedPiece->legalMoves.begin(), clickedPiece->legalMoves.end(), [&](auto move) { return Vector2Equals(move, {x, y}); });
 }
 
 void Game::CapturePiece(int x, int y) {
@@ -109,8 +90,8 @@ void Game::CapturePiece(int x, int y) {
 }
 
 void Game::MakeMove(int x, int y) {
-    lastMovePositions[0] = {clickedPiece->position.x, clickedPiece->position.y};
-    lastMovePositions[1] = {(float)x, (float)y};
+    chessboard.lastMovePositions[0] = {clickedPiece->position.x, clickedPiece->position.y};
+    chessboard.lastMovePositions[1] = {(float)x, (float)y};
     chessboard.grid[x][y] = clickedPiece;
     chessboard.grid[(int)clickedPiece->position.x][(int)clickedPiece->position.y] = nullptr;
     clickedPiece->position = {(float)x, (float)y};
@@ -119,34 +100,39 @@ void Game::MakeMove(int x, int y) {
     isWhiteTurn = !isWhiteTurn;
     PlaySound(moveSound);
 
-    
     CalculateLegalMoves();
-    
 }
 
 void Game::CalculateLegalMoves() {
+    std::cout << "i start CalculateLegalMoves" << std::endl;
     for (auto p : pieces) {
         p->SetLegalMoves(chessboard.grid);
     }
+    std::cout << "i end CalculateLegalMoves" << std::endl;
 }
 
 void Game::Draw() {
     chessboard.Draw();
 
-    DrawRectangle(lastMovePositions[0].x * cellSize, lastMovePositions[0].y * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[0].x, lastMovePositions[0].y));
-    DrawRectangle(lastMovePositions[1].x * cellSize, lastMovePositions[1].y * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[1].x, lastMovePositions[1].y));
-
     if (clickedPiece) {
-        DrawRectangle(clickedPiece->position.x * cellSize, clickedPiece->position.y * cellSize, cellSize, cellSize, SetClickedColor(clickedPiece->position.x, clickedPiece->position.y));
-        for (auto move : clickedPiece->legalMoves) {
-            if (chessboard.grid[(int)move.x][(int)move.y])
-                DrawRing({move.x * cellSize + cellSize / 2, move.y * cellSize + cellSize / 2},40, 50, 0, 360, 32, Fade(BLACK, 0.1f));
-            else
-                DrawCircle(move.x * cellSize + cellSize / 2, move.y * cellSize + cellSize / 2, 17, Fade(BLACK, 0.1f));
-        }
-    }
+        int x = clickedPiece->position.x;
+        int y = clickedPiece->position.y;
+        DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, SetClickedColor(x, y));
+        DrawLegalMoves();
+    };
 
     for (auto p : pieces) {
         p->Draw();
+    }
+}
+
+void Game::DrawLegalMoves() {
+    for (auto move : clickedPiece->legalMoves) {
+        float x = move.x * cellSize + cellSize / 2;
+        float y = move.y * cellSize + cellSize / 2;
+        if (chessboard.grid[(int)move.x][(int)move.y])
+            DrawRing({x, y}, 40, 50, 0, 360, 32, Fade(BLACK, 0.1f));
+        else
+            DrawCircle(x, y, 17, Fade(BLACK, 0.1f));
     }
 }
