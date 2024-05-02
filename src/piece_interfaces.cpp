@@ -19,8 +19,8 @@ void LongRangePiece::SetLegalMoves(Piece* grid[][8]) {
     legalMoves.clear();
 
     for (Vector2 dir : moveDirections) {
-        int x = position.x + dir.x;
-        int y = position.y + dir.y;
+        int x = position.x;
+        int y = position.y;
         do {
             x += dir.x;
             y += dir.y;
