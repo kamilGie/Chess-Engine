@@ -19,7 +19,7 @@ class King : public LimitedRangePiece {
 #include <iostream>
 class KingBlack : public King {
    public:
-    KingBlack(float column=3, float row=0) : King(column, row, "kingBlack") {std::cout<<"ODPALAM SIE "<< column<<" "<<row<<std::endl;}
+    KingBlack(float column=3, float row=0) : King(column, row, "kingBlack") {}
     bool whiteColor() override { return false; }
 };
 

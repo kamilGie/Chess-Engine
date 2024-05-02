@@ -11,7 +11,7 @@ Piece::~Piece() { UnloadTexture(texture); }
 
 void Piece::Draw() { DrawTexture(texture, position.x * cellSize, position.y * cellSize, WHITE); }
 
-bool Piece::isInBorder(int x, int y) { return x < 8 && y < 8 && x >= 0 && y >= 0; }
+bool Piece::isInsideBoard(int x, int y) { return x < 8 && y < 8 && x >= 0 && y >= 0; }
 
 void Piece::addLegalMove(int x, int y) { legalMoves.push_back({static_cast<float>(x), static_cast<float>(y)}); }
 
@@ -19,11 +19,14 @@ void LongRangePiece::SetLegalMoves(Piece* grid[][8]) {
     legalMoves.clear();
 
     for (Vector2 dir : moveDirections) {
-        for (int x = position.x + dir.x, y = position.y + dir.y; isInBorder(x, y); x += dir.x, y += dir.y) {
-            bool isEmptyOrOpponent = !grid[x][y] || grid[x][y]->whiteColor() != whiteColor();
+        int x = position.x + dir.x;
+        int y = position.y + dir.y;
+        do {
+            x += dir.x;
+            y += dir.y;
+            bool isEmptyOrOpponent = isInsideBoard(x, y) && (!grid[x][y] || grid[x][y]->whiteColor() != whiteColor());
             if (isEmptyOrOpponent) addLegalMove(x, y);
-            if (grid[x][y]) break;
-        }
+        } while (!grid[x][y]);
     }
 }
 
@@ -34,7 +37,7 @@ void LimitedRangePiece::SetLegalMoves(Piece* grid[][8]) {
     for (Vector2 dir : moveDirections) {
         int x = position.x + dir.x;
         int y = position.y + dir.y;
-        bool isEmptyOrOpponent = isInBorder(x, y) && (!grid[x][y] || grid[x][y]->whiteColor() != whiteColor());
+        bool isEmptyOrOpponent = isInsideBoard(x, y) && (!grid[x][y] || grid[x][y]->whiteColor() != whiteColor());
         if (isEmptyOrOpponent) addLegalMove(x, y);
     }
 }

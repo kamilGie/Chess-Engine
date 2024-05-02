@@ -21,7 +21,7 @@ class Piece {
 
    protected:
     void addLegalMove(int x, int y);
-    bool isInBorder(int x, int y);
+    bool isInsideBoard(int x, int y);
 
    private:
     Texture2D texture;
