@@ -14,7 +14,7 @@ class Chessboard {
     void Draw();
     void ShowSquares();
     int cellCount = 8;
-    Piece* grid[8][8]{};
+    std::shared_ptr<Piece> grid[8][8]{};
     Vector2 lastMovePositions[2]{{9, 9}, {9, 9}};
 
    private:

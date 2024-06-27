@@ -8,6 +8,7 @@
 #include "chessboard.hpp"
 #include "piece_interfaces.hpp"
 #include "pieces.cpp"
+#include "memory"
 
 extern int cellSize;
 
@@ -27,12 +28,12 @@ class Game {
     void DrawLegalMoves();
     void CalculateLegalMoves(); 
     void InitPieces();
-    void addPiece(Piece* piece);
+    void addPiece(std::shared_ptr<Piece> piece);
 
    private:
     Chessboard chessboard = Chessboard();
-    std::vector<Piece*> pieces;
-    Piece* clickedPiece = nullptr;
+    std::vector<std::shared_ptr<Piece>> pieces;
+    std::shared_ptr<Piece> clickedPiece = nullptr;
     Sound moveSound;
     Sound captureSound;
     bool isWhiteTurn = true;

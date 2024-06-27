@@ -11,43 +11,39 @@ Game::Game() {
 }
 
 Game::~Game() {
-    for (auto p : pieces) {
-        delete p;
-    }
-
     UnloadSound(moveSound);
     UnloadSound(captureSound);
     CloseAudioDevice();
 }
 
 void Game::InitPieces() {
-    addPiece(new RookBlack(0));
-    addPiece(new HorseBlack(1));
-    addPiece(new BishopBlack(2));
-    addPiece(new KingBlack(3));
-    addPiece(new QueenBlack(4));
-    addPiece(new BishopBlack(5));
-    addPiece(new HorseBlack(6));
-    addPiece(new RookBlack(7));
+    addPiece(Rook::CreateBlack(0,0));
+    addPiece(Horse::CreateBlack(1,0));
+    addPiece(Bishop::CreateBlack(2,0));
+    addPiece(King::CreateBlack(3,0));
+    addPiece(Queen::CreateBlack(4,0));
+    addPiece(Bishop::CreateBlack(5,0));
+    addPiece(Horse::CreateBlack(6,0));
+    addPiece(Rook::CreateBlack(7,0));
 
-    addPiece(new RookWhite(0));
-    addPiece(new HorseWhite(1));
-    addPiece(new BishopWhite(2));
-    addPiece(new KingWhite(3));
-    addPiece(new QueenWhite(4));
-    addPiece(new BishopWhite(5));
-    addPiece(new HorseWhite(6));
-    addPiece(new RookWhite(7));
+    addPiece(Rook::CreateWhite(0,7));
+    addPiece(Horse::CreateWhite(1,7));
+    addPiece(Bishop::CreateWhite(2,7));
+    addPiece(King::CreateWhite(3,7));
+    addPiece(Queen::CreateWhite(4,7));
+    addPiece(Bishop::CreateWhite(5,7));
+    addPiece(Horse::CreateWhite(6,7));
+    addPiece(Rook::CreateWhite(7,7));
 
     for (int i = 0; i < 8; ++i) {
-        addPiece(new PawnBlack(i, 1));
-        addPiece(new PawnWhite(i, 6));
+        addPiece(Pawn::CreateBlack(i, 1));
+        addPiece(Pawn::CreateWhite(i, 6));
     }
 }
 
-void Game::addPiece(Piece* piece) {
+void Game::addPiece(std::shared_ptr<Piece> piece) {
     pieces.push_back(piece);
-    chessboard.grid[(int)piece->position.x][(int)piece->position.y] = pieces.back();
+    chessboard.grid[(int)piece->position.x][(int)piece->position.y] = piece;
 }
 
 void Game::Run() {
@@ -63,7 +59,7 @@ void Game::processEvent() {
 }
 
 void Game::handleMouseClick(int x, int y) {
-    bool isPieceClick = chessboard.grid[x][y];
+    bool isPieceClick = chessboard.grid[x][y].get();
     bool isOwnPieceClick = isPieceClick && (chessboard.grid[x][y]->color== PieceColor::white == isWhiteTurn);
 
     if (isOwnPieceClick) {
@@ -85,7 +81,6 @@ bool Game::IsLegalMove(float x, float y) {
 
 void Game::CapturePiece(int x, int y) {
     PlaySound(captureSound);
-    delete chessboard.grid[x][y];
     pieces.erase(std::find(pieces.begin(), pieces.end(), chessboard.grid[x][y]));
 }
 

@@ -15,7 +15,7 @@ bool Piece::isInsideBoard(int x, int y) { return x < 8 && y < 8 && x >= 0 && y >
 
 void Piece::addLegalMove(int x, int y) { legalMoves.push_back({static_cast<float>(x), static_cast<float>(y)}); }
 
-void LongRangePiece::SetLegalMoves(Piece* grid[][8]) {
+void LongRangePiece::SetLegalMoves(std::shared_ptr<Piece> grid[][8]) {
     legalMoves.clear();
 
     for (Vector2 dir : moveDirections) {
@@ -31,7 +31,7 @@ void LongRangePiece::SetLegalMoves(Piece* grid[][8]) {
 }
 
 #include <iostream>
-void LimitedRangePiece::SetLegalMoves(Piece* grid[][8]) {
+void LimitedRangePiece::SetLegalMoves(std::shared_ptr<Piece> grid[][8]) {
     legalMoves.clear();
     std::cout << "start" << std::endl;
     for (Vector2 dir : moveDirections) {
