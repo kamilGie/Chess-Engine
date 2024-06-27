@@ -4,6 +4,11 @@
 #include <string>
 #include <vector>
 
+enum class PieceColor{
+    black,
+    white
+};
+
 extern int cellSize;
 
 class Piece {
@@ -13,11 +18,11 @@ class Piece {
 
     void Draw();
     virtual int getValue() = 0;
-    virtual bool whiteColor() = 0;
     virtual void SetLegalMoves(Piece* grid[][8]) = 0;
 
     Vector2 position;
     std::vector<Vector2> legalMoves;
+    PieceColor color;
 
    protected:
     void addLegalMove(int x, int y);

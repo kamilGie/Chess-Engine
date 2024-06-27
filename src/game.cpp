@@ -64,7 +64,7 @@ void Game::processEvent() {
 
 void Game::handleMouseClick(int x, int y) {
     bool isPieceClick = chessboard.grid[x][y];
-    bool isOwnPieceClick = isPieceClick && chessboard.grid[x][y]->whiteColor() == isWhiteTurn;
+    bool isOwnPieceClick = isPieceClick && (chessboard.grid[x][y]->color== PieceColor::white == isWhiteTurn);
 
     if (isOwnPieceClick) {
         clickedPiece = chessboard.grid[x][y];
