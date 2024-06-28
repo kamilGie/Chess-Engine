@@ -1,6 +1,6 @@
 #include "piece_interfaces.hpp"
 
-Piece::Piece(float column, float row, const std::string& pieceName) : position(Vector2{column, row}) {
+Piece::Piece(float column, float row, const std::string& pieceName, PieceColor color) : position(Vector2{column, row}) , color(color) {
     std::string fullPath = "Graphics/" + pieceName + ".png";
     Image image = LoadImage(fullPath.c_str());
     texture = LoadTextureFromImage(image);

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <iostream>
 
 enum class PieceColor{
     black,
@@ -14,7 +15,7 @@ extern int cellSize;
 
 class Piece {
    public:
-    Piece(float column, float row, const std::string& pieceName);
+    Piece(float column, float row, const std::string& pieceName, PieceColor color);
     virtual ~Piece();
 
     void Draw();
@@ -35,7 +36,7 @@ class Piece {
 
 class LongRangePiece : public Piece {
    public:
-    LongRangePiece(float column, float row, const std::string& pieceName, std::vector<Vector2> moveDirections) : Piece(column, row, pieceName), moveDirections(moveDirections){};
+    LongRangePiece(float column, float row, const std::string& pieceName, std::vector<Vector2> moveDirections,PieceColor color) : Piece(column, row, pieceName,color), moveDirections(moveDirections){};
     virtual ~LongRangePiece() = default;
     void SetLegalMoves(std::shared_ptr<Piece> grid[][8]) override;
 
@@ -45,7 +46,7 @@ class LongRangePiece : public Piece {
 
 class LimitedRangePiece : public Piece {
    public:
-    LimitedRangePiece(float column, float row, const std::string& pieceName, std::vector<Vector2> moveDirections) : Piece(column, row, pieceName), moveDirections(moveDirections){};
+    LimitedRangePiece(float column, float row, const std::string& pieceName, std::vector<Vector2> moveDirections,PieceColor color) : Piece(column, row, pieceName,color), moveDirections(moveDirections){};
     virtual ~LimitedRangePiece() = default;
     void SetLegalMoves(std::shared_ptr<Piece> grid[][8]) override;
 

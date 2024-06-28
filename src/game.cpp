@@ -60,7 +60,7 @@ void Game::processEvent() {
 
 void Game::handleMouseClick(int x, int y) {
     bool isPieceClick = chessboard.grid[x][y].get();
-    bool isOwnPieceClick = isPieceClick && (chessboard.grid[x][y]->color== PieceColor::white == isWhiteTurn);
+    bool isOwnPieceClick = isPieceClick && ( chessboard.grid[x][y]->color == ColorTurn);
 
     if (isOwnPieceClick) {
         clickedPiece = chessboard.grid[x][y];
@@ -92,7 +92,7 @@ void Game::MakeMove(int x, int y) {
     clickedPiece->position = {(float)x, (float)y};
     clickedPiece = nullptr;
 
-    isWhiteTurn = !isWhiteTurn;
+    ColorTurn = (ColorTurn == PieceColor::white) ?  PieceColor::black : PieceColor::white;
     PlaySound(moveSound);
 
     CalculateLegalMoves();

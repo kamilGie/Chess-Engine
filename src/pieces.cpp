@@ -11,7 +11,7 @@
 
 class King : public LimitedRangePiece {
    public:
-    King(float column, float row, const std::string& pieceName) : LimitedRangePiece(column, row, pieceName, {ORTHOGONAL_MOVES, DIAGONALLY_MOVES}){};
+    King(float column, float row, const std::string& pieceName, PieceColor color) : LimitedRangePiece(column, row, pieceName, {ORTHOGONAL_MOVES, DIAGONALLY_MOVES}, color){};
     virtual ~King() = default;
     int getValue() override { return 20; }
 
@@ -24,15 +24,11 @@ class King : public LimitedRangePiece {
     }
 };
 
-#include <iostream>
-
 // ### QUEEN ### //
 
 class Queen : public LongRangePiece {
    public:
-    Queen(float column, float row, const std::string& pieceName, PieceColor color) : LongRangePiece(column, row, pieceName, {{ORTHOGONAL_MOVES, DIAGONALLY_MOVES}}) {
-        this->color = color;
-    };
+    Queen(float column, float row, const std::string& pieceName, PieceColor color) : LongRangePiece(column, row, pieceName, {{ORTHOGONAL_MOVES, DIAGONALLY_MOVES}}, color){};
     virtual ~Queen() = default;
     int getValue() override { return 10; }
 
@@ -49,9 +45,7 @@ class Queen : public LongRangePiece {
 
 class Rook : public LongRangePiece {
    public:
-    Rook(float column, float row, const std::string& pieceName, PieceColor color) : LongRangePiece(column, row, pieceName, {ORTHOGONAL_MOVES}){
-        this->color = color;
-    };
+    Rook(float column, float row, const std::string& pieceName, PieceColor color) : LongRangePiece(column, row, pieceName, {ORTHOGONAL_MOVES}, color) {};
     virtual ~Rook() = default;
     int getValue() override { return 5; }
 
@@ -68,9 +62,7 @@ class Rook : public LongRangePiece {
 
 class Horse : public LimitedRangePiece {
    public:
-    Horse(float column, float row, const std::string& pieceName, PieceColor color) : LimitedRangePiece(column, row, pieceName, {L_SHAPED_MOVES}){
-        this->color = color;
-    };
+    Horse(float column, float row, const std::string& pieceName, PieceColor color) : LimitedRangePiece(column, row, pieceName, {L_SHAPED_MOVES},color) {};
     virtual ~Horse() = default;
     int getValue() override { return 3; }
 
@@ -87,9 +79,7 @@ class Horse : public LimitedRangePiece {
 
 class Bishop : public LongRangePiece {
    public:
-    Bishop(float column, float row, const std::string& pieceName, PieceColor color) : LongRangePiece(column, row, pieceName, {DIAGONALLY_MOVES}){
-        this->color = color;
-    };
+    Bishop(float column, float row, const std::string& pieceName, PieceColor color) : LongRangePiece(column, row, pieceName, {DIAGONALLY_MOVES}, color){};
     virtual ~Bishop() = default;
     int getValue() override { return 3; }
 
@@ -106,9 +96,7 @@ class Bishop : public LongRangePiece {
 
 class Pawn : public Piece {
    public:
-    Pawn(float column, float row, const std::string& pieceName, PieceColor color) : Piece(column, row, pieceName) {
-        this->color = color;
-    };
+    Pawn(float column, float row, const std::string& pieceName, PieceColor color) : Piece(column, row, pieceName, color){};
     virtual ~Pawn() = default;
     int getValue() override { return 1; }
 

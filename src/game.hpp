@@ -11,6 +11,7 @@
 #include "memory"
 
 extern int cellSize;
+enum class PieceColor;
 
 class Game {
    public:
@@ -36,5 +37,5 @@ class Game {
     std::shared_ptr<Piece> clickedPiece = nullptr;
     Sound moveSound;
     Sound captureSound;
-    bool isWhiteTurn = true;
+    PieceColor ColorTurn = PieceColor::white;
 };
