@@ -8,9 +8,9 @@ int main() {
     Game game;
 
     while (!WindowShouldClose()) {
-        BeginDrawing();
-        game.Run();
-        EndDrawing();
+        game.HandleInput();
+        game.Update();
+        game.Draw();
     }
 
     CloseWindow();

@@ -3,10 +3,11 @@
 int cellSize = 100;
 
 Game::Game() {
-    InitPieces();
     InitAudioDevice();
     moveSound = LoadSound("Sounds/move.mp3");
     captureSound = LoadSound("Sounds/capture.mp3");
+
+    InitPieces();
     CalculateLegalMoves();
 }
 
@@ -14,6 +15,35 @@ Game::~Game() {
     UnloadSound(moveSound);
     UnloadSound(captureSound);
     CloseAudioDevice();
+}
+
+void Game::HandleInput() {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) handleMouseClick(GetMouseX() / cellSize, GetMouseY() / cellSize);
+}
+
+void Game::Update() {
+    if(hasBoardChanged) {
+        CalculateLegalMoves();
+        hasBoardChanged = false;
+        chessboard.ShowSquares();
+    }
+}
+
+void Game::Draw() {
+    BeginDrawing();
+    chessboard.Draw();
+
+    if (clickedPiece) {
+        int x = clickedPiece->position.x;
+        int y = clickedPiece->position.y;
+        DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, SetClickedColor(x, y));
+        DrawLegalMoves();
+    };
+
+    for (auto p : pieces) {
+        p->Draw();
+    }
+    EndDrawing();
 }
 
 void Game::InitPieces() {
@@ -46,17 +76,6 @@ void Game::addPiece(std::shared_ptr<Piece> piece) {
     chessboard.grid[(int)piece->position.x][(int)piece->position.y] = piece;
 }
 
-void Game::Run() {
-    processEvent();
-    Draw();
-}
-
-void Game::processEvent() {
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        handleMouseClick(GetMouseX() / cellSize, GetMouseY() / cellSize);
-        chessboard.ShowSquares();
-    }
-}
 
 void Game::handleMouseClick(int x, int y) {
     bool isPieceClick = chessboard.grid[x][y].get();
@@ -68,9 +87,7 @@ void Game::handleMouseClick(int x, int y) {
     }
 
     if (clickedPiece && IsLegalMove(x, y)) {
-        if (isPieceClick) {
-            CapturePiece(x, y);
-        }
+        if (isPieceClick) CapturePiece(x, y);
         MakeMove(x, y);
     }
 }
@@ -95,7 +112,7 @@ void Game::MakeMove(int x, int y) {
     ColorTurn = (ColorTurn == PieceColor::white) ?  PieceColor::black : PieceColor::white;
     PlaySound(moveSound);
 
-    CalculateLegalMoves();
+    hasBoardChanged = true;
 }
 
 void Game::CalculateLegalMoves() {
@@ -106,28 +123,14 @@ void Game::CalculateLegalMoves() {
     std::cout << "i end CalculateLegalMoves" << std::endl;
 }
 
-void Game::Draw() {
-    chessboard.Draw();
-
-    if (clickedPiece) {
-        int x = clickedPiece->position.x;
-        int y = clickedPiece->position.y;
-        DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, SetClickedColor(x, y));
-        DrawLegalMoves();
-    };
-
-    for (auto p : pieces) {
-        p->Draw();
-    }
-}
-
 void Game::DrawLegalMoves() {
     for (auto move : clickedPiece->legalMoves) {
         float x = move.x * cellSize + cellSize / 2;
         float y = move.y * cellSize + cellSize / 2;
-        if (chessboard.grid[(int)move.x][(int)move.y])
+        if (chessboard.grid[(int)move.x][(int)move.y]){
             DrawRing({x, y}, 40, 50, 0, 360, 32, Fade(BLACK, 0.1f));
-        else
+        } else{
             DrawCircle(x, y, 17, Fade(BLACK, 0.1f));
+        }
     }
 }

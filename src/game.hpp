@@ -17,21 +17,22 @@ class Game {
    public:
     Game();
     ~Game();
-    void Run();
+    void Draw();
+    void Update();
+    void HandleInput();
 
    private:
-    void processEvent();
     void handleMouseClick(int x, int y);
     void MakeMove(int x, int y);
     void CapturePiece(int x, int y);
     bool IsLegalMove(float x, float y);
-    void Draw();
     void DrawLegalMoves();
     void CalculateLegalMoves(); 
     void InitPieces();
     void addPiece(std::shared_ptr<Piece> piece);
 
    private:
+    bool hasBoardChanged = false;
     Chessboard chessboard = Chessboard();
     std::vector<std::shared_ptr<Piece>> pieces;
     std::shared_ptr<Piece> clickedPiece = nullptr;
