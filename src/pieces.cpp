@@ -16,17 +16,6 @@ class King : public LimitedRangePiece {
     int getValue() override { return 20; }
     static bool whiteCHECK;
     static bool blackCHECK;
-    static void SetKingLegalMoves(std::vector<Vector2> &legalMoves,bool attackedPoolsByEnemy[8][8]) {
-        for (int i = 0; i < legalMoves.size(); i++) {
-            int x = static_cast<int>(legalMoves[i].x);
-            int y = static_cast<int>(legalMoves[i].y);
-            if (attackedPoolsByEnemy[x][y]) {
-                legalMoves.erase(legalMoves.begin() + i);
-                i--;
-            }
-        }
-
-    }
 
     static std::shared_ptr<King> CreateBlack(float column, float row) {
         return std::make_shared<King>(column, row, "kingBlack", PieceColor::black);
@@ -113,7 +102,7 @@ class Pawn : public Piece {
     virtual ~Pawn() = default;
     int getValue() override { return 1; }
 
-    void SetLegalMoves(std::shared_ptr<Piece> grid[][8], bool atackedPools[8][8]) override {
+    void SetLegalMoves(std::shared_ptr<Piece> grid[][8]) override {
         legalMoves.clear();
 
         if (position.y == 7 || position.y == 0) return;
@@ -121,19 +110,26 @@ class Pawn : public Piece {
         int x = position.x;
         int y = position.y + moveDirection;
         if (!grid[x][y]) {
-            addLegalMove(x, y);
+            if (SafeMove(x,y,grid))addLegalMove(x, y);
             bool isFirstMove = color == PieceColor::white ? 6 == position.y : 1 == position.y;
-            if (isFirstMove && !grid[x][y + moveDirection]) addLegalMove(x, y + moveDirection);
+            if (isFirstMove && !grid[x][y + moveDirection] && SafeMove(x,y+moveDirection,grid)) addLegalMove(x, y + moveDirection);
         }
         if (x > 0 ){
-            if ( grid[x - 1][y] && grid[x - 1][y]->color != color) addLegalMove(x - 1, y);
-            atackedPools[x - 1][y] = true;
+            if ( grid[x - 1][y] && grid[x - 1][y]->color != color && SafeMove(x-1,y,grid)) addLegalMove(x - 1, y);
         }
         if (x < 7 ){
-            if (grid[x + 1][y] && grid[x + 1][y]->color != color) addLegalMove(x + 1, y);
-            atackedPools[x + 1][y] = true;
+            if (grid[x + 1][y] && grid[x + 1][y]->color != color && SafeMove(x+1,y,grid)) addLegalMove(x + 1, y);
         }
     }
+
+    void SetAtackedPools(std::shared_ptr<Piece> grid[][8], bool atackedPools[8][8]) override {
+        int moveDirection = color == PieceColor::white ? -1 : 1;
+        int x = position.x;
+        int y = position.y + moveDirection;
+        if (x > 0 && isInsideBoard(x - 1, y)) atackedPools[x - 1][y] = true;
+        if (x < 7 && isInsideBoard(x + 1, y)) atackedPools[x + 1][y] = true;
+    }
+
     static std::shared_ptr<Pawn> CreateBlack(float column, float row) {
         return std::make_shared<Pawn>(column, row, "pawnBlack", PieceColor::black);
     }

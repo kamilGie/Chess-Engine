@@ -131,33 +131,38 @@ void Game::MakeMove(int x, int y) {
 }
 
 void Game::CalculateLegalMoves() {
-    for (int i = 0; i < 8; i++) {
-        std::fill_n(chessboard.atackedByBlack[i], 8, false);
-        std::fill_n(chessboard.atackedByWhite[i], 8, false);
-    }
-
+    bool atackedPools[8][8]{};
     for (auto piece : pieces) {
-        if (piece->color == PieceColor::white) {
-            piece->SetLegalMoves(chessboard.grid, chessboard.atackedByWhite);
-        } else {
-            piece->SetLegalMoves(chessboard.grid, chessboard.atackedByBlack);
+        if (ColorTurn != piece->color) {
+            piece->SetAtackedPools(chessboard.grid,atackedPools);
         }
     }
 
-    int WhiteKing = pieces.size() - 1;
-    King::SetKingLegalMoves(pieces[WhiteKing]->legalMoves, chessboard.atackedByWhite);
-    if (chessboard.atackedByWhite[(int)pieces[WhiteKing]->position.x][(int)pieces[WhiteKing]->position.y]) {
-        PlaySound(checkSound);
-        if (pieces[WhiteKing]->legalMoves.size() == 0) gameStatus = GameStatus::whiteWin;
+    std::shared_ptr<Piece> king = nullptr;
+    for (int i = 0; i < 8; i++) {
+        for(int j = 0; j < 8; j++){
+            if(chessboard.grid[i][j] && chessboard.grid[i][j]->color == ColorTurn && chessboard.grid[i][j]->getValue() == 20){
+                 king = chessboard.grid[i][j];
+                 break;
+            }
+        }
     }
+    bool check = atackedPools[(int)king->position.x][(int)king->position.y];
 
-    int BlacKing = pieces.size() - 2;
-    King::SetKingLegalMoves(pieces[BlacKing]->legalMoves, chessboard.atackedByBlack);
-    if (chessboard.atackedByBlack[(int)pieces[BlacKing]->position.x][(int)pieces[BlacKing]->position.y]) {
+
+    for (auto piece : pieces) {
+        piece->SetLegalMoves(chessboard.grid);
+    }
+    if(check){
         PlaySound(checkSound);
-        if (pieces[BlacKing]->legalMoves.size() == 0) gameStatus = GameStatus::blackWin;
+        if (std::all_of(pieces.begin(), pieces.end(), [&](auto piece) { return piece->color != ColorTurn || piece->legalMoves.empty(); })) {
+            gameStatus = GameStatus::blackWin;
+            if (ColorTurn == PieceColor::black) gameStatus = GameStatus::whiteWin;
+        }
+    
     }
 }
+
 
 void Game::DrawLegalMoves() {
     for (auto move : clickedPiece->legalMoves) {
