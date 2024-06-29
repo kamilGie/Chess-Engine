@@ -45,7 +45,7 @@ class Queen : public LongRangePiece {
 
 class Rook : public LongRangePiece {
    public:
-    Rook(float column, float row, const std::string& pieceName, PieceColor color) : LongRangePiece(column, row, pieceName, {ORTHOGONAL_MOVES}, color) {};
+    Rook(float column, float row, const std::string& pieceName, PieceColor color) : LongRangePiece(column, row, pieceName, {ORTHOGONAL_MOVES}, color){};
     virtual ~Rook() = default;
     int getValue() override { return 5; }
 
@@ -62,7 +62,7 @@ class Rook : public LongRangePiece {
 
 class Horse : public LimitedRangePiece {
    public:
-    Horse(float column, float row, const std::string& pieceName, PieceColor color) : LimitedRangePiece(column, row, pieceName, {L_SHAPED_MOVES},color) {};
+    Horse(float column, float row, const std::string& pieceName, PieceColor color) : LimitedRangePiece(column, row, pieceName, {L_SHAPED_MOVES}, color){};
     virtual ~Horse() = default;
     int getValue() override { return 3; }
 
@@ -100,7 +100,7 @@ class Pawn : public Piece {
     virtual ~Pawn() = default;
     int getValue() override { return 1; }
 
-    void SetLegalMoves(std::shared_ptr<Piece> grid[][8]) override {
+    void SetLegalMoves(std::shared_ptr<Piece> grid[][8], bool atackedPools[8][8]) override {
         legalMoves.clear();
 
         if (position.y == 7 || position.y == 0) return;
@@ -108,12 +108,18 @@ class Pawn : public Piece {
         int x = position.x;
         int y = position.y + moveDirection;
         if (!grid[x][y]) {
-            addLegalMove(x, y);
+            legalMoves.push_back({static_cast<float>(x), static_cast<float>(y)});
             bool isFirstMove = color == PieceColor::white ? 6 == position.y : 1 == position.y;
-            if (isFirstMove && !grid[x][y + moveDirection]) addLegalMove(x, y + moveDirection);
+            if (isFirstMove && !grid[x][y + moveDirection]) legalMoves.push_back({static_cast<float>(x), static_cast<float>(y+moveDirection)});
         }
-        if (x > 0 && grid[x - 1][y] && grid[x - 1][y]->color != color) addLegalMove(x - 1, y);
-        if (x < 7 && grid[x + 1][y] && grid[x + 1][y]->color != color) addLegalMove(x + 1, y);
+        if (x > 0 && grid[x - 1][y] ){
+            if (grid[x - 1][y]->color != color) addLegalMove(x - 1, y,atackedPools);
+            atackedPools[x - 1][y] = true;
+        }
+        if (x < 7 && grid[x + 1][y] ){
+            if ( grid[x + 1][y]->color != color) addLegalMove(x + 1, y,atackedPools);
+            atackedPools[x + 1][y] = true;
+        }
     }
     static std::shared_ptr<Pawn> CreateBlack(float column, float row) {
         return std::make_shared<Pawn>(column, row, "pawnBlack", PieceColor::black);

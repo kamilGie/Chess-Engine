@@ -16,6 +16,8 @@ class Chessboard {
     int cellCount = 8;
     std::shared_ptr<Piece> grid[8][8]{};
     Vector2 lastMovePositions[2]{{9, 9}, {9, 9}};
+    bool atackedByWhite[8][8];
+    bool atackedByBlack[8][8];
 
    private:
 };

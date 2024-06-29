@@ -117,8 +117,15 @@ void Game::MakeMove(int x, int y) {
 
 void Game::CalculateLegalMoves() {
     std::cout << "i start CalculateLegalMoves" << std::endl;
+    std::memset(chessboard.atackedByWhite, 0, sizeof(bool) * 8);
+    std::memset(chessboard.atackedByBlack, 0, sizeof(bool) * 8);
     for (auto p : pieces) {
-        p->SetLegalMoves(chessboard.grid);
+        if(p->color == PieceColor::white){
+            p->SetLegalMoves(chessboard.grid, chessboard.atackedByWhite);
+        } else{
+            p->SetLegalMoves(chessboard.grid, chessboard.atackedByBlack);
+        }
+        
     }
     std::cout << "i end CalculateLegalMoves" << std::endl;
 }

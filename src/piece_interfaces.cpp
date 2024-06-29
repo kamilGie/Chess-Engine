@@ -13,9 +13,12 @@ void Piece::Draw() { DrawTexture(texture, position.x * cellSize, position.y * ce
 
 bool Piece::isInsideBoard(int x, int y) { return x < 8 && y < 8 && x >= 0 && y >= 0; }
 
-void Piece::addLegalMove(int x, int y) { legalMoves.push_back({static_cast<float>(x), static_cast<float>(y)}); }
+void Piece::addLegalMove(int x, int y,bool atackedPools[8][8]) {
+     legalMoves.push_back({static_cast<float>(x), static_cast<float>(y)}); 
+     atackedPools[x][y] = true;
+    }
 
-void LongRangePiece::SetLegalMoves(std::shared_ptr<Piece> grid[][8]) {
+void LongRangePiece::SetLegalMoves(std::shared_ptr<Piece> grid[][8],bool atackedPools[8][8]) {
     legalMoves.clear();
 
     for (Vector2 dir : moveDirections) {
@@ -25,18 +28,18 @@ void LongRangePiece::SetLegalMoves(std::shared_ptr<Piece> grid[][8]) {
             x += dir.x;
             y += dir.y;
             bool isEmptyOrOpponent = isInsideBoard(x, y) && (!grid[x][y] || grid[x][y]->color != color);
-            if (isEmptyOrOpponent) addLegalMove(x, y);
+            if (isEmptyOrOpponent) addLegalMove(x, y,atackedPools);
         } while (!grid[x][y]);
     }
 }
 
-void LimitedRangePiece::SetLegalMoves(std::shared_ptr<Piece> grid[][8]) {
+void LimitedRangePiece::SetLegalMoves(std::shared_ptr<Piece> grid[][8],bool atackedPools[8][8]) {
     legalMoves.clear();
     std::cout << "start" << std::endl;
     for (Vector2 dir : moveDirections) {
         int x = position.x + dir.x;
         int y = position.y + dir.y;
         bool isEmptyOrOpponent = isInsideBoard(x, y) && (!grid[x][y] || grid[x][y]->color != color);
-        if (isEmptyOrOpponent) addLegalMove(x, y);
+        if (isEmptyOrOpponent) addLegalMove(x, y,atackedPools);
     }
 }
