@@ -30,7 +30,6 @@ void LongRangePiece::SetLegalMoves(std::shared_ptr<Piece> grid[][8]) {
     }
 }
 
-#include <iostream>
 void LimitedRangePiece::SetLegalMoves(std::shared_ptr<Piece> grid[][8]) {
     legalMoves.clear();
     std::cout << "start" << std::endl;

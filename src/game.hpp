@@ -4,11 +4,11 @@
 
 #include <iostream>
 #include <vector>
+#include "memory"
 
 #include "chessboard.hpp"
 #include "piece_interfaces.hpp"
 #include "pieces.cpp"
-#include "memory"
 
 extern int cellSize;
 enum class PieceColor;
