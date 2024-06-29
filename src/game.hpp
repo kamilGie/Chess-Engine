@@ -35,6 +35,7 @@ class Game {
     void DrawLegalMoves();
     void CalculateLegalMoves(); 
     void InitPieces();
+    void InitSounds();
     void addPiece(std::shared_ptr<Piece> piece);
 
    private:
