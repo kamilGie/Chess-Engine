@@ -6,6 +6,7 @@ Game::Game() {
     InitAudioDevice();
     moveSound = LoadSound("Sounds/move.mp3");
     captureSound = LoadSound("Sounds/capture.mp3");
+    checkSound = LoadSound("Sounds/move-check.mp3");
 
     InitPieces();
     CalculateLegalMoves();
@@ -18,7 +19,7 @@ Game::~Game() {
 }
 
 void Game::HandleInput() {
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) handleMouseClick(GetMouseX() / cellSize, GetMouseY() / cellSize);
+    if (gameStatus == GameStatus::playing && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) handleMouseClick(GetMouseX() / cellSize, GetMouseY() / cellSize);
 }
 
 void Game::Update() {
@@ -43,6 +44,11 @@ void Game::Draw() {
     for (auto p : pieces) {
         p->Draw();
     }
+
+    if(gameStatus != GameStatus::playing){
+        GameOver();
+    } 
+
     EndDrawing();
 }
 
@@ -50,7 +56,6 @@ void Game::InitPieces() {
     addPiece(Rook::CreateBlack(0,0));
     addPiece(Horse::CreateBlack(1,0));
     addPiece(Bishop::CreateBlack(2,0));
-    addPiece(King::CreateBlack(3,0));
     addPiece(Queen::CreateBlack(4,0));
     addPiece(Bishop::CreateBlack(5,0));
     addPiece(Horse::CreateBlack(6,0));
@@ -59,7 +64,6 @@ void Game::InitPieces() {
     addPiece(Rook::CreateWhite(0,7));
     addPiece(Horse::CreateWhite(1,7));
     addPiece(Bishop::CreateWhite(2,7));
-    addPiece(King::CreateWhite(3,7));
     addPiece(Queen::CreateWhite(4,7));
     addPiece(Bishop::CreateWhite(5,7));
     addPiece(Horse::CreateWhite(6,7));
@@ -69,6 +73,9 @@ void Game::InitPieces() {
         addPiece(Pawn::CreateBlack(i, 1));
         addPiece(Pawn::CreateWhite(i, 6));
     }
+    //we adding to the end so the king is the last piece to be drawn and when we calculate the legal moves we can use the atackedBy arrays
+    addPiece(King::CreateWhite(3,7));
+    addPiece(King::CreateBlack(3,0));
 }
 
 void Game::addPiece(std::shared_ptr<Piece> piece) {
@@ -76,6 +83,17 @@ void Game::addPiece(std::shared_ptr<Piece> piece) {
     chessboard.grid[(int)piece->position.x][(int)piece->position.y] = piece;
 }
 
+void Game::GameOver() {
+    DrawRectangle(0, 0, 800, 800, Fade(BLACK, 0.8f));
+    DrawText("GAME OVER", 240, 300, 50, WHITE);
+    if (gameStatus == GameStatus::whiteWin){
+        DrawText("WHITE WINS", 238, 380, 50, WHITE);
+    } else if (gameStatus == GameStatus::blackWin){
+        DrawText("BLACK WINS", 238, 380, 50, WHITE);
+    } else if (gameStatus == GameStatus::STALEMATE){
+        DrawText("STALEMATE", 237, 380, 50, WHITE);
+    }
+}
 
 void Game::handleMouseClick(int x, int y) {
     bool isPieceClick = chessboard.grid[x][y].get();
@@ -117,15 +135,36 @@ void Game::MakeMove(int x, int y) {
 
 void Game::CalculateLegalMoves() {
     std::cout << "i start CalculateLegalMoves" << std::endl;
-    std::memset(chessboard.atackedByWhite, 0, sizeof(bool) * 8);
-    std::memset(chessboard.atackedByBlack, 0, sizeof(bool) * 8);
-    for (auto p : pieces) {
-        if(p->color == PieceColor::white){
-            p->SetLegalMoves(chessboard.grid, chessboard.atackedByWhite);
-        } else{
-            p->SetLegalMoves(chessboard.grid, chessboard.atackedByBlack);
+    for(int i = 0; i < 8; i++){
+        for(int j = 0; j < 8; j++){
+            chessboard.atackedByBlack[i][j]=false;
+            chessboard.atackedByWhite[i][j]=false;
         }
-        
+    }
+    int i =0;
+    while(i < pieces.size()){
+        if(pieces[i]->color == PieceColor::white){
+            pieces[i]->SetLegalMoves(chessboard.grid, chessboard.atackedByWhite);
+        } else{
+            pieces[i]->SetLegalMoves(chessboard.grid, chessboard.atackedByBlack);
+        }
+        i++;
+    }
+    King::SetKingLegalMoves(pieces[i-2]->legalMoves,chessboard.atackedByBlack);
+    if(chessboard.atackedByBlack[(int)pieces[i-2]->position.x][(int)pieces[i-2]->position.y]){
+        PlaySound(checkSound);
+        std::cout << "black king is in check" << std::endl;
+        if(pieces[i-2]->legalMoves.size() == 0){
+            gameStatus = GameStatus::blackWin;
+        }
+    }
+    King::SetKingLegalMoves(pieces[i-1]->legalMoves,chessboard.atackedByWhite);
+    if(chessboard.atackedByWhite[(int)pieces[i-1]->position.x][(int)pieces[i-1]->position.y]){
+        PlaySound(checkSound);
+        std::cout << "white king is in check" << std::endl;
+        if(pieces[i-1]->legalMoves.size() == 0){
+            gameStatus = GameStatus::whiteWin;
+        }
     }
     std::cout << "i end CalculateLegalMoves" << std::endl;
 }

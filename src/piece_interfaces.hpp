@@ -27,7 +27,7 @@ class Piece {
     PieceColor color;
 
    protected:
-    void addLegalMove(int x, int y,bool atackedPools[8][8]);
+    void addLegalMove(int x, int y);
     bool isInsideBoard(int x, int y);
 
    private:

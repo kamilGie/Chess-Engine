@@ -14,6 +14,19 @@ class King : public LimitedRangePiece {
     King(float column, float row, const std::string& pieceName, PieceColor color) : LimitedRangePiece(column, row, pieceName, {ORTHOGONAL_MOVES, DIAGONALLY_MOVES}, color){};
     virtual ~King() = default;
     int getValue() override { return 20; }
+    static bool whiteCHECK;
+    static bool blackCHECK;
+    static void SetKingLegalMoves(std::vector<Vector2> &legalMoves,bool attackedPoolsByEnemy[8][8]) {
+        for (int i = 0; i < legalMoves.size(); i++) {
+            int x = static_cast<int>(legalMoves[i].x);
+            int y = static_cast<int>(legalMoves[i].y);
+            if (attackedPoolsByEnemy[x][y]) {
+                legalMoves.erase(legalMoves.begin() + i);
+                i--;
+            }
+        }
+
+    }
 
     static std::shared_ptr<King> CreateBlack(float column, float row) {
         return std::make_shared<King>(column, row, "kingBlack", PieceColor::black);
@@ -108,16 +121,16 @@ class Pawn : public Piece {
         int x = position.x;
         int y = position.y + moveDirection;
         if (!grid[x][y]) {
-            legalMoves.push_back({static_cast<float>(x), static_cast<float>(y)});
+            addLegalMove(x, y);
             bool isFirstMove = color == PieceColor::white ? 6 == position.y : 1 == position.y;
-            if (isFirstMove && !grid[x][y + moveDirection]) legalMoves.push_back({static_cast<float>(x), static_cast<float>(y+moveDirection)});
+            if (isFirstMove && !grid[x][y + moveDirection]) addLegalMove(x, y + moveDirection);
         }
-        if (x > 0 && grid[x - 1][y] ){
-            if (grid[x - 1][y]->color != color) addLegalMove(x - 1, y,atackedPools);
+        if (x > 0 ){
+            if ( grid[x - 1][y] && grid[x - 1][y]->color != color) addLegalMove(x - 1, y);
             atackedPools[x - 1][y] = true;
         }
-        if (x < 7 && grid[x + 1][y] ){
-            if ( grid[x + 1][y]->color != color) addLegalMove(x + 1, y,atackedPools);
+        if (x < 7 ){
+            if (grid[x + 1][y] && grid[x + 1][y]->color != color) addLegalMove(x + 1, y);
             atackedPools[x + 1][y] = true;
         }
     }
