@@ -43,10 +43,8 @@ void Game::Draw() {
         }
     }
 
-    if (gameStatus != GameStatus::playing) {
-        GameOver();
-    }
-
+    if (gameStatus != GameStatus::playing) GameOver();
+    
     EndDrawing();
 }
 
@@ -86,15 +84,8 @@ void Game::handleMouseClick(int x, int y) {
     bool isPieceClick = chessboard.grid[x][y].get();
     bool isOwnPieceClick = isPieceClick && (chessboard.grid[x][y]->color == ColorTurn);
 
-    if (isOwnPieceClick) {
-        clickedPiece = chessboard.grid[x][y];
-        return;
-    }
-
-    if (clickedPiece && IsLegalMove(x, y)) {
-        if (isPieceClick) CapturePiece(x, y);
-        MakeMove(x, y);
-    }
+    if (isOwnPieceClick) clickedPiece = chessboard.grid[x][y];
+    else if (clickedPiece && IsLegalMove(x, y)) MakeMove(x, y);
 }
 
 bool Game::IsLegalMove(float x, float y) {
@@ -107,15 +98,17 @@ void Game::CapturePiece(int x, int y) {
 }
 
 void Game::MakeMove(int x, int y) {
-    // Store  move positions
     chessboard.lastMovePositions[0] = {clickedPiece->position.x, clickedPiece->position.y};
     chessboard.lastMovePositions[1] = {(float)x, (float)y};
 
+    enPassant(x, y);
+
     // Move the piece to the new position
+    if(chessboard.grid[x][y])  CapturePiece(x, y);
     chessboard.grid[x][y] = std::move(chessboard.grid[(int)clickedPiece->position.x][(int)clickedPiece->position.y]);
     clickedPiece->position = {(float)x, (float)y};
+    clickedPiece->moveCount++;
     if (clickedPiece->getValue() == 1 && (y == 0 || y == 7)) promote(clickedPiece);
-    clickedPiece->HaveMoved = true;
 
     // Reset the clicked piece
     clickedPiece = nullptr;
@@ -126,22 +119,41 @@ void Game::MakeMove(int x, int y) {
     hasBoardChanged = true;
 }
 
+void Game::enPassant(int x, int y) {
+    // add enemy pawn legal move  en passant
+    if (clickedPiece->getValue() == 1 && abs(clickedPiece->position.y - y)>1){
+        if(chessboard.grid[x-1][y] && chessboard.grid[x-1][y]->getValue() == 1 && chessboard.grid[x-1][y]->color != clickedPiece->color){
+            int moveDirection = (clickedPiece->color == PieceColor::black) ? -1 : 1;
+            std::dynamic_pointer_cast<Pawn>(chessboard.grid[x-1][y])->en_passant = {(float)x,(float)y+moveDirection}; 
+        }
+        if(chessboard.grid[x+1][y] && chessboard.grid[x+1][y]->getValue() == 1 && chessboard.grid[x+1][y]->color != clickedPiece->color){
+            int moveDirection = (clickedPiece->color == PieceColor::black) ? -1 : 1;
+            std::dynamic_pointer_cast<Pawn>(chessboard.grid[x+1][y])->en_passant = {(float)x,(float)y+moveDirection};
+        }
+    }
+
+    // capture enemy pawn en passant
+    if(clickedPiece->getValue() == 1 && abs(clickedPiece->position.x - x)>0 && !chessboard.grid[x][y]){
+        int moveDirection = (clickedPiece->color == PieceColor::black) ? -1 : 1;
+        CapturePiece(x,y+moveDirection);
+    }
+}
 
 void Game::promote(std::shared_ptr<Piece>& piece) {
-    if (piece->color == PieceColor::black) chessboard.grid[(int)piece->position.x][(int)piece->position.y] = Queen::CreateBlack(piece->position.x, piece->position.y);
-    else chessboard.grid[(int)piece->position.x][(int)piece->position.y] = Queen::CreateWhite(piece->position.x, piece->position.y);
-    
+    int x = piece->position.x;
+    int y = piece->position.y;
+    chessboard.grid[x][y] = (piece->color == PieceColor::black) ?  Queen::CreateBlack(x, y): chessboard.grid[x][y] = Queen::CreateWhite(x, y);
 }
 
 void Game::CalculateLegalMoves() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            if (chessboard.grid[i][j]) chessboard.grid[i][j]->SetLegalMoves(chessboard.grid);
+            if (chessboard.grid[i][j] && chessboard.grid[i][j]->color == ColorTurn ) chessboard.grid[i][j]->SetLegalMoves(chessboard.grid);
         }
     }
 
     checkForCastling();
-
+    checkForEnPassant();
     bool NoPossibleMoves = std::all_of(&chessboard.grid[0][0], &chessboard.grid[0][0] + 8 * 8, [&](auto& piece) { return !piece || piece->color != ColorTurn || piece->legalMoves.empty(); });
     if (isKingChecked(chessboard.grid)) {
         PlaySound(checkSound);
@@ -149,6 +161,10 @@ void Game::CalculateLegalMoves() {
     } else if (NoPossibleMoves) {
         gameStatus = GameStatus::STALEMATE;
     }
+}
+
+void Game::checkForEnPassant() {
+    
 }
 
 void Game::checkForCastling() {

@@ -100,6 +100,8 @@ class Pawn : public Piece {
     virtual ~Pawn() = default;
     int getValue() override { return 1; }
 
+    Vector2 en_passant = {0,0};
+
     void SetLegalMoves(std::shared_ptr<Piece> grid[][8]) override {
         legalMoves.clear();
 
@@ -109,15 +111,12 @@ class Pawn : public Piece {
         int y = position.y + moveDirection;
         if (!grid[x][y]) {
             if (SafeMove(x,y,grid))addLegalMove(x, y);
-            bool isFirstMove = color == PieceColor::white ? 6 == position.y : 1 == position.y;
-            if (isFirstMove && !grid[x][y + moveDirection] && SafeMove(x,y+moveDirection,grid)) addLegalMove(x, y + moveDirection);
+            if (moveCount==0 && !grid[x][y + moveDirection] && SafeMove(x,y+moveDirection,grid)) addLegalMove(x, y + moveDirection);
         }
-        if (x > 0 ){
-            if ( grid[x - 1][y] && grid[x - 1][y]->color != color && SafeMove(x-1,y,grid)) addLegalMove(x - 1, y);
-        }
-        if (x < 7 ){
-            if (grid[x + 1][y] && grid[x + 1][y]->color != color && SafeMove(x+1,y,grid)) addLegalMove(x + 1, y);
-        }
+        if (x > 0 && grid[x - 1][y] && grid[x - 1][y]->color != color && SafeMove(x-1,y,grid)) addLegalMove(x - 1, y);
+        if (x < 7  && grid[x + 1][y] && grid[x + 1][y]->color != color && SafeMove(x+1,y,grid)) addLegalMove(x + 1, y);
+        if (en_passant.y > 0 && SafeMove(en_passant.x,en_passant.y,grid)) addLegalMove(en_passant.x, en_passant.y);
+        en_passant = {0,0};  
     }
 
     bool SetAtackedPools(std::shared_ptr<Piece> grid[][8], bool atackedPools[8][8]) override {
