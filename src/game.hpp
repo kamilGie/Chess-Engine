@@ -30,6 +30,7 @@ class Game {
     void GameOver();
     void handleMouseClick(int x, int y);
     void MakeMove(int x, int y);
+    void promote(std::shared_ptr<Piece>& piece);
     void CapturePiece(int x, int y);
     bool IsLegalMove(float x, float y);
     void DrawLegalMoves();

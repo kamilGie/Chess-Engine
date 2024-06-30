@@ -114,6 +114,7 @@ void Game::MakeMove(int x, int y) {
     // Move the piece to the new position
     chessboard.grid[x][y] = std::move(chessboard.grid[(int)clickedPiece->position.x][(int)clickedPiece->position.y]);
     clickedPiece->position = {(float)x, (float)y};
+    if (clickedPiece->getValue() == 1 && (y == 0 || y == 7)) promote(clickedPiece);
 
     // Reset the clicked piece
     clickedPiece = nullptr;
@@ -122,6 +123,12 @@ void Game::MakeMove(int x, int y) {
     PlaySound(moveSound);
 
     hasBoardChanged = true;
+}
+
+void Game::promote(std::shared_ptr<Piece>& piece) {
+    if (piece->color == PieceColor::black) chessboard.grid[(int)piece->position.x][(int)piece->position.y] = Queen::CreateBlack(piece->position.x, piece->position.y);
+    else chessboard.grid[(int)piece->position.x][(int)piece->position.y] = Queen::CreateWhite(piece->position.x, piece->position.y);
+    
 }
 
 void Game::CalculateLegalMoves() {

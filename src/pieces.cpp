@@ -14,8 +14,6 @@ class King : public LimitedRangePiece {
     King(float column, float row, const std::string& pieceName, PieceColor color) : LimitedRangePiece(column, row, pieceName, {ORTHOGONAL_MOVES, DIAGONALLY_MOVES}, color){};
     virtual ~King() = default;
     int getValue() override { return 20; }
-    static bool whiteCHECK;
-    static bool blackCHECK;
 
     static std::shared_ptr<King> CreateBlack(float column, float row) {
         return std::make_shared<King>(column, row, "kingBlack", PieceColor::black);
