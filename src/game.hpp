@@ -36,7 +36,7 @@ class Game {
     void CalculateLegalMoves(); 
     void InitPieces();
     void InitSounds();
-    void addPiece(std::shared_ptr<Piece> piece);
+    bool isKingChecked(std::shared_ptr<Piece> grid[][8]);
 
    private:
     Sound moveSound;
@@ -45,7 +45,6 @@ class Game {
     bool hasBoardChanged = false;
     Chessboard chessboard = Chessboard();
     PieceColor ColorTurn = PieceColor::white;
-    std::vector<std::shared_ptr<Piece>> pieces;
     GameStatus gameStatus = GameStatus::playing;
     std::shared_ptr<Piece> clickedPiece = nullptr;
 };

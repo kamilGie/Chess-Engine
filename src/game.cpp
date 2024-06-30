@@ -37,8 +37,10 @@ void Game::Draw() {
         DrawLegalMoves();
     };
 
-    for (auto p : pieces) {
-        p->Draw();
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (chessboard.grid[i][j]) chessboard.grid[i][j]->Draw();
+        }
     }
 
     if (gameStatus != GameStatus::playing) {
@@ -50,28 +52,27 @@ void Game::Draw() {
 
 void Game::InitPieces() {
     for (int i = 0; i < 8; ++i) {
-        addPiece(Pawn::CreateBlack(i, 1));
-        addPiece(Pawn::CreateWhite(i, 6));
+        chessboard.grid[i][1] = Pawn::CreateBlack(i, 1);
+        chessboard.grid[i][6] = Pawn::CreateWhite(i, 6);
     }
-    addPiece(Rook::CreateBlack(0, 0));
-    addPiece(Horse::CreateBlack(1, 0));
-    addPiece(Bishop::CreateBlack(2, 0));
-    addPiece(Queen::CreateBlack(4, 0));
-    addPiece(Bishop::CreateBlack(5, 0));
-    addPiece(Horse::CreateBlack(6, 0));
-    addPiece(Rook::CreateBlack(7, 0));
+    chessboard.grid[0][0] = Rook::CreateBlack(0, 0);
+    chessboard.grid[1][0] = Horse::CreateBlack(1, 0);
+    chessboard.grid[2][0] = Bishop::CreateBlack(2, 0);
+    chessboard.grid[4][0] = Queen::CreateBlack(4, 0);
+    chessboard.grid[3][0] = King::CreateBlack(3, 0);
+    chessboard.grid[5][0] = Bishop::CreateBlack(5, 0);
+    chessboard.grid[6][0] = Horse::CreateBlack(6, 0);
+    chessboard.grid[7][0] = Rook::CreateBlack(7, 0);
 
-    addPiece(Rook::CreateWhite(0, 7));
-    addPiece(Horse::CreateWhite(1, 7));
-    addPiece(Bishop::CreateWhite(2, 7));
-    addPiece(Queen::CreateWhite(4, 7));
-    addPiece(Bishop::CreateWhite(5, 7));
-    addPiece(Horse::CreateWhite(6, 7));
-    addPiece(Rook::CreateWhite(7, 7));
+    chessboard.grid[0][7] = Rook::CreateWhite(0, 7);
+    chessboard.grid[1][7] = Horse::CreateWhite(1, 7);
+    chessboard.grid[2][7] = Bishop::CreateWhite(2, 7);
+    chessboard.grid[4][7] = Queen::CreateWhite(4, 7);
+    chessboard.grid[3][7] = King::CreateWhite(3, 7);
+    chessboard.grid[5][7] = Bishop::CreateWhite(5, 7);
+    chessboard.grid[6][7] = Horse::CreateWhite(6, 7);
+    chessboard.grid[7][7] = Rook::CreateWhite(7, 7);
 
-    // we adding to the end so the king is the last piece to be drawn and when we calculate the legal moves we can use the atackedBy arrays
-    addPiece(King::CreateWhite(3, 7));
-    addPiece(King::CreateBlack(3, 0));
     CalculateLegalMoves();
 }
 
@@ -80,12 +81,6 @@ void Game::InitSounds() {
     captureSound = LoadSound("Sounds/capture.mp3");
     checkSound = LoadSound("Sounds/move-check.mp3");
 }
-
-void Game::addPiece(std::shared_ptr<Piece> piece) {
-    pieces.push_back(piece);
-    chessboard.grid[(int)piece->position.x][(int)piece->position.y] = piece;
-}
-
 
 void Game::handleMouseClick(int x, int y) {
     bool isPieceClick = chessboard.grid[x][y].get();
@@ -108,8 +103,7 @@ bool Game::IsLegalMove(float x, float y) {
 
 void Game::CapturePiece(int x, int y) {
     PlaySound(captureSound);
-    pieces.erase(std::find(pieces.begin(), pieces.end(), chessboard.grid[x][y]));
-    chessboard.grid[x][y]=nullptr;
+    chessboard.grid[x][y] = nullptr;
 }
 
 void Game::MakeMove(int x, int y) {
@@ -131,38 +125,30 @@ void Game::MakeMove(int x, int y) {
 }
 
 void Game::CalculateLegalMoves() {
-    bool atackedPools[8][8]{};
-    for (auto piece : pieces) {
-        if (ColorTurn != piece->color) {
-            piece->SetAtackedPools(chessboard.grid,atackedPools);
-        }
-    }
-
-    std::shared_ptr<Piece> king = nullptr;
     for (int i = 0; i < 8; i++) {
-        for(int j = 0; j < 8; j++){
-            if(chessboard.grid[i][j] && chessboard.grid[i][j]->color == ColorTurn && chessboard.grid[i][j]->getValue() == 20){
-                 king = chessboard.grid[i][j];
-                 break;
-            }
+        for (int j = 0; j < 8; j++) {
+            if (chessboard.grid[i][j]) chessboard.grid[i][j]->SetLegalMoves(chessboard.grid);
         }
     }
-    bool check = atackedPools[(int)king->position.x][(int)king->position.y];
 
-
-    for (auto piece : pieces) {
-        piece->SetLegalMoves(chessboard.grid);
-    }
-    if(check){
+    bool NoPossibleMoves = std::all_of(&chessboard.grid[0][0], &chessboard.grid[0][0] + 8 * 8, [&](auto& piece) { return !piece || piece->color != ColorTurn || piece->legalMoves.empty(); });
+    if (isKingChecked(chessboard.grid)) {
         PlaySound(checkSound);
-        if (std::all_of(pieces.begin(), pieces.end(), [&](auto piece) { return piece->color != ColorTurn || piece->legalMoves.empty(); })) {
-            gameStatus = GameStatus::blackWin;
-            if (ColorTurn == PieceColor::black) gameStatus = GameStatus::whiteWin;
-        }
-    
+        if (NoPossibleMoves) gameStatus = (ColorTurn == PieceColor::black) ? GameStatus::whiteWin : GameStatus::blackWin;
+    } else if (NoPossibleMoves) {
+        gameStatus = GameStatus::STALEMATE;
     }
 }
 
+bool Game::isKingChecked(std::shared_ptr<Piece> grid[][8]) {
+    bool atackedPools[8][8]{};
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (chessboard.grid[i][j] && chessboard.grid[i][j]->color != ColorTurn && chessboard.grid[i][j]->SetAtackedPools(chessboard.grid, atackedPools)) return true; 
+        }
+    }
+    return false;
+}
 
 void Game::DrawLegalMoves() {
     for (auto move : clickedPiece->legalMoves) {

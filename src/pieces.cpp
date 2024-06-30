@@ -122,12 +122,19 @@ class Pawn : public Piece {
         }
     }
 
-    void SetAtackedPools(std::shared_ptr<Piece> grid[][8], bool atackedPools[8][8]) override {
+    bool SetAtackedPools(std::shared_ptr<Piece> grid[][8], bool atackedPools[8][8]) override {
         int moveDirection = color == PieceColor::white ? -1 : 1;
         int x = position.x;
         int y = position.y + moveDirection;
-        if (x > 0 && isInsideBoard(x - 1, y)) atackedPools[x - 1][y] = true;
-        if (x < 7 && isInsideBoard(x + 1, y)) atackedPools[x + 1][y] = true;
+        if (x > 0 && isInsideBoard(x - 1, y)){
+            atackedPools[x - 1][y] = true;
+            if (grid[x-1][y] &&  grid[x - 1][y]->color != color && grid[x - 1][y]->getValue() == 20) return true;
+        }
+        if (x < 7 && isInsideBoard(x + 1, y)){
+            atackedPools[x + 1][y] = true;
+            if (grid[x+1][y] &&  grid[x + 1][y]->color != color && grid[x + 1][y]->getValue() == 20) return true;
+        }
+        return false;
     }
 
     static std::shared_ptr<Pawn> CreateBlack(float column, float row) {
