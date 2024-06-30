@@ -115,6 +115,7 @@ void Game::MakeMove(int x, int y) {
     chessboard.grid[x][y] = std::move(chessboard.grid[(int)clickedPiece->position.x][(int)clickedPiece->position.y]);
     clickedPiece->position = {(float)x, (float)y};
     if (clickedPiece->getValue() == 1 && (y == 0 || y == 7)) promote(clickedPiece);
+    clickedPiece->HaveMoved = true;
 
     // Reset the clicked piece
     clickedPiece = nullptr;
@@ -124,6 +125,7 @@ void Game::MakeMove(int x, int y) {
 
     hasBoardChanged = true;
 }
+
 
 void Game::promote(std::shared_ptr<Piece>& piece) {
     if (piece->color == PieceColor::black) chessboard.grid[(int)piece->position.x][(int)piece->position.y] = Queen::CreateBlack(piece->position.x, piece->position.y);
@@ -138,6 +140,8 @@ void Game::CalculateLegalMoves() {
         }
     }
 
+    checkForCastling();
+
     bool NoPossibleMoves = std::all_of(&chessboard.grid[0][0], &chessboard.grid[0][0] + 8 * 8, [&](auto& piece) { return !piece || piece->color != ColorTurn || piece->legalMoves.empty(); });
     if (isKingChecked(chessboard.grid)) {
         PlaySound(checkSound);
@@ -146,6 +150,11 @@ void Game::CalculateLegalMoves() {
         gameStatus = GameStatus::STALEMATE;
     }
 }
+
+void Game::checkForCastling() {
+    
+}
+
 
 bool Game::isKingChecked(std::shared_ptr<Piece> grid[][8]) {
     bool atackedPools[8][8]{};

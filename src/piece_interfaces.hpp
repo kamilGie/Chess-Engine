@@ -25,6 +25,7 @@ class Piece {
 
     Vector2 position;
     PieceColor color;
+    bool HaveMoved = false;
     std::vector<Vector2> legalMoves;
 
    protected:
