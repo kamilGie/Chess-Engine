@@ -102,6 +102,7 @@ void Game::MakeMove(int x, int y) {
     chessboard.lastMovePositions[1] = {(float)x, (float)y};
 
     enPassant(x, y);
+    castling(x, y);
 
     // Move the piece to the new position
     if(chessboard.grid[x][y])  CapturePiece(x, y);
@@ -139,6 +140,17 @@ void Game::enPassant(int x, int y) {
     }
 }
 
+void Game::castling(int x, int y) {
+    if (clickedPiece->getValue() == 20 && abs(clickedPiece->position.x - x)>1) {
+        int rookX = (x == 1) ? 0 : 7;
+        int rookNewX = (x == 1) ? 2 : 4;
+        int rookY = (clickedPiece->color == PieceColor::black) ? 0 : 7;
+        chessboard.grid[rookNewX][rookY] = std::move(chessboard.grid[rookX][rookY]);
+        chessboard.grid[rookNewX][rookY]->position = {(float)rookNewX, (float)rookY};
+        chessboard.grid[rookNewX][rookY]->moveCount++;
+    }
+}
+
 void Game::promote(std::shared_ptr<Piece>& piece) {
     int x = piece->position.x;
     int y = piece->position.y;
@@ -152,8 +164,7 @@ void Game::CalculateLegalMoves() {
         }
     }
 
-    checkForCastling();
-    checkForEnPassant();
+
     bool NoPossibleMoves = std::all_of(&chessboard.grid[0][0], &chessboard.grid[0][0] + 8 * 8, [&](auto& piece) { return !piece || piece->color != ColorTurn || piece->legalMoves.empty(); });
     if (isKingChecked(chessboard.grid)) {
         PlaySound(checkSound);
@@ -162,15 +173,6 @@ void Game::CalculateLegalMoves() {
         gameStatus = GameStatus::STALEMATE;
     }
 }
-
-void Game::checkForEnPassant() {
-    
-}
-
-void Game::checkForCastling() {
-    
-}
-
 
 bool Game::isKingChecked(std::shared_ptr<Piece> grid[][8]) {
     bool atackedPools[8][8]{};
