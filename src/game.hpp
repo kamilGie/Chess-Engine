@@ -18,6 +18,12 @@ enum class GameStatus{
     STALEMATE,
 };
 
+enum class EventAnimation{
+    none,
+    promote,
+    move
+};
+
 class Game {
    public:
     Game();
@@ -49,5 +55,13 @@ class Game {
     Chessboard chessboard = Chessboard();
     PieceColor ColorTurn = PieceColor::white;
     GameStatus gameStatus = GameStatus::playing;
+    EventAnimation eventAnimation = EventAnimation::none;
     std::shared_ptr<Piece> clickedPiece = nullptr;
+    struct Move {
+        Vector2 from;
+        Vector2 to;
+        std::shared_ptr<Piece> piece;
+    };
+    Move move = {Vector2{0, 0}, Vector2{0, 0}, nullptr};
+    
 };

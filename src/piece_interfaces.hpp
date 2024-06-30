@@ -26,6 +26,7 @@ class Piece {
     Vector2 position;
     PieceColor color;
     int moveCount = 0;
+    Texture2D texture;
     std::vector<Vector2> legalMoves;
 
    protected:
@@ -34,8 +35,6 @@ class Piece {
     bool isKingChecked(std::shared_ptr<Piece> grid[][8]);
     bool SafeMove(int x, int y, std::shared_ptr<Piece> grid[][8]);
 
-   private:
-    Texture2D texture;
 };
 
 class LongRangePiece : public Piece {

@@ -24,13 +24,23 @@ void Game::Update() {
         CalculateLegalMoves();
         hasBoardChanged = false;
     }
+
+    if(eventAnimation == EventAnimation::move) {
+        if (Vector2Distance(move.from, move.to) > 0.1f) {
+            move.from = Vector2Lerp(move.from, move.to, 0.2f);
+        } else {
+            eventAnimation = EventAnimation::none;
+            MakeMove(move.to.x/cellSize, move.to.y/cellSize);
+        }
+    }
+    
 }
 
 void Game::Draw() {
     BeginDrawing();
     chessboard.Draw();
 
-    if (clickedPiece) {
+    if (clickedPiece && eventAnimation == EventAnimation::none) {
         int x = clickedPiece->position.x;
         int y = clickedPiece->position.y;
         DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, SetClickedColor(x, y));
@@ -44,6 +54,7 @@ void Game::Draw() {
     }
 
     if (gameStatus != GameStatus::playing) GameOver();
+    if (eventAnimation == EventAnimation::move)  DrawTexture(move.piece->texture, move.from.x , move.from.y, WHITE);
     
     EndDrawing();
 }
@@ -85,7 +96,13 @@ void Game::handleMouseClick(int x, int y) {
     bool isOwnPieceClick = isPieceClick && (chessboard.grid[x][y]->color == ColorTurn);
 
     if (isOwnPieceClick) clickedPiece = chessboard.grid[x][y];
-    else if (clickedPiece && IsLegalMove(x, y)) MakeMove(x, y);
+    else if (clickedPiece && IsLegalMove(x, y)) {
+        eventAnimation = EventAnimation::move;
+        chessboard.lastMovePositions[0] = {clickedPiece->position.x, clickedPiece->position.y};
+        chessboard.lastMovePositions[1] = {(float)x, (float)y};
+        move = {{clickedPiece->position.x*cellSize,clickedPiece->position.y*cellSize}, {(float)x*cellSize, (float)y*cellSize}, clickedPiece};
+        chessboard.grid[(int)clickedPiece->position.x][(int)clickedPiece->position.y] = nullptr;
+    }
 }
 
 bool Game::IsLegalMove(float x, float y) {
@@ -98,15 +115,12 @@ void Game::CapturePiece(int x, int y) {
 }
 
 void Game::MakeMove(int x, int y) {
-    chessboard.lastMovePositions[0] = {clickedPiece->position.x, clickedPiece->position.y};
-    chessboard.lastMovePositions[1] = {(float)x, (float)y};
-
     enPassant(x, y);
     castling(x, y);
 
     // Move the piece to the new position
     if(chessboard.grid[x][y])  CapturePiece(x, y);
-    chessboard.grid[x][y] = std::move(chessboard.grid[(int)clickedPiece->position.x][(int)clickedPiece->position.y]);
+    chessboard.grid[x][y] = std::move(move.piece);
     clickedPiece->position = {(float)x, (float)y};
     clickedPiece->moveCount++;
     if (clickedPiece->getValue() == 1 && (y == 0 || y == 7)) promote(clickedPiece);
@@ -123,11 +137,11 @@ void Game::MakeMove(int x, int y) {
 void Game::enPassant(int x, int y) {
     // add enemy pawn legal move  en passant
     if (clickedPiece->getValue() == 1 && abs(clickedPiece->position.y - y)>1){
-        if(chessboard.grid[x-1][y] && chessboard.grid[x-1][y]->getValue() == 1 && chessboard.grid[x-1][y]->color != clickedPiece->color){
+        if(x>0 && chessboard.grid[x-1][y] && chessboard.grid[x-1][y]->getValue() == 1 && chessboard.grid[x-1][y]->color != clickedPiece->color){
             int moveDirection = (clickedPiece->color == PieceColor::black) ? -1 : 1;
             std::dynamic_pointer_cast<Pawn>(chessboard.grid[x-1][y])->en_passant = {(float)x,(float)y+moveDirection}; 
         }
-        if(chessboard.grid[x+1][y] && chessboard.grid[x+1][y]->getValue() == 1 && chessboard.grid[x+1][y]->color != clickedPiece->color){
+        if(x<7 && chessboard.grid[x+1][y] && chessboard.grid[x+1][y]->getValue() == 1 && chessboard.grid[x+1][y]->color != clickedPiece->color){
             int moveDirection = (clickedPiece->color == PieceColor::black) ? -1 : 1;
             std::dynamic_pointer_cast<Pawn>(chessboard.grid[x+1][y])->en_passant = {(float)x,(float)y+moveDirection};
         }
