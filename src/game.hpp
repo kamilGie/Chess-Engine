@@ -18,12 +18,6 @@ enum class GameStatus{
     STALEMATE,
 };
 
-enum class EventAnimation{
-    none,
-    promote,
-    move
-};
-
 class Game {
    public:
     Game();
@@ -38,14 +32,14 @@ class Game {
     bool IsLegalMove(float x, float y);
     void CalculateLegalMoves(); 
     void InitPieces();
+    void InitSounds();
+    void UnloadSounds();
     bool isKingChecked(std::shared_ptr<Piece> grid[][8]);
 
    private:
-    bool hasBoardChanged = false;
     Chessboard chessboard = Chessboard();
     PieceColor ColorTurn = PieceColor::white;
     GameStatus gameStatus = GameStatus::playing;
-    EventAnimation eventAnimation = EventAnimation::none;
     std::shared_ptr<Piece> clickedPiece = nullptr;
-    Move move;
+    std::unique_ptr<Move> move = nullptr;
 };

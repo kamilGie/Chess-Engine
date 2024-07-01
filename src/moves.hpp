@@ -4,16 +4,16 @@
 
 #include <memory>
 
+#include "chessboard.hpp"
 #include "piece_interfaces.hpp"
 #include "pieces.hpp"
 
 
 class Move{
     public:
-    Move();
-    Move(Vector2 from, Vector2 to, std::shared_ptr<Piece>& piece);
+    Move(Vector2 from, Vector2 to, Chessboard& chessboard);
     void MoveAnimation();
-    void MoveCalculation();
+    void Update();
     void ExecuteMove(std::shared_ptr<Piece>(&grid)[8][8]);
     void enPassant(std::shared_ptr<Piece> (&grid)[8][8]);
     void castling(std::shared_ptr<Piece> (&grid)[8][8]);
@@ -22,8 +22,11 @@ class Move{
     
     Vector2 from;
     Vector2 to;
-    std::shared_ptr<Piece> piece;
+    Vector2 AnimationPosition;
+    Chessboard &chessboard;
     bool AnimationEnd = false;
+
+    std::shared_ptr<Piece> piece;
 
     static Sound moveSound;
     static Sound captureSound;

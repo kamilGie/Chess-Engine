@@ -4,51 +4,47 @@ Sound Move::moveSound;
 Sound Move::captureSound;
 Sound Move::checkSound;
 
-Move::Move() {
-    InitAudioDevice();
-     Move::moveSound = LoadSound("../Sounds/move.mp3");
-     Move::captureSound = LoadSound("../Sounds/capture.mp3");
-     Move::checkSound = LoadSound("../Sounds/move-check.mp3");
-}
 
-Move::Move(Vector2 from, Vector2 to, std::shared_ptr<Piece>& piece) : from(from), to(to), piece(piece) {
+Move::Move(Vector2 from, Vector2 to, Chessboard& chessboard): from(from), to(to), chessboard(chessboard){
+    piece = chessboard.grid[(int)from.x][(int)from.y];
+    chessboard.grid[(int)from.x][(int)from.y] = nullptr;
+    chessboard.lastMovePositions[0] = from;
+    chessboard.lastMovePositions[1] = to;
+    AnimationPosition = Vector2Scale(from, cellSize);
     PlaySound(moveSound);
 }
 
 void Move::MoveAnimation() {
-    DrawTexture(piece->texture, from.x , from.y, WHITE);
+    DrawTexture(piece->texture, AnimationPosition.x , AnimationPosition.y, WHITE);
 }
 
-void Move::MoveCalculation() {
-        if (Vector2Distance(from, to) > 0.1f) {
-            from = Vector2Lerp(from, to, 0.2f);
+void Move::Update() {
+        if (Vector2Distance(AnimationPosition, Vector2Scale(to, cellSize)) > 0.1f) {
+            AnimationPosition = Vector2Lerp(AnimationPosition, Vector2Scale(to, cellSize),0.2f);
         } else {
             AnimationEnd = true;
         }
 }
 
 void Move::ExecuteMove(std::shared_ptr<Piece> (&grid)[8][8]) {
-    AnimationEnd = false;
-    int x = (int)to.x/cellSize;
-    int y = (int)to.y/cellSize;
     enPassant(grid);
     castling(grid);
 
-    // Move the piece to the new position
+    int x = to.x;
+    int y = to.y;
     if(grid[x][y])  CapturePiece(grid[x][y]);
     std::cout<<piece<<std::endl;
     piece->position = {(float)x, (float)y};
     piece->moveCount++;
     if (piece->getValue() == 1 && (y == 0 || y == 7)) promote(piece);
     grid[x][y] = std::move(piece);
-    std::cout<<piece<<std::endl;
-
+    AnimationEnd = false;
 }
 
 void Move::enPassant(std::shared_ptr<Piece>(&grid)[8][8]) {
     // add enemy pawn legal move  en passant
-    int x = (int)to.x/cellSize;
-    int y = (int)to.y/cellSize;
+    int x = to.x;
+    int y = to.y;
     if (piece->getValue() == 1 && abs(piece->position.y - y)>1){
         if(x>0 && grid[x-1][y] && grid[x-1][y]->getValue() == 1 && grid[x-1][y]->color != piece->color){
             int moveDirection = (piece->color == PieceColor::black) ? -1 : 1;
@@ -68,7 +64,7 @@ void Move::enPassant(std::shared_ptr<Piece>(&grid)[8][8]) {
 }
 
 void Move::castling(std::shared_ptr<Piece>(&grid)[8][8]) {
-    int x = (int)to.x/cellSize;
+    int x = to.x;
     if (piece->getValue() == 20 && abs(piece->position.x - x)>1) {
         int rookX = (x == 1) ? 0 : 7;
         int rookNewX = (x == 1) ? 2 : 4;
@@ -80,9 +76,7 @@ void Move::castling(std::shared_ptr<Piece>(&grid)[8][8]) {
 }
 
 void Move::promote(std::shared_ptr<Piece>& piece) {
-    int x = to.x/cellSize;
-    int y = to.y/cellSize;
-    piece = (piece->color == PieceColor::black) ?  Queen::CreateBlack(x, y): piece = Queen::CreateWhite(x, y);
+    piece = (piece->color == PieceColor::black) ?  Queen::CreateBlack(to.x, to.y): piece = Queen::CreateWhite(to.x, to.y);
 }
 
 void Move::CapturePiece(std::shared_ptr<Piece>& p) {

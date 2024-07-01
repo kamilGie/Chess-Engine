@@ -4,34 +4,27 @@ int cellSize = 100;
 
 Game::Game() {
     InitPieces();
+    InitSounds();
 }
 
 Game::~Game() {
-    UnloadSound(Move::checkSound);
-    UnloadSound(Move::moveSound);
-    UnloadSound(Move::captureSound);
-    CloseAudioDevice();
+    UnloadSounds();
 }
 
 void Game::HandleInput() {
-    if (gameStatus == GameStatus::playing  && eventAnimation ==EventAnimation::none && IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
+    if (gameStatus == GameStatus::playing  && !move && IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
          handleMouseClick(GetMouseX() / cellSize, GetMouseY() / cellSize);
     }
 }
 
 void Game::Update() {
-    if (hasBoardChanged) {
-        CalculateLegalMoves();
-        hasBoardChanged = false;
-    }
-    if(eventAnimation == EventAnimation::move){
-        move.MoveCalculation();
-        if (move.AnimationEnd) {
-            move.ExecuteMove(chessboard.grid);
-            eventAnimation = EventAnimation::none;
+    if(move){
+        move->Update();
+        if (move->AnimationEnd) {
+            move->ExecuteMove(chessboard.grid);
             ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
-            hasBoardChanged = true;
-            clickedPiece = nullptr;
+            CalculateLegalMoves();
+            move = nullptr;
         }
     }
 }
@@ -41,8 +34,8 @@ void Game::Draw() {
 
     chessboard.DrawSquares();
     chessboard.DrawPieces();
-    if (clickedPiece && eventAnimation == EventAnimation::none) chessboard.DrawSelectedPieceDetails(clickedPiece);
-    if (eventAnimation == EventAnimation::move)  move.MoveAnimation();
+    if (clickedPiece) chessboard.DrawSelectedPieceDetails(clickedPiece);
+    if (move)  move->MoveAnimation();
     if (gameStatus != GameStatus::playing) GameOver();
     
     EndDrawing();
@@ -54,16 +47,11 @@ void Game::InitPieces() {
 }
 
 void Game::handleMouseClick(int x, int y) {
-    bool isPieceClick = chessboard.grid[x][y].get();
-    bool isOwnPieceClick = isPieceClick && (chessboard.grid[x][y]->color == ColorTurn);
-
+    bool isOwnPieceClick = chessboard.grid[x][y].get() && (chessboard.grid[x][y]->color == ColorTurn);
     if (isOwnPieceClick) clickedPiece = chessboard.grid[x][y];
     else if (clickedPiece && IsLegalMove(x, y)) {
-        eventAnimation = EventAnimation::move;
-        chessboard.lastMovePositions[0] = {clickedPiece->position.x, clickedPiece->position.y};
-        chessboard.lastMovePositions[1] = {(float)x, (float)y};
-        move = {{clickedPiece->position.x*cellSize,clickedPiece->position.y*cellSize}, {(float)x*cellSize, (float)y*cellSize}, clickedPiece};
-        chessboard.grid[(int)clickedPiece->position.x][(int)clickedPiece->position.y] = nullptr;
+        move = std::make_unique<Move>(Move{clickedPiece->position, {(float)x, (float)y}, chessboard});
+        clickedPiece = nullptr;
     }
 }
 
@@ -117,4 +105,19 @@ void Game::GameOver() {
     DrawRectangle(0, 0, 800, 800, Fade(BLACK, 0.8f));
     DrawText("GAME OVER", (800 - MeasureText("GAME OVER", 50)) / 2, 300, 50, WHITE);
     DrawText(resultText.c_str(), (800 - MeasureText(resultText.c_str(), 50)) / 2, 380, 50, WHITE);
+}
+
+
+void Game::InitSounds() {
+    InitAudioDevice();
+    Move::moveSound = LoadSound("../Sounds/move.mp3");
+    Move::captureSound = LoadSound("../Sounds/capture.mp3");
+    Move::checkSound = LoadSound("../Sounds/move-check.mp3");
+}
+
+void Game::UnloadSounds() {
+    UnloadSound(Move::checkSound);
+    UnloadSound(Move::moveSound);
+    UnloadSound(Move::captureSound);
+    CloseAudioDevice();
 }
