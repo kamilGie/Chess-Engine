@@ -16,7 +16,7 @@ Game::~Game() {
 }
 
 void Game::HandleInput() {
-    if (gameStatus == GameStatus::playing && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) handleMouseClick(GetMouseX() / cellSize, GetMouseY() / cellSize);
+    if (gameStatus == GameStatus::playing  && eventAnimation ==EventAnimation::none && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) handleMouseClick(GetMouseX() / cellSize, GetMouseY() / cellSize);
 }
 
 void Game::Update() {
@@ -86,9 +86,9 @@ void Game::InitPieces() {
 }
 
 void Game::InitSounds() {
-    moveSound = LoadSound("Sounds/move.mp3");
-    captureSound = LoadSound("Sounds/capture.mp3");
-    checkSound = LoadSound("Sounds/move-check.mp3");
+    moveSound = LoadSound("../Sounds/move.mp3");
+    captureSound = LoadSound("../Sounds/capture.mp3");
+    checkSound = LoadSound("../Sounds/move-check.mp3");
 }
 
 void Game::handleMouseClick(int x, int y) {
@@ -98,6 +98,7 @@ void Game::handleMouseClick(int x, int y) {
     if (isOwnPieceClick) clickedPiece = chessboard.grid[x][y];
     else if (clickedPiece && IsLegalMove(x, y)) {
         eventAnimation = EventAnimation::move;
+        PlaySound(moveSound);
         chessboard.lastMovePositions[0] = {clickedPiece->position.x, clickedPiece->position.y};
         chessboard.lastMovePositions[1] = {(float)x, (float)y};
         move = {{clickedPiece->position.x*cellSize,clickedPiece->position.y*cellSize}, {(float)x*cellSize, (float)y*cellSize}, clickedPiece};
@@ -129,7 +130,6 @@ void Game::MakeMove(int x, int y) {
     clickedPiece = nullptr;
 
     ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
-    PlaySound(moveSound);
 
     hasBoardChanged = true;
 }
