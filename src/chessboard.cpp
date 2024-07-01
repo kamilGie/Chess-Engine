@@ -1,6 +1,31 @@
 #include "chessboard.hpp"
+#include "pieces.hpp"
 
 Chessboard::Chessboard() {}
+
+void Chessboard::initPieces() {
+    for (int i = 0; i < 8; ++i) {
+        grid[i][1] = Pawn::CreateBlack(i, 1);
+        grid[i][6] = Pawn::CreateWhite(i, 6);
+    }
+    grid[0][0] = Rook::CreateBlack(0, 0);
+    grid[1][0] = Horse::CreateBlack(1, 0);
+    grid[2][0] = Bishop::CreateBlack(2, 0);
+    grid[4][0] = Queen::CreateBlack(4, 0);
+    grid[3][0] = King::CreateBlack(3, 0);
+    grid[5][0] = Bishop::CreateBlack(5, 0);
+    grid[6][0] = Horse::CreateBlack(6, 0);
+    grid[7][0] = Rook::CreateBlack(7, 0);
+
+    grid[0][7] = Rook::CreateWhite(0, 7);
+    grid[1][7] = Horse::CreateWhite(1, 7);
+    grid[2][7] = Bishop::CreateWhite(2, 7);
+    grid[4][7] = Queen::CreateWhite(4, 7);
+    grid[3][7] = King::CreateWhite(3, 7);
+    grid[5][7] = Bishop::CreateWhite(5, 7);
+    grid[6][7] = Horse::CreateWhite(6, 7);
+    grid[7][7] = Rook::CreateWhite(7, 7);
+}
 
 void Chessboard::DrawSquares() {
     DrawRectangle(0, 0, cellSize * cellCount, cellSize * cellCount, Green);

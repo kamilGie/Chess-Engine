@@ -1,16 +1,15 @@
 #pragma once
 #include <raylib.h>
 
-#include <iostream>
-
 #include "colors.hpp"
-#include "piece_interfaces.hpp"
+#include "pieces.hpp"
 
 extern int cellSize;
 
 class Chessboard {
    public:
     Chessboard();
+    void initPieces();
     void DrawPieces();
     void DrawSquares();
     void DrawLegalMoves(std::shared_ptr<Piece> piece);

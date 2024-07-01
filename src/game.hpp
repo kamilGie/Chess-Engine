@@ -7,7 +7,8 @@
 
 #include "chessboard.hpp"
 #include "piece_interfaces.hpp"
-#include "pieces.cpp"
+#include "pieces.hpp"
+#include "move.hpp"
 
 extern int cellSize;
 enum class GameStatus{
@@ -55,11 +56,5 @@ class Game {
     GameStatus gameStatus = GameStatus::playing;
     EventAnimation eventAnimation = EventAnimation::none;
     std::shared_ptr<Piece> clickedPiece = nullptr;
-    struct Move {
-        Vector2 from;
-        Vector2 to;
-        std::shared_ptr<Piece> piece;
-    };
     Move move = {Vector2{0, 0}, Vector2{0, 0}, nullptr};
-    
 };

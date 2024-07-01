@@ -26,16 +26,10 @@ void Game::Update() {
         CalculateLegalMoves();
         hasBoardChanged = false;
     }
-
-    if(eventAnimation == EventAnimation::move) {
-        if (Vector2Distance(move.from, move.to) > 0.1f) {
-            move.from = Vector2Lerp(move.from, move.to, 0.2f);
-        } else {
-            eventAnimation = EventAnimation::none;
-            MakeMove(move.to.x/cellSize, move.to.y/cellSize);
-        }
+    #define moveReachEnd true
+    if(eventAnimation == EventAnimation::move){
+        if(move.MoveCalculation() == moveReachEnd) MakeMove(move.to.x/cellSize, move.to.y/cellSize);
     }
-    
 }
 
 void Game::Draw() {
@@ -44,35 +38,14 @@ void Game::Draw() {
     chessboard.DrawSquares();
     chessboard.DrawPieces();
     if (clickedPiece && eventAnimation == EventAnimation::none) chessboard.DrawSelectedPieceDetails(clickedPiece);
-    if (eventAnimation == EventAnimation::move)  DrawTexture(move.piece->texture, move.from.x , move.from.y, WHITE);
+    if (eventAnimation == EventAnimation::move)  move.MoveAnimation();
     if (gameStatus != GameStatus::playing) GameOver();
     
     EndDrawing();
 }
 
 void Game::InitPieces() {
-    for (int i = 0; i < 8; ++i) {
-        chessboard.grid[i][1] = Pawn::CreateBlack(i, 1);
-        chessboard.grid[i][6] = Pawn::CreateWhite(i, 6);
-    }
-    chessboard.grid[0][0] = Rook::CreateBlack(0, 0);
-    chessboard.grid[1][0] = Horse::CreateBlack(1, 0);
-    chessboard.grid[2][0] = Bishop::CreateBlack(2, 0);
-    chessboard.grid[4][0] = Queen::CreateBlack(4, 0);
-    chessboard.grid[3][0] = King::CreateBlack(3, 0);
-    chessboard.grid[5][0] = Bishop::CreateBlack(5, 0);
-    chessboard.grid[6][0] = Horse::CreateBlack(6, 0);
-    chessboard.grid[7][0] = Rook::CreateBlack(7, 0);
-
-    chessboard.grid[0][7] = Rook::CreateWhite(0, 7);
-    chessboard.grid[1][7] = Horse::CreateWhite(1, 7);
-    chessboard.grid[2][7] = Bishop::CreateWhite(2, 7);
-    chessboard.grid[4][7] = Queen::CreateWhite(4, 7);
-    chessboard.grid[3][7] = King::CreateWhite(3, 7);
-    chessboard.grid[5][7] = Bishop::CreateWhite(5, 7);
-    chessboard.grid[6][7] = Horse::CreateWhite(6, 7);
-    chessboard.grid[7][7] = Rook::CreateWhite(7, 7);
-
+    chessboard.initPieces();
     CalculateLegalMoves();
 }
 
@@ -107,6 +80,7 @@ void Game::CapturePiece(int x, int y) {
 }
 
 void Game::MakeMove(int x, int y) {
+    eventAnimation = EventAnimation::none;
     enPassant(x, y);
     castling(x, y);
 
