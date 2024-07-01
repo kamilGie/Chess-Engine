@@ -3,15 +3,13 @@
 int cellSize = 100;
 
 Game::Game() {
-    InitAudioDevice();
-    InitSounds();
     InitPieces();
 }
 
 Game::~Game() {
-    UnloadSound(checkSound);
-    UnloadSound(moveSound);
-    UnloadSound(captureSound);
+    UnloadSound(Move::checkSound);
+    UnloadSound(Move::moveSound);
+    UnloadSound(Move::captureSound);
     CloseAudioDevice();
 }
 
@@ -26,9 +24,15 @@ void Game::Update() {
         CalculateLegalMoves();
         hasBoardChanged = false;
     }
-    #define moveReachEnd true
     if(eventAnimation == EventAnimation::move){
-        if(move.MoveCalculation() == moveReachEnd) MakeMove(move.to.x/cellSize, move.to.y/cellSize);
+        move.MoveCalculation();
+        if (move.AnimationEnd) {
+            move.ExecuteMove(chessboard.grid);
+            eventAnimation = EventAnimation::none;
+            ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
+            hasBoardChanged = true;
+            clickedPiece = nullptr;
+        }
     }
 }
 
@@ -49,12 +53,6 @@ void Game::InitPieces() {
     CalculateLegalMoves();
 }
 
-void Game::InitSounds() {
-    moveSound = LoadSound("../Sounds/move.mp3");
-    captureSound = LoadSound("../Sounds/capture.mp3");
-    checkSound = LoadSound("../Sounds/move-check.mp3");
-}
-
 void Game::handleMouseClick(int x, int y) {
     bool isPieceClick = chessboard.grid[x][y].get();
     bool isOwnPieceClick = isPieceClick && (chessboard.grid[x][y]->color == ColorTurn);
@@ -62,7 +60,6 @@ void Game::handleMouseClick(int x, int y) {
     if (isOwnPieceClick) clickedPiece = chessboard.grid[x][y];
     else if (clickedPiece && IsLegalMove(x, y)) {
         eventAnimation = EventAnimation::move;
-        PlaySound(moveSound);
         chessboard.lastMovePositions[0] = {clickedPiece->position.x, clickedPiece->position.y};
         chessboard.lastMovePositions[1] = {(float)x, (float)y};
         move = {{clickedPiece->position.x*cellSize,clickedPiece->position.y*cellSize}, {(float)x*cellSize, (float)y*cellSize}, clickedPiece};
@@ -74,75 +71,17 @@ bool Game::IsLegalMove(float x, float y) {
     return std::any_of(clickedPiece->legalMoves.begin(), clickedPiece->legalMoves.end(), [&](auto move) { return Vector2Equals(move, {x, y}); });
 }
 
-void Game::CapturePiece(int x, int y) {
-    PlaySound(captureSound);
-    chessboard.grid[x][y] = nullptr;
-}
-
-void Game::MakeMove(int x, int y) {
-    eventAnimation = EventAnimation::none;
-    enPassant(x, y);
-    castling(x, y);
-
-    // Move the piece to the new position
-    if(chessboard.grid[x][y])  CapturePiece(x, y);
-    chessboard.grid[x][y] = std::move(move.piece);
-    clickedPiece->position = {(float)x, (float)y};
-    clickedPiece->moveCount++;
-    if (clickedPiece->getValue() == 1 && (y == 0 || y == 7)) promote(clickedPiece);
-
-    // Reset the clicked piece
-    clickedPiece = nullptr;
-
-    ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
-
-    hasBoardChanged = true;
-}
-
-void Game::enPassant(int x, int y) {
-    // add enemy pawn legal move  en passant
-    if (clickedPiece->getValue() == 1 && abs(clickedPiece->position.y - y)>1){
-        if(x>0 && chessboard.grid[x-1][y] && chessboard.grid[x-1][y]->getValue() == 1 && chessboard.grid[x-1][y]->color != clickedPiece->color){
-            int moveDirection = (clickedPiece->color == PieceColor::black) ? -1 : 1;
-            std::dynamic_pointer_cast<Pawn>(chessboard.grid[x-1][y])->en_passant = {(float)x,(float)y+moveDirection}; 
-        }
-        if(x<7 && chessboard.grid[x+1][y] && chessboard.grid[x+1][y]->getValue() == 1 && chessboard.grid[x+1][y]->color != clickedPiece->color){
-            int moveDirection = (clickedPiece->color == PieceColor::black) ? -1 : 1;
-            std::dynamic_pointer_cast<Pawn>(chessboard.grid[x+1][y])->en_passant = {(float)x,(float)y+moveDirection};
-        }
-    }
-
-    // capture enemy pawn en passant
-    if(clickedPiece->getValue() == 1 && abs(clickedPiece->position.x - x)>0 && !chessboard.grid[x][y]){
-        int moveDirection = (clickedPiece->color == PieceColor::black) ? -1 : 1;
-        CapturePiece(x,y+moveDirection);
-    }
-}
-
-void Game::castling(int x, int y) {
-    if (clickedPiece->getValue() == 20 && abs(clickedPiece->position.x - x)>1) {
-        int rookX = (x == 1) ? 0 : 7;
-        int rookNewX = (x == 1) ? 2 : 4;
-        int rookY = (clickedPiece->color == PieceColor::black) ? 0 : 7;
-        chessboard.grid[rookNewX][rookY] = std::move(chessboard.grid[rookX][rookY]);
-        chessboard.grid[rookNewX][rookY]->position = {(float)rookNewX, (float)rookY};
-        chessboard.grid[rookNewX][rookY]->moveCount++;
-    }
-}
-
-void Game::promote(std::shared_ptr<Piece>& piece) {
-    int x = piece->position.x;
-    int y = piece->position.y;
-    chessboard.grid[x][y] = (piece->color == PieceColor::black) ?  Queen::CreateBlack(x, y): chessboard.grid[x][y] = Queen::CreateWhite(x, y);
-}
-
 void Game::CalculateLegalMoves() {
-    SetPiecesLegalMoves(chessboard.grid, ColorTurn);
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (chessboard.grid[i][j] && chessboard.grid[i][j]->color == ColorTurn ) chessboard.grid[i][j]->SetLegalMoves(chessboard.grid);
+        }
+    }
 
 
     bool NoPossibleMoves = std::all_of(&chessboard.grid[0][0], &chessboard.grid[0][0] + 8 * 8, [&](auto& piece) { return !piece || piece->color != ColorTurn || piece->legalMoves.empty(); });
     if (isKingChecked(chessboard.grid)) {
-        PlaySound(checkSound);
+        PlaySound(Move::checkSound);
         if (NoPossibleMoves) gameStatus = (ColorTurn == PieceColor::black) ? GameStatus::whiteWin : GameStatus::blackWin;
     } else if (NoPossibleMoves) {
         gameStatus = GameStatus::STALEMATE;
