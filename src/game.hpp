@@ -8,7 +8,7 @@
 #include "chessboard.hpp"
 #include "piece_interfaces.hpp"
 #include "pieces.hpp"
-#include "move.hpp"
+#include "moves.hpp"
 
 extern int cellSize;
 enum class GameStatus{

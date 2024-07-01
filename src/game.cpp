@@ -137,11 +137,7 @@ void Game::promote(std::shared_ptr<Piece>& piece) {
 }
 
 void Game::CalculateLegalMoves() {
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            if (chessboard.grid[i][j] && chessboard.grid[i][j]->color == ColorTurn ) chessboard.grid[i][j]->SetLegalMoves(chessboard.grid);
-        }
-    }
+    SetPiecesLegalMoves(chessboard.grid, ColorTurn);
 
 
     bool NoPossibleMoves = std::all_of(&chessboard.grid[0][0], &chessboard.grid[0][0] + 8 * 8, [&](auto& piece) { return !piece || piece->color != ColorTurn || piece->legalMoves.empty(); });
