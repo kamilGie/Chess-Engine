@@ -16,7 +16,9 @@ Game::~Game() {
 }
 
 void Game::HandleInput() {
-    if (gameStatus == GameStatus::playing  && eventAnimation ==EventAnimation::none && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) handleMouseClick(GetMouseX() / cellSize, GetMouseY() / cellSize);
+    if (gameStatus == GameStatus::playing  && eventAnimation ==EventAnimation::none && IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
+         handleMouseClick(GetMouseX() / cellSize, GetMouseY() / cellSize);
+    }
 }
 
 void Game::Update() {
@@ -38,23 +40,12 @@ void Game::Update() {
 
 void Game::Draw() {
     BeginDrawing();
-    chessboard.Draw();
 
-    if (clickedPiece && eventAnimation == EventAnimation::none) {
-        int x = clickedPiece->position.x;
-        int y = clickedPiece->position.y;
-        DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, SetClickedColor(x, y));
-        DrawLegalMoves();
-    };
-
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            if (chessboard.grid[i][j]) chessboard.grid[i][j]->Draw();
-        }
-    }
-
-    if (gameStatus != GameStatus::playing) GameOver();
+    chessboard.DrawSquares();
+    chessboard.DrawPieces();
+    if (clickedPiece && eventAnimation == EventAnimation::none) chessboard.DrawSelectedPieceDetails(clickedPiece);
     if (eventAnimation == EventAnimation::move)  DrawTexture(move.piece->texture, move.from.x , move.from.y, WHITE);
+    if (gameStatus != GameStatus::playing) GameOver();
     
     EndDrawing();
 }
@@ -196,18 +187,6 @@ bool Game::isKingChecked(std::shared_ptr<Piece> grid[][8]) {
         }
     }
     return false;
-}
-
-void Game::DrawLegalMoves() {
-    for (auto move : clickedPiece->legalMoves) {
-        float x = move.x * cellSize + cellSize / 2;
-        float y = move.y * cellSize + cellSize / 2;
-        if (chessboard.grid[(int)move.x][(int)move.y]) {
-            DrawRing({x, y}, 40, 50, 0, 360, 32, Fade(BLACK, 0.1f));
-        } else {
-            DrawCircle(x, y, 17, Fade(BLACK, 0.1f));
-        }
-    }
 }
 
 void Game::GameOver() {

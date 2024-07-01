@@ -2,9 +2,8 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#include <iostream>
 #include <vector>
-#include "memory"
+#include <memory>
 
 #include "chessboard.hpp"
 #include "piece_interfaces.hpp"
@@ -41,7 +40,6 @@ class Game {
     void promote(std::shared_ptr<Piece>& piece);
     void CapturePiece(int x, int y);
     bool IsLegalMove(float x, float y);
-    void DrawLegalMoves();
     void CalculateLegalMoves(); 
     void InitPieces();
     void InitSounds();
