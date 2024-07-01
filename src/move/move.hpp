@@ -2,7 +2,7 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#include "chessboard.hpp"
+#include "../chessboard/chessboard.hpp"
 
 class Move {
    public:

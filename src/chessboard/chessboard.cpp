@@ -1,5 +1,4 @@
 #include "chessboard.hpp"
-#include "pieces.hpp"
 
 Chessboard::Chessboard() {}
 

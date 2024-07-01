@@ -1,4 +1,4 @@
-#include "moves.hpp"
+#include "move.hpp"
 
 Sound Move::moveSound;
 Sound Move::captureSound;

@@ -5,10 +5,7 @@
 #include <vector>
 #include <memory>
 
-#include "chessboard.hpp"
-#include "piece_interfaces.hpp"
-#include "pieces.hpp"
-#include "moves.hpp"
+#include "move/move.hpp"
 
 extern int cellSize;
 enum class GameStatus{

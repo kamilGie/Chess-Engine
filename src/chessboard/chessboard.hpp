@@ -1,8 +1,8 @@
 #pragma once
 #include <raylib.h>
 
-#include "colors.hpp"
-#include "pieces.hpp"
+#include "../resources/colors.hpp"
+#include "../pieces/pieces.hpp"
 
 extern int cellSize;
 
