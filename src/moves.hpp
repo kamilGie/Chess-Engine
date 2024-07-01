@@ -2,33 +2,31 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#include <memory>
-
 #include "chessboard.hpp"
-#include "piece_interfaces.hpp"
-#include "pieces.hpp"
 
-
-class Move{
-    public:
+class Move {
+   public:
     Move(Vector2 from, Vector2 to, Chessboard& chessboard);
     void MoveAnimation();
     void Update();
-    void ExecuteMove(std::shared_ptr<Piece>(&grid)[8][8]);
-    void enPassant(std::shared_ptr<Piece> (&grid)[8][8]);
-    void castling(std::shared_ptr<Piece> (&grid)[8][8]);
-    void CapturePiece(std::shared_ptr<Piece>& p);
-    void promote(std::shared_ptr<Piece>& piece);
-    
-    Vector2 from;
-    Vector2 to;
-    Vector2 AnimationPosition;
-    Chessboard &chessboard;
-    bool AnimationEnd = false;
+    void ExecuteMove();
 
-    std::shared_ptr<Piece> piece;
+    bool AnimationEnd = false;
 
     static Sound moveSound;
     static Sound captureSound;
     static Sound checkSound;
+
+   private:
+    Vector2 from;
+    Vector2 to;
+    Vector2 AnimationPosition;
+    Chessboard& chessboard;
+    std::shared_ptr<Piece> piece;
+
+    void enPassantCalculation();
+    bool isEnemyPawnOn(int x, int y);
+    void castling();
+    void promote();
+    void CapturePiece(std::shared_ptr<Piece>& p);
 };

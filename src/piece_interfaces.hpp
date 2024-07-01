@@ -11,6 +11,7 @@ enum class PieceColor{
     white
 };
 
+
 extern int cellSize;
 
 class Piece {

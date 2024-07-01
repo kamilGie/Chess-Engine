@@ -21,7 +21,7 @@ void Game::Update() {
     if(move){
         move->Update();
         if (move->AnimationEnd) {
-            move->ExecuteMove(chessboard.grid);
+            move->ExecuteMove();
             ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
             CalculateLegalMoves();
             move = nullptr;

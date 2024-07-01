@@ -50,6 +50,11 @@ void Chessboard::DrawSelectedPieceDetails(std::shared_ptr<Piece> piece) {
         DrawLegalMoves(piece);
 }
 
+void Chessboard::SetLastMovePositions(Vector2 from, Vector2 to) {
+    lastMovePositions[0] = from;
+    lastMovePositions[1] = to;
+}
+
 void Chessboard::DrawLegalMoves(std::shared_ptr<Piece> piece) {
     for (auto move : piece->legalMoves) {
         float x = move.x * cellSize + cellSize / 2;
