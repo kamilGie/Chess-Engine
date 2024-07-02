@@ -1,10 +1,10 @@
 #pragma once
 #include <raylib.h>
-
-#include "../resources/colors.hpp"
-#include "../pieces/pieces.hpp"
+#include <memory>
 
 extern int cellSize;
+
+class Piece;
 
 class Chessboard {
    public:

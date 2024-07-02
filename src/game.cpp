@@ -1,8 +1,22 @@
 #include "game.hpp"
+#include <raylib.h>
+#include <raymath.h>
+
+#include "chessboard/chessboard.hpp"
+#include "pieces/pieces.hpp"
+#include "move/move.hpp"
 
 int cellSize = 100;
 
+enum class GameStatus {
+    playing,
+    whiteWin,
+    blackWin,
+    STALEMATE,
+};
+
 Game::Game() {
+    gameStatus = GameStatus::playing;
     InitPieces();
     InitSounds();
 }
@@ -24,6 +38,7 @@ void Game::Update() {
             move->ExecuteMove();
             ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
             CalculateLegalMoves();
+            delete move;
             move = nullptr;
         }
     }
@@ -42,6 +57,8 @@ void Game::Draw() {
 }
 
 void Game::InitPieces() {
+    ColorTurn = PieceColor::white;
+    chessboard = Chessboard();
     chessboard.initPieces();
     CalculateLegalMoves();
 }
@@ -50,7 +67,7 @@ void Game::handleMouseClick(int x, int y) {
     bool isOwnPieceClick = chessboard.grid[x][y].get() && (chessboard.grid[x][y]->color == ColorTurn);
     if (isOwnPieceClick) clickedPiece = chessboard.grid[x][y];
     else if (clickedPiece && IsLegalMove(x, y)) {
-        move = std::make_unique<Move>(Move{clickedPiece->position, {(float)x, (float)y}, chessboard});
+        move = new Move{clickedPiece->position, {(float)x, (float)y}, chessboard};
         clickedPiece = nullptr;
     }
 }

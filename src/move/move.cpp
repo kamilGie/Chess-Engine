@@ -1,4 +1,8 @@
 #include "move.hpp"
+#include <raymath.h>
+
+#include "../chessboard/chessboard.hpp"
+#include "../pieces/pieces.hpp"
 
 Sound Move::moveSound;
 Sound Move::captureSound;

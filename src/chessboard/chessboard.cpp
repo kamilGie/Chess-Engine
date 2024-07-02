@@ -1,4 +1,6 @@
 #include "chessboard.hpp"
+#include "../resources/colors.hpp"
+#include "../pieces/pieces.hpp"
 
 Chessboard::Chessboard() {}
 

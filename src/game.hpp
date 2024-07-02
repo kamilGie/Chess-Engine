@@ -1,19 +1,10 @@
 #pragma once
-#include <raylib.h>
-#include <raymath.h>
+#include "chessboard/chessboard.hpp"
 
-#include <vector>
-#include <memory>
-
-#include "move/move.hpp"
-
-extern int cellSize;
-enum class GameStatus{
-    playing,
-    whiteWin,
-    blackWin,
-    STALEMATE,
-};
+class Piece;
+class Move;
+enum class PieceColor;
+enum class GameStatus;
 
 class Game {
    public:
@@ -27,16 +18,16 @@ class Game {
     void GameOver();
     void handleMouseClick(int x, int y);
     bool IsLegalMove(float x, float y);
-    void CalculateLegalMoves(); 
+    void CalculateLegalMoves();
     void InitPieces();
     void InitSounds();
     void UnloadSounds();
     bool isKingChecked(std::shared_ptr<Piece> grid[][8]);
 
    private:
+    Move* move = nullptr;
+    PieceColor ColorTurn;
+    GameStatus gameStatus;
     Chessboard chessboard = Chessboard();
-    PieceColor ColorTurn = PieceColor::white;
-    GameStatus gameStatus = GameStatus::playing;
     std::shared_ptr<Piece> clickedPiece = nullptr;
-    std::unique_ptr<Move> move = nullptr;
 };

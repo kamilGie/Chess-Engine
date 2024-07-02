@@ -1,8 +1,9 @@
 #pragma once
 #include <raylib.h>
-#include <raymath.h>
+#include <memory>
 
-#include "../chessboard/chessboard.hpp"
+class Piece;
+class Chessboard;
 
 class Move {
    public:
