@@ -1,7 +1,6 @@
 #include "chessboard.hpp"
 #include "../resources/colors.hpp"
 #include "../pieces/pieces.hpp"
-
 Chessboard::Chessboard() {}
 
 void Chessboard::initPieces() {
@@ -26,6 +25,17 @@ void Chessboard::initPieces() {
     grid[5][7] = Bishop::CreateWhite(5, 7);
     grid[6][7] = Horse::CreateWhite(6, 7);
     grid[7][7] = Rook::CreateWhite(7, 7);
+    
+    // Set starting legal moves
+    for (int i = 0; i < 8; ++i) {
+        grid[i][1]->SetLegalMoves(grid);
+        grid[i][6]->SetLegalMoves(grid);
+    }
+    grid[1][0]->SetLegalMoves(grid);
+    grid[6][0]->SetLegalMoves(grid);
+    grid[1][7]->SetLegalMoves(grid);
+    grid[6][7]->SetLegalMoves(grid);
+
 }
 
 void Chessboard::DrawSquares() {

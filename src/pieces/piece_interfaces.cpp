@@ -42,7 +42,7 @@ bool Piece::SafeMove(int x, int y, std::shared_ptr<Piece> grid[][8]) {
     return safe;
 }
 
-void LongRangePiece::SetLegalMoves(std::shared_ptr<Piece> grid[][8]) {
+void LongRangePiece::SetLegalMoves(std::shared_ptr<Piece>(&grid)[][8]) {
     legalMoves.clear();
 
     for (Vector2 dir : moveDirections) {
@@ -69,7 +69,7 @@ bool LimitedRangePiece::SetAtackedPools(std::shared_ptr<Piece> grid[][8],bool at
     return false;
 }
 
-void LimitedRangePiece::SetLegalMoves(std::shared_ptr<Piece> grid[][8]) {
+void LimitedRangePiece::SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]) {
     legalMoves.clear();
     for (Vector2 dir : moveDirections) {
         int x = position.x + dir.x;

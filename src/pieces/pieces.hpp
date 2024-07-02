@@ -7,7 +7,7 @@ class King : public LimitedRangePiece {
     King(float column, float row, const std::string& pieceName, PieceColor color);
     virtual ~King() = default;
     int getValue() override { return 20; }
-    void SetLegalMoves(std::shared_ptr<Piece> grid[][8]) override;
+    void SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]) override;
 
     static std::shared_ptr<King> CreateBlack(float column, float row);
     static std::shared_ptr<King> CreateWhite(float column, float row);
@@ -63,7 +63,7 @@ class Pawn : public Piece {
 
     Vector2 en_passant = {0,0};
 
-    void SetLegalMoves(std::shared_ptr<Piece> grid[][8]) override;
+    void SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]) override;
     bool SetAtackedPools(std::shared_ptr<Piece> grid[][8], bool atackedPools[8][8]) override;
 
     static std::shared_ptr<Pawn> CreateBlack(float column, float row);

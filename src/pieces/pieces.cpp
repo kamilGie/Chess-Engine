@@ -7,7 +7,7 @@
 #define L_SHAPED_MOVES \
     {1, 2}, {2, 1}, {-2, 1}, {1, -2}, {-1, 2}, {2, -1}, {-1, -2}, { -2, -1 }
 
-void King::SetLegalMoves(std::shared_ptr<Piece> grid[][8]) {
+void King::SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]) {
     LimitedRangePiece::SetLegalMoves(grid);
     if (moveCount == 0) {
         if (color == PieceColor::white) {
@@ -39,7 +39,7 @@ Bishop::Bishop(float column, float row, const std::string& pieceName, PieceColor
 std::shared_ptr<Bishop> Bishop::CreateBlack(float column, float row) { return std::make_shared<Bishop>(column, row, "BishopBlack", PieceColor::black); }
 std::shared_ptr<Bishop> Bishop::CreateWhite(float column, float row) { return std::make_shared<Bishop>(column, row, "BishopWhite", PieceColor::white); }
 
-void Pawn::SetLegalMoves(std::shared_ptr<Piece> grid[][8]){
+void Pawn::SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]){
     legalMoves.clear();
 
     if (position.y == 7 || position.y == 0) return;

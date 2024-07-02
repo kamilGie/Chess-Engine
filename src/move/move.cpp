@@ -22,7 +22,7 @@ void Move::Update() {
     if (Vector2Distance(AnimationPosition, Vector2Scale(to, cellSize)) > 0.1f) {
         AnimationPosition = Vector2Lerp(AnimationPosition, Vector2Scale(to, cellSize), 0.2f);
     } else {
-        AnimationEnd = true;
+        animationEnd = true;
     }
 }
 
@@ -34,7 +34,8 @@ void Move::ExecuteMove() {
     piece->position = to;
     piece->moveCount++;
     if (piece->getValue() == 1 && (to.y == 0 || to.y == 7)) promote();
-    chessboard.grid[(int)to.x][(int)to.y] = std::move(piece);
+    chessboard.grid[(int)to.x][(int)to.y] = piece;
+    CalculateLegalMoves();
 }
 
 void Move::enPassantCalculation() {
@@ -71,4 +72,31 @@ void Move::promote() {
 void Move::CapturePiece(std::shared_ptr<Piece>& p) {
     PlaySound(captureSound);
     p = nullptr;
+}
+
+
+void Move::CalculateLegalMoves() {
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (chessboard.grid[i][j].get() && chessboard.grid[i][j]->color != piece->color ) chessboard.grid[i][j]->SetLegalMoves(chessboard.grid);
+        }
+    }
+
+    bool NoPossibleMoves = std::all_of(&chessboard.grid[0][0], &chessboard.grid[0][0] + 8 * 8, [&](auto& p) { return !p || p->color == piece->color || p->legalMoves.empty(); });
+    if (isKingChecked()) {
+        PlaySound(checkSound);
+        if (NoPossibleMoves) winningMove = true; 
+    } else if (NoPossibleMoves) {
+        stalematingMove = true;
+    }
+}
+
+bool Move::isKingChecked() {
+    bool atackedPools[8][8]{};
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (chessboard.grid[i][j] && chessboard.grid[i][j]->color == piece->color && chessboard.grid[i][j]->SetAtackedPools(chessboard.grid, atackedPools)) return true; 
+        }
+    }
+    return false;
 }
