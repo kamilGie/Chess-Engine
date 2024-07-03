@@ -1,11 +1,13 @@
 #include "chessboard.hpp"
 #include "../resources/colors.hpp"
 #include "../pieces/pieces.hpp"
+#include "../pieces/piece_factory.hpp"
 Chessboard::Chessboard() {}
 
 void Chessboard::initPieces() {
+    PieceFactory::InitPrototype();
     for (int i = 0; i < 8; ++i) {
-        grid[i][1] = Pawn::CreateBlack(i, 1);
+        grid[i][1] = PieceFactory::CreatePiece("PawnBlack", i, 1);
         grid[i][6] = Pawn::CreateWhite(i, 6);
     }
     grid[0][0] = Rook::CreateBlack(0, 0);

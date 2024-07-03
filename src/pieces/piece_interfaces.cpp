@@ -1,11 +1,18 @@
 #include "piece_interfaces.hpp"
+#include <iostream>
 
 Piece::Piece(float column, float row, const std::string& pieceName, PieceColor color) : position(Vector2{column, row}) , color(color) {
     std::string fullPath = "../Graphics/" + pieceName + ".png";
     Image image = LoadImage(fullPath.c_str());
+    std::cout<<"wczytuje pionka\n"<<fullPath<<"\n";
     texture = LoadTextureFromImage(image);
     UnloadImage(image);
 }
+
+Piece::Piece(const Piece& piece) 
+    position = piece.position;
+    color = piece.color;
+    texture = texture;
 
 Piece::~Piece() { UnloadTexture(texture); }
 
