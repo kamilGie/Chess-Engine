@@ -1,22 +1,41 @@
 #pragma once
-#include "pieces.hpp"
-#include <unordered_map>
 #include <raylib.h>
+
 #include <memory>
+#include <unordered_map>
+
+#include "pieces.hpp"
 
 class PieceFactory {
-    PieceFactory() = delete;
-    static std::unordered_map<std::string, std::unique_ptr<Piece>> prototypes;
-    public:
-    static void InitPrototype();
+   public:
+    static std::shared_ptr<Pawn> BlackPawn(int x, int y);
+    static std::shared_ptr<Pawn> WhitePawn(int x, int y);
+    static std::shared_ptr<Rook> BlackRook(int x, int y);
+    static std::shared_ptr<Rook> WhiteRook(int x, int y);
+    static std::shared_ptr<Horse> BlackHorse(int x, int y);
+    static std::shared_ptr<Horse> WhiteHorse(int x, int y);
+    static std::shared_ptr<Bishop> BlackBishop(int x, int y);
+    static std::shared_ptr<Bishop> WhiteBishop(int x, int y);
+    static std::shared_ptr<Queen> BlackQueen(int x, int y);
+    static std::shared_ptr<Queen> WhiteQueen(int x, int y);
+    static std::shared_ptr<King> BlackKing(int x, int y);
+    static std::shared_ptr<King> WhiteKing(int x, int y);
 
-    static std::shared_ptr<Piece> CreatePiece(const std::string& type, float column, float row) {
-        auto it = prototypes.find(type);
-        if (it != prototypes.end()) {
-            std::shared_ptr<Piece> piece = std::make_shared<Piece>(*it->second);
-            piece->position = {column, row};
-            return piece;
-        }
-        return nullptr;
-    }
+    static void UnloadTextures();
+
+   private:
+    static Pawn GetWhitePawnPrototype();
+    static Pawn GetBlackPawnPrototype();
+    static Rook GetWhiteRookPrototype();
+    static Rook GetBlackRookPrototype();
+    static Horse GetWhiteHorsePrototype();
+    static Horse GetBlackHorsePrototype();
+    static Bishop GetWhiteBishopPrototype();
+    static Bishop GetBlackBishopPrototype();
+    static Queen GetWhiteQueenPrototype();
+    static Queen GetBlackQueenPrototype();
+    static King GetWhiteKingPrototype();
+    static King GetBlackKingPrototype();
+
+    PieceFactory() = delete;
 };

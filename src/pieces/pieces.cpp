@@ -19,25 +19,18 @@ void King::SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]) {
         }
     }
 }
+
 King::King(float column, float row, const std::string& pieceName, PieceColor color) : LimitedRangePiece(column, row, pieceName, {ORTHOGONAL_MOVES, DIAGONALLY_MOVES}, color){};
-std::shared_ptr<King> King::CreateBlack(float column, float row) { return std::make_shared<King>(column, row, "kingBlack", PieceColor::black); }
-std::shared_ptr<King> King::CreateWhite(float column, float row) { return std::make_shared<King>(column, row, "kingWhite", PieceColor::white); }
 
 Queen::Queen(float column, float row, const std::string& pieceName, PieceColor color) : LongRangePiece(column, row, pieceName, {{ORTHOGONAL_MOVES, DIAGONALLY_MOVES}}, color){};
-std::shared_ptr<Queen> Queen::CreateBlack(float column, float row) { return std::make_shared<Queen>(column, row, "QueenBlack", PieceColor::black); }
-std::shared_ptr<Queen> Queen::CreateWhite(float column, float row) { return std::make_shared<Queen>(column, row, "QueenWhite", PieceColor::white); }
 
 Rook::Rook(float column, float row, const std::string& pieceName, PieceColor color) : LongRangePiece(column, row, pieceName, {ORTHOGONAL_MOVES}, color){};
-std::shared_ptr<Rook> Rook::CreateBlack(float column, float row) { return std::make_shared<Rook>(column, row, "RookBlack", PieceColor::black); }
-std::shared_ptr<Rook> Rook::CreateWhite(float column, float row) { return std::make_shared<Rook>(column, row, "RookWhite", PieceColor::white); }
 
 Horse::Horse(float column, float row, const std::string& pieceName, PieceColor color) : LimitedRangePiece(column, row, pieceName, {L_SHAPED_MOVES}, color){};
-std::shared_ptr<Horse> Horse::CreateBlack(float column, float row) { return std::make_shared<Horse>(column, row, "HorseBlack", PieceColor::black); }
-std::shared_ptr<Horse> Horse::CreateWhite(float column, float row) { return std::make_shared<Horse>(column, row, "HorseWhite", PieceColor::white); }
 
 Bishop::Bishop(float column, float row, const std::string& pieceName, PieceColor color) : LongRangePiece(column, row, pieceName, {DIAGONALLY_MOVES}, color){};
-std::shared_ptr<Bishop> Bishop::CreateBlack(float column, float row) { return std::make_shared<Bishop>(column, row, "BishopBlack", PieceColor::black); }
-std::shared_ptr<Bishop> Bishop::CreateWhite(float column, float row) { return std::make_shared<Bishop>(column, row, "BishopWhite", PieceColor::white); }
+
+Pawn::Pawn(float column, float row, const std::string& pieceName, PieceColor color) : Piece(column, row, pieceName, color){};
 
 void Pawn::SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]){
     legalMoves.clear();
@@ -70,7 +63,3 @@ bool Pawn::SetAtackedPools(std::shared_ptr<Piece> grid[][8], bool atackedPools[8
     }
     return false;
 }
-
-Pawn::Pawn(float column, float row, const std::string& pieceName, PieceColor color) : Piece(column, row, pieceName, color){};
-std::shared_ptr<Pawn> Pawn::CreateBlack(float column, float row) { return std::make_shared<Pawn>(column, row, "pawnBlack", PieceColor::black); }
-std::shared_ptr<Pawn> Pawn::CreateWhite(float column, float row) { return std::make_shared<Pawn>(column, row, "pawnWhite", PieceColor::white); }

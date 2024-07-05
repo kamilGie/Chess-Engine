@@ -9,6 +9,7 @@ class Piece;
 class Chessboard {
    public:
     Chessboard();
+    ~Chessboard();
     void initPieces();
     void DrawPieces();
     void DrawSquares();

@@ -3,6 +3,7 @@
 
 #include "../chessboard/chessboard.hpp"
 #include "../pieces/pieces.hpp"
+#include "../pieces/piece_factory.hpp"
 
 Sound Move::moveSound;
 Sound Move::captureSound;
@@ -66,7 +67,7 @@ void Move::castling() {
 }
 
 void Move::promote() {
-    piece = (piece->color == PieceColor::black) ? Queen::CreateBlack(to.x, to.y) : piece = Queen::CreateWhite(to.x, to.y);
+    piece = (piece->color == PieceColor::black) ? PieceFactory::BlackQueen(to.x, to.y) : piece = PieceFactory::WhiteQueen(to.x, to.y);
 }
 
 void Move::CapturePiece(std::shared_ptr<Piece>& p) {

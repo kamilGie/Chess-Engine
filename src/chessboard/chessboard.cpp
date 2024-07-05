@@ -4,29 +4,32 @@
 #include "../pieces/piece_factory.hpp"
 Chessboard::Chessboard() {}
 
-void Chessboard::initPieces() {
-    PieceFactory::InitPrototype();
-    for (int i = 0; i < 8; ++i) {
-        grid[i][1] = PieceFactory::CreatePiece("PawnBlack", i, 1);
-        grid[i][6] = Pawn::CreateWhite(i, 6);
-    }
-    grid[0][0] = Rook::CreateBlack(0, 0);
-    grid[1][0] = Horse::CreateBlack(1, 0);
-    grid[2][0] = Bishop::CreateBlack(2, 0);
-    grid[4][0] = Queen::CreateBlack(4, 0);
-    grid[3][0] = King::CreateBlack(3, 0);
-    grid[5][0] = Bishop::CreateBlack(5, 0);
-    grid[6][0] = Horse::CreateBlack(6, 0);
-    grid[7][0] = Rook::CreateBlack(7, 0);
+Chessboard::~Chessboard() {
+    PieceFactory::UnloadTextures();
+}
 
-    grid[0][7] = Rook::CreateWhite(0, 7);
-    grid[1][7] = Horse::CreateWhite(1, 7);
-    grid[2][7] = Bishop::CreateWhite(2, 7);
-    grid[4][7] = Queen::CreateWhite(4, 7);
-    grid[3][7] = King::CreateWhite(3, 7);
-    grid[5][7] = Bishop::CreateWhite(5, 7);
-    grid[6][7] = Horse::CreateWhite(6, 7);
-    grid[7][7] = Rook::CreateWhite(7, 7);
+void Chessboard::initPieces() {
+    for (int i = 0; i < 8; ++i) {
+        grid[i][1] = PieceFactory::BlackPawn(i,1);
+        grid[i][6] = PieceFactory::WhitePawn(i,6);
+    }
+    grid[0][0] = PieceFactory::BlackRook(0, 0);
+    grid[1][0] = PieceFactory::BlackHorse(1, 0);
+    grid[2][0] = PieceFactory::BlackBishop(2, 0);
+    grid[4][0] = PieceFactory::BlackQueen(4, 0);
+    grid[3][0] = PieceFactory::BlackKing(3, 0);
+    grid[5][0] = PieceFactory::BlackBishop(5, 0);
+    grid[6][0] = PieceFactory::BlackHorse(6, 0);
+    grid[7][0] = PieceFactory::BlackRook(7, 0);
+
+    grid[0][7] = PieceFactory::WhiteRook(0, 7);
+    grid[1][7] = PieceFactory::WhiteHorse(1, 7);
+    grid[2][7] = PieceFactory::WhiteBishop(2, 7);
+    grid[4][7] = PieceFactory::WhiteQueen(4, 7);
+    grid[3][7] = PieceFactory::WhiteKing(3, 7);
+    grid[5][7] = PieceFactory::WhiteBishop(5, 7);
+    grid[6][7] = PieceFactory::WhiteHorse(6, 7);
+    grid[7][7] = PieceFactory::WhiteRook(7, 7);
     
     // Set starting legal moves
     for (int i = 0; i < 8; ++i) {
