@@ -1,7 +1,5 @@
 #include "piece_interfaces.hpp"
 
-#include <iostream>
-
 Piece::Piece(float column, float row, const std::string& pieceName, PieceColor color) : position(Vector2{column, row}), color(color) {
     std::string fullPath = "../Graphics/" + pieceName + ".png";
     Image image = LoadImage(fullPath.c_str());
@@ -10,6 +8,7 @@ Piece::Piece(float column, float row, const std::string& pieceName, PieceColor c
 }
 
 void Piece::Draw() { DrawTexture(texture, position.x * cellSize, position.y * cellSize, WHITE); }
+
 
 bool Piece::isInsideBoard(int x, int y) { return x < 8 && y < 8 && x >= 0 && y >= 0; }
 

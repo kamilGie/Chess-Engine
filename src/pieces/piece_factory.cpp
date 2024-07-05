@@ -1,4 +1,5 @@
 #include "piece_factory.hpp"
+#include "pieces.hpp"
 
 std::shared_ptr<Pawn> PieceFactory::BlackPawn(int x, int y) {
     auto newPiece = std::make_shared<Pawn>(GetBlackPawnPrototype());

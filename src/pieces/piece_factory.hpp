@@ -1,10 +1,13 @@
 #pragma once
-#include <raylib.h>
-
 #include <memory>
-#include <unordered_map>
 
-#include "pieces.hpp"
+class Piece;
+class Pawn;
+class Rook;
+class Horse;
+class Bishop;
+class Queen;
+class King;
 
 class PieceFactory {
    public:
