@@ -2,8 +2,8 @@
 #include <raymath.h>
 
 #include "../chessboard/chessboard.hpp"
-#include "../pieces/pieces.hpp"
-#include "../pieces/piece_factory.hpp"
+#include "../pieces/models/include.hpp"
+#include "../pieces/factory/piece_factory.hpp"
 
 Sound Move::moveSound;
 Sound Move::captureSound;
@@ -67,7 +67,7 @@ void Move::castling() {
 }
 
 void Move::promote() {
-    piece = (piece->color == PieceColor::black) ? Piece::Create().QueenBlack().Position(to.x,to.y) : piece = Piece::Create().QueenWhite().Position(to.x,to.y) ;
+    piece = (piece->color == PieceColor::black) ? Piece::Create().Queen.black().Position(to.x,to.y) : piece = Piece::Create().Queen.white().Position(to.x,to.y) ;
 }
 
 void Move::CapturePiece(std::shared_ptr<Piece>& p) {

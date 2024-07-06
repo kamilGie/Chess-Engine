@@ -5,7 +5,7 @@
 
 #include "chessboard/chessboard.hpp"
 #include "move/move.hpp"
-#include "pieces/pieces.hpp"
+#include "pieces/models/include.hpp"
 #include "resources/audio.hpp"
 
 int cellSize = 100;
