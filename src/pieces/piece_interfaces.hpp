@@ -4,17 +4,22 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "piece_factory.hpp"
 
 enum class PieceColor {
     black,
     white
 };
 
+class PieceFactory;
+
 extern int cellSize;
 
 class Piece {
    public:
     void Draw();
+    // to set creating piece type do .(name of the piece).posttion(x,y);
+    static PieceFactory Create();
     virtual int getValue() = 0;
     virtual void SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]) = 0;
     virtual bool SetAtackedPools(std::shared_ptr<Piece> grid[][8], bool atackedPools[8][8]) = 0;

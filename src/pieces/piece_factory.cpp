@@ -1,76 +1,69 @@
 #include "piece_factory.hpp"
 #include "pieces.hpp"
 
-std::shared_ptr<Pawn> PieceFactory::BlackPawn(int x, int y) {
-    auto newPiece = std::make_shared<Pawn>(GetBlackPawnPrototype());
-    newPiece->position = {static_cast<float>(x), static_cast<float>(y)};
-    return newPiece;
+PieceFactory& PieceFactory::PawnWhite() {
+    P = std::make_shared<Pawn>(GetWhitePawnPrototype());
+    return *this;
 }
 
-std::shared_ptr<Pawn> PieceFactory::WhitePawn(int x, int y) {
-    auto newPiece = std::make_shared<Pawn>(GetWhitePawnPrototype());
-    newPiece->position = {static_cast<float>(x), static_cast<float>(y)};
-    return newPiece;
+PieceFactory& PieceFactory::PawnBlack() {
+    P = std::make_shared<Pawn>(GetBlackPawnPrototype());
+    return *this;
 }
 
-std::shared_ptr<Rook> PieceFactory::BlackRook(int x, int y) {
-    auto newPiece = std::make_shared<Rook>(GetBlackRookPrototype());
-    newPiece->position = {static_cast<float>(x), static_cast<float>(y)};
-    return newPiece;
+PieceFactory& PieceFactory::RookWhite() {
+    P = std::make_shared<Rook>(GetWhiteRookPrototype());
+    return *this;
 }
 
-std::shared_ptr<Rook> PieceFactory::WhiteRook(int x, int y) {
-    auto newPiece = std::make_shared<Rook>(GetWhiteRookPrototype());
-    newPiece->position = {static_cast<float>(x), static_cast<float>(y)};
-    return newPiece;
+PieceFactory& PieceFactory::RookBlack() {
+    P = std::make_shared<Rook>(GetBlackRookPrototype());
+    return *this;
 }
 
-std::shared_ptr<Horse> PieceFactory::BlackHorse(int x, int y) {
-    auto newPiece = std::make_shared<Horse>(GetBlackHorsePrototype());
-    newPiece->position = {static_cast<float>(x), static_cast<float>(y)};
-    return newPiece;
+PieceFactory& PieceFactory::HorseWhite() {
+    P = std::make_shared<Horse>(GetWhiteHorsePrototype());
+    return *this;
 }
 
-std::shared_ptr<Horse> PieceFactory::WhiteHorse(int x, int y) {
-    auto newPiece = std::make_shared<Horse>(GetWhiteHorsePrototype());
-    newPiece->position = {static_cast<float>(x), static_cast<float>(y)};
-    return newPiece;
+PieceFactory& PieceFactory::HorseBlack() {
+    P = std::make_shared<Horse>(GetBlackHorsePrototype());
+    return *this;
 }
 
-std::shared_ptr<Bishop> PieceFactory::BlackBishop(int x, int y) {
-    auto newPiece = std::make_shared<Bishop>(GetBlackBishopPrototype());
-    newPiece->position = {static_cast<float>(x), static_cast<float>(y)};
-    return newPiece;
+PieceFactory& PieceFactory::BishopWhite() {
+    P = std::make_shared<Bishop>(GetWhiteBishopPrototype());
+    return *this;
 }
 
-std::shared_ptr<Bishop> PieceFactory::WhiteBishop(int x, int y) {
-    auto newPiece = std::make_shared<Bishop>(GetWhiteBishopPrototype());
-    newPiece->position = {static_cast<float>(x), static_cast<float>(y)};
-    return newPiece;
+PieceFactory& PieceFactory::BishopBlack() {
+    P = std::make_shared<Bishop>(GetBlackBishopPrototype());
+    return *this;
 }
 
-std::shared_ptr<Queen> PieceFactory::BlackQueen(int x, int y) {
-    auto newPiece = std::make_shared<Queen>(GetBlackQueenPrototype());
-    newPiece->position = {static_cast<float>(x), static_cast<float>(y)};
-    return newPiece;
+PieceFactory& PieceFactory::QueenWhite() {
+    P = std::make_shared<Queen>(GetWhiteQueenPrototype());
+    return *this;
 }
 
-std::shared_ptr<Queen> PieceFactory::WhiteQueen(int x, int y) {
-    auto newPiece = std::make_shared<Queen>(GetWhiteQueenPrototype());
-    newPiece->position = {static_cast<float>(x), static_cast<float>(y)};
-    return newPiece;
+PieceFactory& PieceFactory::QueenBlack() {
+    P = std::make_shared<Queen>(GetBlackQueenPrototype());
+    return *this;
 }
 
-std::shared_ptr<King> PieceFactory::BlackKing(int x, int y) {
-    auto newPiece = std::make_shared<King>(GetBlackKingPrototype());
-    newPiece->position = {static_cast<float>(x), static_cast<float>(y)};
-    return newPiece;
+PieceFactory& PieceFactory::KingWhite() {
+    P = std::make_shared<King>(GetWhiteKingPrototype());
+    return *this;
 }
 
-std::shared_ptr<King> PieceFactory::WhiteKing(int x, int y) {
-    auto newPiece = std::make_shared<King>(GetWhiteKingPrototype());
-    newPiece->position = {static_cast<float>(x), static_cast<float>(y)};
-    return newPiece;
+PieceFactory& PieceFactory::KingBlack() {
+    P = std::make_shared<King>(GetBlackKingPrototype());
+    return *this;
+}
+
+PieceFactory& PieceFactory::Position(int x, int y) {
+    P->position = {static_cast<float>(x), static_cast<float>(y)};
+    return *this;
 }
 
 void PieceFactory::UnloadTextures() {

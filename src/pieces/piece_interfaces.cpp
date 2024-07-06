@@ -9,6 +9,9 @@ Piece::Piece(float column, float row, const std::string& pieceName, PieceColor c
 
 void Piece::Draw() { DrawTexture(texture, position.x * cellSize, position.y * cellSize, WHITE); }
 
+PieceFactory Piece::Create() {
+    return PieceFactory();
+}
 
 bool Piece::isInsideBoard(int x, int y) { return x < 8 && y < 8 && x >= 0 && y >= 0; }
 

@@ -2,7 +2,6 @@
 #include "../resources/colors.hpp"
 #include "../pieces/pieces.hpp"
 #include "../pieces/piece_factory.hpp"
-Chessboard::Chessboard() {}
 
 Chessboard::~Chessboard() {
     PieceFactory::UnloadTextures();
@@ -10,28 +9,28 @@ Chessboard::~Chessboard() {
 
 void Chessboard::initPieces() {
     for (int i = 0; i < 8; ++i) {
-        grid[i][1] = PieceFactory::BlackPawn(i,1);
-        grid[i][6] = PieceFactory::WhitePawn(i,6);
+        grid[i][1] = Piece::Create().PawnBlack().Position(i,1);
+        grid[i][6] = Piece::Create().PawnWhite().Position(i,6);
     }
-    grid[0][0] = PieceFactory::BlackRook(0, 0);
-    grid[1][0] = PieceFactory::BlackHorse(1, 0);
-    grid[2][0] = PieceFactory::BlackBishop(2, 0);
-    grid[4][0] = PieceFactory::BlackQueen(4, 0);
-    grid[3][0] = PieceFactory::BlackKing(3, 0);
-    grid[5][0] = PieceFactory::BlackBishop(5, 0);
-    grid[6][0] = PieceFactory::BlackHorse(6, 0);
-    grid[7][0] = PieceFactory::BlackRook(7, 0);
+    grid[0][0] = Piece::Create().RookBlack().Position(0, 0);
+    grid[1][0] = Piece::Create().HorseBlack().Position(1, 0);
+    grid[2][0] = Piece::Create().BishopBlack().Position(2, 0);
+    grid[4][0] = Piece::Create().QueenBlack().Position(4, 0);
+    grid[3][0] = Piece::Create().KingBlack().Position(3, 0);
+    grid[5][0] = Piece::Create().BishopBlack().Position(5, 0);
+    grid[6][0] = Piece::Create().HorseBlack().Position(6, 0);
+    grid[7][0] = Piece::Create().RookBlack().Position(7, 0);
 
-    grid[0][7] = PieceFactory::WhiteRook(0, 7);
-    grid[1][7] = PieceFactory::WhiteHorse(1, 7);
-    grid[2][7] = PieceFactory::WhiteBishop(2, 7);
-    grid[4][7] = PieceFactory::WhiteQueen(4, 7);
-    grid[3][7] = PieceFactory::WhiteKing(3, 7);
-    grid[5][7] = PieceFactory::WhiteBishop(5, 7);
-    grid[6][7] = PieceFactory::WhiteHorse(6, 7);
-    grid[7][7] = PieceFactory::WhiteRook(7, 7);
+    grid[0][7] = Piece::Create().RookWhite().Position(0, 7);
+    grid[1][7] = Piece::Create().HorseWhite().Position(1, 7);
+    grid[2][7] = Piece::Create().BishopWhite().Position(2, 7);
+    grid[4][7] = Piece::Create().QueenWhite().Position(4, 7);
+    grid[3][7] = Piece::Create().KingWhite().Position(3, 7);
+    grid[5][7] = Piece::Create().BishopWhite().Position(5, 7);
+    grid[6][7] = Piece::Create().HorseWhite().Position(6, 7);
+    grid[7][7] = Piece::Create().RookWhite().Position(7, 7);
     
-    // Set starting legal moves
+    // Set starting legal moves (pawn and horse)
     for (int i = 0; i < 8; ++i) {
         grid[i][1]->SetLegalMoves(grid);
         grid[i][6]->SetLegalMoves(grid);

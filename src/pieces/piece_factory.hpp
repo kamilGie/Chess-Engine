@@ -11,22 +11,28 @@ class King;
 
 class PieceFactory {
    public:
-    static std::shared_ptr<Pawn> BlackPawn(int x, int y);
-    static std::shared_ptr<Pawn> WhitePawn(int x, int y);
-    static std::shared_ptr<Rook> BlackRook(int x, int y);
-    static std::shared_ptr<Rook> WhiteRook(int x, int y);
-    static std::shared_ptr<Horse> BlackHorse(int x, int y);
-    static std::shared_ptr<Horse> WhiteHorse(int x, int y);
-    static std::shared_ptr<Bishop> BlackBishop(int x, int y);
-    static std::shared_ptr<Bishop> WhiteBishop(int x, int y);
-    static std::shared_ptr<Queen> BlackQueen(int x, int y);
-    static std::shared_ptr<Queen> WhiteQueen(int x, int y);
-    static std::shared_ptr<King> BlackKing(int x, int y);
-    static std::shared_ptr<King> WhiteKing(int x, int y);
+    PieceFactory& KingBlack();
+    PieceFactory& KingWhite();
+    PieceFactory& QueenBlack();
+    PieceFactory& QueenWhite();
+    PieceFactory& BishopBlack();
+    PieceFactory& BishopWhite();
+    PieceFactory& HorseBlack();
+    PieceFactory& HorseWhite();
+    PieceFactory& RookBlack();
+    PieceFactory& RookWhite();
+    PieceFactory& PawnBlack();
+    PieceFactory& PawnWhite();
+
+    PieceFactory& Position(int x, int y);
+
+    operator std::shared_ptr<Piece>() const { return std::move(P); }
 
     static void UnloadTextures();
 
    private:
+    std::shared_ptr<Piece> P;
+
     static Pawn GetWhitePawnPrototype();
     static Pawn GetBlackPawnPrototype();
     static Rook GetWhiteRookPrototype();
@@ -39,6 +45,4 @@ class PieceFactory {
     static Queen GetBlackQueenPrototype();
     static King GetWhiteKingPrototype();
     static King GetBlackKingPrototype();
-
-    PieceFactory() = delete;
 };

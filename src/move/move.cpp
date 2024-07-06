@@ -67,7 +67,7 @@ void Move::castling() {
 }
 
 void Move::promote() {
-    piece = (piece->color == PieceColor::black) ? PieceFactory::BlackQueen(to.x, to.y) : piece = PieceFactory::WhiteQueen(to.x, to.y);
+    piece = (piece->color == PieceColor::black) ? Piece::Create().QueenBlack().Position(to.x,to.y) : piece = Piece::Create().QueenWhite().Position(to.x,to.y) ;
 }
 
 void Move::CapturePiece(std::shared_ptr<Piece>& p) {
