@@ -26,7 +26,7 @@ class Piece {
     void Draw();
     
     virtual int getValue() = 0;
-    static PieceFactory Create();
+    static PieceFactory& Create();
     virtual void SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]) = 0;
     virtual bool SetAtackedPools(std::shared_ptr<Piece> grid[][8], bool atackedPools[8][8]) = 0;
 

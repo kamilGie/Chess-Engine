@@ -5,13 +5,13 @@ Piece::Piece(float column, float row, const std::string& pieceName, PieceColor c
     std::string fullPath = "../Graphics/" + pieceName + ".png";
     Image image = LoadImage(fullPath.c_str());
     texture = LoadTextureFromImage(image);
-    PieceFactory::Textures.push_back(&texture);
+    PieceFactory::Get().addTexture(&texture);
     UnloadImage(image);
 }
 
 void Piece::Draw() { DrawTexture(texture, position.x * cellSize, position.y * cellSize, WHITE); }
 
-PieceFactory Piece::Create() { return PieceFactory(); }
+PieceFactory& Piece::Create() { return PieceFactory::Get(); }
 
 bool Piece::isInsideBoard(int x, int y) { return x < 8 && y < 8 && x >= 0 && y >= 0; }
 

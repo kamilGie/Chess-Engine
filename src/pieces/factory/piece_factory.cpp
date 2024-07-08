@@ -1,10 +1,12 @@
 #include "piece_factory.hpp"
 
 void PieceFactory::UnloadTextures() {
-    for (auto texture : Textures) {
+    for (auto texture : textures) {
         UnloadTexture(*texture);
     }
-    Textures.clear();
+    textures.clear();
 }
 
-std::vector<Texture2D*> PieceFactory::Textures = {};
+void PieceFactory::addTexture(Texture2D* texture) {
+    textures.push_back(texture);
+}

@@ -4,7 +4,7 @@
 #include "../pieces/factory/piece_factory.hpp"
 
 Chessboard::~Chessboard() {
-    PieceFactory::UnloadTextures();
+    PieceFactory::Get().UnloadTextures();
 }
 
 void Chessboard::initPieces() {
