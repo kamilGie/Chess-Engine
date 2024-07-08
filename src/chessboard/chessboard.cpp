@@ -2,12 +2,24 @@
 #include "../resources/colors.hpp"
 #include "../pieces/models/include.hpp"
 #include "../pieces/factory/piece_factory.hpp"
+#include "../move/move.hpp"
 
 Chessboard::~Chessboard() {
     PieceFactory::Get().UnloadTextures();
+    UnloadTexture(Move::whitePromotionTexture);
+    UnloadTexture(Move::blackPromotionTexture);
 }
 
 void Chessboard::initPieces() {
+    std::string fullPathWhite = "../Graphics/promoteWhite.png";
+    std::string fullPathBlack = "../Graphics/promoteBlack.png";
+    Image Wimage = LoadImage(fullPathWhite.c_str());
+    Image Bimage = LoadImage(fullPathBlack.c_str());
+    Move::whitePromotionTexture  = LoadTextureFromImage(Wimage);
+    Move::blackPromotionTexture  = LoadTextureFromImage(Bimage);
+    UnloadImage(Wimage);
+    UnloadImage(Bimage);
+
     for (int i = 0; i < 8; ++i) {
         grid[i][1] = Piece::Create().Pawn.black().Position(i,1);
         grid[i][6] = Piece::Create().Pawn.white().Position(i,6);

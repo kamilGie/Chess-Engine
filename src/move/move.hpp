@@ -10,16 +10,20 @@ class Move {
    public:
     Move(Vector2 from, Vector2 to, Chessboard& chessboard);
     void MoveAnimation();
+    void PromoteAnimation();
     void Update();
     void ExecuteMove();
 
     bool winningMove = false;
     bool stalematingMove = false;
     bool animationEnd = false;
+    bool promotion = false;
 
     static Sound moveSound;
     static Sound captureSound;
     static Sound checkSound;
+    static Texture2D whitePromotionTexture;
+    static Texture2D blackPromotionTexture;
 
    private:
     Vector2 from;

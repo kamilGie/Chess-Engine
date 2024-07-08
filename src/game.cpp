@@ -66,6 +66,7 @@ void Game::Draw() {
     chessboard.DrawPieces();
     if (clickedPiece) chessboard.DrawSelectedPieceDetails(clickedPiece);
     if (move) move->MoveAnimation();
+    if(move && move->promotion) move->PromoteAnimation();
     if (gameStatus != GameStatus::playing) GameOver();
 
     EndDrawing();
