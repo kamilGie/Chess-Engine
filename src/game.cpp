@@ -2,8 +2,9 @@
 
 #include <raylib.h>
 #include <raymath.h>
-#include <iostream>
+
 #include <fstream>
+#include <iostream>
 
 #include "ChessAI/ChessAI.hpp"
 #include "chessboard/chessboard.hpp"
@@ -22,36 +23,24 @@ enum class GameStatus {
 
 Game::Game() {
     std::ifstream file("../src/GameSettings.txt");
-
-    if (file.is_open()) {
-        std::string text;
-        while (file >> text) {
-            if (text == "ChessAI") {
-                file >> text;
-                if (text == "true") {
-                    file >> text;
-                    file >> text;
-                    if (text == "black") {
-                        ai = new ChessAI(PieceColor::black);
-                    } else {
-                        ai = new ChessAI(PieceColor::white);
-                    }
-                } else {
-                    ai = nullptr;
-                    file >> text;
-                    file >> text;
-                }
-            } else if (text == "TargetFPS:") {
-                int fps;
-                file >> fps;
-                SetTargetFPS(fps);
+    std::string text;
+    while (file >> text) {
+        if (text == "ChessAI") {
+            file >> text;
+            if (text == "true") {
+                file >> text >> text;
+                ai = new ChessAI(text == "black" ? PieceColor::black : PieceColor::white);
+            } else {
+                ai = nullptr;
+                file >> text >> text;
             }
+        } else if (text == "TargetFPS:") {
+            int fps;
+            file >> fps;
+            SetTargetFPS(fps);
         }
-        file.close();
-    } else {
-        ai = nullptr;
-        SetTargetFPS(60);
     }
+    file.close();
 
     InitWindow(800, 800, "chess");
     gameStatus = GameStatus::playing;
