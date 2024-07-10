@@ -1,5 +1,6 @@
 #pragma once
 #include "chessboard/chessboard.hpp"
+#include "ChessAI/ChessAI.hpp"
 
 class Piece;
 class Move;
@@ -18,6 +19,7 @@ class Game {
     void GameOver();
 
    private:
+    ChessAI ai = ChessAI();
     Move* move = nullptr;
     PieceColor ColorTurn;
     GameStatus gameStatus;

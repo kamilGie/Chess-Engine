@@ -57,6 +57,7 @@ void Game::Update() {
             ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
         }
     }
+    else if(ColorTurn==PieceColor::black) move = ai.GetMove(chessboard);
 }
 
 void Game::Draw() {
