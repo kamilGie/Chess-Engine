@@ -51,6 +51,7 @@ Game::Game() {
 
 Game::~Game() {
     if (ai) delete ai;
+    if (move) delete move;
     UnloadSounds();
 }
 
