@@ -6,7 +6,7 @@ bool LimitedRangePiece::SetAtackedPools(std::shared_ptr<Piece> grid[][8], bool a
         int y = position.y + dir.y;
         if (isInsideBoard(x, y)) {
             atackedPools[x][y] = true;
-            if (grid[x][y] && grid[x][y]->color != color && grid[x][y]->getValue() == 20) return true;
+            if (grid[x][y] && grid[x][y]->color != color && grid[x][y]->getValue() == 100) return true;
         }
     }
     return false;

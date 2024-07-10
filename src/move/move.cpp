@@ -40,7 +40,7 @@ void Move::Update() {
 
 void Move::ExecuteMove() {
     if (piece->getValue() == 1) enPassantCalculation();
-    if (piece->getValue() == 20 && abs(from.x - to.x) > 1) castling();
+    if (piece->getValue() == 100 && abs(from.x - to.x) > 1) castling();
 
     if (chessboard.grid[(int)to.x][(int)to.y]) CapturePiece(chessboard.grid[(int)to.x][(int)to.y]);
     piece->position = to;
