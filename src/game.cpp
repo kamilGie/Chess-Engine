@@ -72,6 +72,8 @@ void Game::HandleInput() {
 }
 
 void Game::Update() {
+    if(gameStatus != GameStatus::playing) return;
+
     if (move) {
         move->Update();
         if (move->animationEnd) {
@@ -82,8 +84,10 @@ void Game::Update() {
             move = nullptr;
             ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
         }
-    } else if (ai && ColorTurn == ai->colorAI)
+    } else if (ai && ColorTurn == ai->colorAI){
         move = ai->GetMove(chessboard);
+        if (move->promotion) move->AI_promotion=true;
+    }
 }
 
 void Game::Draw() {
@@ -93,7 +97,7 @@ void Game::Draw() {
     chessboard.DrawPieces();
     if (clickedPiece) chessboard.DrawSelectedPieceDetails(clickedPiece);
     if (move) move->MoveAnimation();
-    if (move && move->promotion) move->PromoteAnimation();
+    if (move && move->promotion && !move->AI_promotion) move->PromoteAnimation();
     if (gameStatus != GameStatus::playing) GameOver();
 
     EndDrawing();

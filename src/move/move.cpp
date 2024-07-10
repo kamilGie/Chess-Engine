@@ -24,13 +24,13 @@ void Move::MoveAnimation() {
 }
 
 void Move::PromoteAnimation() {
-    if(piece->color == PieceColor::white) DrawTexture(whitePromotionTexture, to.x * cellSize, to.y * cellSize, WHITE);
-    if(piece->color == PieceColor::black) DrawTexture(blackPromotionTexture, to.x * cellSize, to.y * cellSize-(3*cellSize), WHITE);
+    if (piece->color == PieceColor::white) DrawTexture(whitePromotionTexture, to.x * cellSize, to.y * cellSize, WHITE);
+    if (piece->color == PieceColor::black) DrawTexture(blackPromotionTexture, to.x * cellSize, to.y * cellSize - (3 * cellSize), WHITE);
 }
 
 void Move::Update() {
     if (Vector2Distance(AnimationPosition, Vector2Scale(to, cellSize)) > 0.1f) {
-        AnimationPosition = Vector2Lerp(AnimationPosition, Vector2Scale(to, cellSize), 20*GetFrameTime() );
+        AnimationPosition = Vector2Lerp(AnimationPosition, Vector2Scale(to, cellSize), 20 * GetFrameTime());
     } else if (promotion) {
         promote();
     } else {
@@ -45,7 +45,6 @@ void Move::ExecuteMove() {
     if (chessboard.grid[(int)to.x][(int)to.y]) CapturePiece(chessboard.grid[(int)to.x][(int)to.y]);
     piece->position = to;
     piece->moveCount++;
-    if (promotion) promote();
     chessboard.grid[(int)to.x][(int)to.y] = piece;
     CalculateLegalMoves();
 }
@@ -78,7 +77,10 @@ void Move::castling() {
 }
 
 void Move::promote() {
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && GetMouseX() / cellSize == to.x && GetMouseY() / cellSize >= to.y && GetMouseY() / cellSize < to.y + 4) {
+    if (AI_promotion) {
+        piece = piece->color == PieceColor::white ? Piece::Create().Queen.white().Position(to.x, to.y) : Piece::Create().Queen.black().Position(to.x, to.y);
+        promotion = false;
+    } else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && GetMouseX() / cellSize == to.x && GetMouseY() / cellSize >= to.y && GetMouseY() / cellSize < to.y + 4) {
         int y = GetMouseY() / cellSize;
         if (y == 0) piece = Piece::Create().Queen.white().Position(to.x, to.y);
         if (y == 1) piece = Piece::Create().Rook.white().Position(to.x, to.y);
@@ -90,7 +92,6 @@ void Move::promote() {
         if (y == 5) piece = Piece::Create().Horse.black().Position(to.x, to.y);
         if (y == 4) piece = Piece::Create().Bishop.black().Position(to.x, to.y);
 
-        animationEnd = true;
         promotion = false;
     }
 }

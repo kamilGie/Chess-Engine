@@ -18,6 +18,7 @@ class Move {
     bool stalematingMove = false;
     bool animationEnd = false;
     bool promotion = false;
+    bool AI_promotion = false;
 
     static Sound moveSound;
     static Sound captureSound;

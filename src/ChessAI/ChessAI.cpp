@@ -11,6 +11,14 @@ ChessAI::~ChessAI() {
 }
 
 Move* ChessAI::GetMove(Chessboard& chessboard) {
-
-    return  new Move({0, 1}, {0, 3},chessboard);
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (chessboard.grid[i][j] && chessboard.grid[i][j]->color == colorAI) {
+                for (auto& move : chessboard.grid[i][j]->legalMoves) {
+                        return new Move({(float)i, (float)j}, move,chessboard);
+                }
+            }
+        }
+    }
+    return nullptr;
 }
