@@ -5,6 +5,21 @@
 #include <fstream>
 
 Launcher::Launcher() {
+    std::ifstream file("../src/GameSettings.txt");
+    std::string text;
+    while (file >> text) {
+        if (text == "ChessAI") {
+            file >> text;
+            ChessAI = (text == "true") ? true : false;
+        } else if (text == "ChessAIColor") {
+            file >> text;
+            AIBlack = (text == "black") ? true : false;
+        } else if (text == "TargetFPS") {
+            file >> fps;
+        }
+    }
+    file.close();
+
     SetTargetFPS(60);
     InitWindow(300, 500, "chess launcher");
 }

@@ -9,8 +9,8 @@ class Launcher {
     void HandleInput();
     bool start = false;
     private:
-    int fps=60;
-    bool ChessAI=true;
-    bool AIBlack=true;
+    int fps;
+    bool ChessAI;
+    bool AIBlack;
     bool hasSettingsChanged=false;
 };

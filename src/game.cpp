@@ -34,7 +34,7 @@ Game::Game() {
                 ai = nullptr;
                 file >> text >> text;
             }
-        } else if (text == "TargetFPS:") {
+        } else if (text == "TargetFPS") {
             int fps;
             file >> fps;
             SetTargetFPS(fps);
