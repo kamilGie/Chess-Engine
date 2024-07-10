@@ -1,13 +1,14 @@
 #pragma once
 
-class Launcher {
+class Menu {
    public:
-    Launcher();
-    ~Launcher();
+    Menu();
+    ~Menu();
     void Draw();
     void Update();
     void HandleInput();
-    bool start = false;
+    bool running = true;
+    bool quit = false;
     private:
     int fps;
     bool ChessAI;

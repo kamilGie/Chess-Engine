@@ -1,14 +1,15 @@
 #include "game.hpp"
-#include "launcher/launcher.hpp"
+#include "Menu/Menu.hpp"
 
 int main() {
-    {
-        Launcher launcher;
-        while (!WindowShouldClose() && !launcher.start) {
-            launcher.HandleInput();
-            launcher.Update();
-            launcher.Draw();
-        }
+    InitWindow(800, 800, "chess");
+
+    // for loop to delete Menu object after it's scope
+    for (Menu menu;menu.running;){
+        menu.HandleInput();
+        menu.Update();
+        menu.Draw();
+        if (WindowShouldClose() || menu.quit) return 0;
     }
 
     Game game;

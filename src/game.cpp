@@ -42,7 +42,6 @@ Game::Game() {
     }
     file.close();
 
-    InitWindow(800, 800, "chess");
     gameStatus = GameStatus::playing;
     ColorTurn = PieceColor::white;
     chessboard.initPieces();

@@ -1,10 +1,10 @@
-#include "launcher.hpp"
+#include "Menu.hpp"
 
 #include <raylib.h>
 
 #include <fstream>
 
-Launcher::Launcher() {
+Menu::Menu() {
     std::ifstream file("../src/GameSettings.txt");
     std::string text;
     while (file >> text) {
@@ -21,11 +21,9 @@ Launcher::Launcher() {
     file.close();
 
     SetTargetFPS(60);
-    InitWindow(300, 500, "chess launcher");
 }
 
-Launcher::~Launcher() {
-    CloseWindow();
+Menu::~Menu() {
     if (!hasSettingsChanged) return;
 
     std::ofstream file("../src/GameSettings.txt");
@@ -37,7 +35,7 @@ Launcher::~Launcher() {
     }
 }
 
-void Launcher::Draw() {
+void Menu::Draw() {
     BeginDrawing();
     ClearBackground(RAYWHITE);
     DrawText("Chess AI", 10, 10, 20, BLACK);
@@ -54,12 +52,12 @@ void Launcher::Draw() {
     EndDrawing();
 }
 
-void Launcher::Update() {
+void Menu::Update() {
 }
 
-void Launcher::HandleInput() {
+void Menu::HandleInput() {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(GetMousePosition(), {(float)GetScreenWidth() / 2 - 140, (float)GetScreenHeight() - 100, 280, 50})) start = true;
+        if (CheckCollisionPointRec(GetMousePosition(), {(float)GetScreenWidth() / 2 - 140, (float)GetScreenHeight() - 100, 280, 50})) running = false;
         if (CheckCollisionPointRec(GetMousePosition(), {10, 10, 280, 20})) {
             ChessAI = !ChessAI;
             hasSettingsChanged = true;
