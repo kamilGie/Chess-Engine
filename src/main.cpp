@@ -1,8 +1,15 @@
 #include "game.hpp"
+#include "launcher/launcher.hpp"
 
 int main() {
-    InitWindow(800, 800, "chess");
-    SetTargetFPS(120);
+    {
+        Launcher launcher;
+        while (!WindowShouldClose()) {
+            launcher.HandleInput();
+            launcher.Update();
+            launcher.Draw();
+        }
+    }
 
     Game game;
     while (!WindowShouldClose()) {
@@ -10,6 +17,5 @@ int main() {
         game.Update();
         game.Draw();
     }
-
     CloseWindow();
 }

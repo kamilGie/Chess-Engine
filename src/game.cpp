@@ -2,7 +2,10 @@
 
 #include <raylib.h>
 #include <raymath.h>
+#include <iostream>
+#include <fstream>
 
+#include "ChessAI/ChessAI.hpp"
 #include "chessboard/chessboard.hpp"
 #include "move/move.hpp"
 #include "pieces/models/include.hpp"
@@ -18,6 +21,39 @@ enum class GameStatus {
 };
 
 Game::Game() {
+    std::ifstream file("../src/GameSettings.txt");
+
+    if (file.is_open()) {
+        std::string text;
+        while (file >> text) {
+            if (text == "ChessAI") {
+                file >> text;
+                if (text == "true") {
+                    file >> text;
+                    file >> text;
+                    if (text == "black") {
+                        ai = new ChessAI(PieceColor::black);
+                    } else {
+                        ai = new ChessAI(PieceColor::white);
+                    }
+                } else {
+                    ai = nullptr;
+                    file >> text;
+                    file >> text;
+                }
+            } else if (text == "TargetFPS:") {
+                int fps;
+                file >> fps;
+                SetTargetFPS(fps);
+            }
+        }
+        file.close();
+    } else {
+        ai = nullptr;
+        SetTargetFPS(60);
+    }
+
+    InitWindow(800, 800, "chess");
     gameStatus = GameStatus::playing;
     ColorTurn = PieceColor::white;
     chessboard.initPieces();
@@ -25,6 +61,7 @@ Game::Game() {
 }
 
 Game::~Game() {
+    if (ai) delete ai;
     UnloadSounds();
 }
 
@@ -35,10 +72,10 @@ void Game::HandleInput() {
         bool isOwnPieceClick = chessboard.grid[x][y].get() && (chessboard.grid[x][y]->color == ColorTurn);
         bool isLegalMove = (clickedPiece && std::any_of(clickedPiece->legalMoves.begin(), clickedPiece->legalMoves.end(), [&](auto move) { return Vector2Equals(move, {(float)x, (float)y}); }));
 
-        //logic on click 
-        if (isOwnPieceClick){
+        // logic on click
+        if (isOwnPieceClick) {
             clickedPiece = chessboard.grid[x][y];
-        }else if (clickedPiece && isLegalMove) {
+        } else if (clickedPiece && isLegalMove) {
             move = new Move{clickedPiece->position, {(float)x, (float)y}, chessboard};
             clickedPiece = nullptr;
         }
@@ -56,8 +93,8 @@ void Game::Update() {
             move = nullptr;
             ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
         }
-    }
-    else if(ColorTurn==PieceColor::black) move = ai.GetMove(chessboard);
+    } else if (ai && ColorTurn == ai->colorAI)
+        move = ai->GetMove(chessboard);
 }
 
 void Game::Draw() {
@@ -67,7 +104,7 @@ void Game::Draw() {
     chessboard.DrawPieces();
     if (clickedPiece) chessboard.DrawSelectedPieceDetails(clickedPiece);
     if (move) move->MoveAnimation();
-    if(move && move->promotion) move->PromoteAnimation();
+    if (move && move->promotion) move->PromoteAnimation();
     if (gameStatus != GameStatus::playing) GameOver();
 
     EndDrawing();

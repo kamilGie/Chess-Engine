@@ -1,9 +1,9 @@
 #pragma once
 #include "chessboard/chessboard.hpp"
-#include "ChessAI/ChessAI.hpp"
 
 class Piece;
 class Move;
+class ChessAI;
 enum class PieceColor;
 enum class GameStatus;
 
@@ -19,8 +19,8 @@ class Game {
     void GameOver();
 
    private:
-    ChessAI ai = ChessAI();
     Move* move = nullptr;
+    ChessAI* ai = nullptr;
     PieceColor ColorTurn;
     GameStatus gameStatus;
     Chessboard chessboard = Chessboard();

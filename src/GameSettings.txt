@@ -1,0 +1,3 @@
+ChessAI true
+ChessAIColor black
+TargetFPS 120
