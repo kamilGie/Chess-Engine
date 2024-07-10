@@ -4,7 +4,7 @@
 int main() {
     {
         Launcher launcher;
-        while (!WindowShouldClose()) {
+        while (!WindowShouldClose() && !launcher.start) {
             launcher.HandleInput();
             launcher.Update();
             launcher.Draw();
