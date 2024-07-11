@@ -57,7 +57,7 @@ float ChessAI::CalculateMove(Vector2 from, Vector2 to, std::shared_ptr<Piece> (&
     if (pieceCaptured) {
         score += pieceCaptured->getValue();
     }
-    if (depth == 1) return score;
+    if (depth == 2) return score;
 
     grid[x][y] = grid[(int)from.x][(int)from.y];
     grid[(int)from.x][(int)from.y] = nullptr;
