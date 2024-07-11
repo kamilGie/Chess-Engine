@@ -1,5 +1,6 @@
 #include "piece.hpp"
 #include "../factory/piece_factory.hpp"
+#include "../models/king/king.hpp"
 
 Piece::Piece(float column, float row, const std::string& pieceName, PieceColor color) : position(Vector2{column, row}), color(color) {
     std::string fullPath = "../Graphics/" + pieceName + ".png";
@@ -37,7 +38,11 @@ bool Piece::SafeMove(int x, int y, std::shared_ptr<Piece> grid[][8]) {
 bool Piece::isKingChecked(std::shared_ptr<Piece> grid[][8]) {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            if (grid[i][j] && grid[i][j]->color != color && grid[i][j]->isAtackingKing(grid)) return true;
+            auto p = grid[i][j];
+            if (p && p->color == color && p->getValue()==100) {
+                if (std::static_pointer_cast<King>(p)->isGettingAtack(grid)) return true;
+                else return false;
+            }
         }
     }
     return false;

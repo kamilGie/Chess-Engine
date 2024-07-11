@@ -6,6 +6,7 @@ class King : public LimitedRangePiece {
    public:
     int getValue() override { return 100; }
     void SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]) override;
+    bool isGettingAtack(std::shared_ptr<Piece> grid[][8]);
 
     friend class KingPieceFactory;
 };

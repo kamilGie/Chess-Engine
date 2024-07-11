@@ -11,6 +11,7 @@ ChessAI::ChessAI(PieceColor colorAI) : colorAI(colorAI) {}
 
 ChessAI::~ChessAI() {
 }
+int totalMoves=0;
 
 Move* ChessAI::GetMove(Chessboard& chessboard) {
     struct BestMove {
@@ -18,7 +19,7 @@ Move* ChessAI::GetMove(Chessboard& chessboard) {
         Vector2 from;
         Vector2 to;
     };
-
+    totalMoves=0;
     BestMove bestMove;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
@@ -35,7 +36,7 @@ Move* ChessAI::GetMove(Chessboard& chessboard) {
             }
         }
     }
-
+    std::cout<<"Total moves: "<<totalMoves<<std::endl<<std::endl<<std::endl;
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
             if (chessboard.grid[i][j] && chessboard.grid[i][j]->color != colorAI) {
@@ -48,7 +49,7 @@ Move* ChessAI::GetMove(Chessboard& chessboard) {
 }
 
 float ChessAI::CalculateMove(Vector2 from, Vector2 to, std::shared_ptr<Piece> (&grid)[8][8],PieceColor colorTurn,int depth) {
-
+    totalMoves++;
     float score = 0;
     int x = to.x;
     int y = to.y;

@@ -1,6 +1,7 @@
 #include "move.hpp"
 
 #include <raymath.h>
+#include <iostream>
 
 #include "../chessboard/chessboard.hpp"
 #include "../pieces/factory/piece_factory.hpp"
@@ -110,6 +111,7 @@ void Move::CalculateLegalMoves() {
 
     bool NoPossibleMoves = std::all_of(&chessboard.grid[0][0], &chessboard.grid[0][0] + 8 * 8, [&](auto& p) { return !p || p->color == piece->color || p->legalMoves.empty(); });
     if (isKingChecked()) {
+        std::cout<<"Check"<<std::endl;
         PlaySound(checkSound);
         if (NoPossibleMoves) winningMove = true;
     } else if (NoPossibleMoves) {
@@ -120,7 +122,11 @@ void Move::CalculateLegalMoves() {
 bool Move::isKingChecked() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            if (chessboard.grid[i][j] && chessboard.grid[i][j]->color == piece->color && chessboard.grid[i][j]->isAtackingKing(chessboard.grid)) return true;
+            auto p = chessboard.grid[i][j];
+            if (p && p->color != piece->color && p->getValue()==100) {
+                if (std::static_pointer_cast<King>(p)->isGettingAtack(chessboard.grid)) return true;
+                else return false;
+            }
         }
     }
     return false;

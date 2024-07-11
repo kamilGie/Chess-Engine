@@ -24,7 +24,6 @@ bool LongRangePiece::isAtackingKing(std::shared_ptr<Piece> grid[][8]) {
             x += dir.x;
             y += dir.y;
             if (isInsideBoard(x, y) && grid[x][y] && grid[x][y]->color != color && grid[x][y]->getValue() == 100)  return true;
-
         } while (!grid[x][y]);
     }
     return false;
