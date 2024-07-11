@@ -118,10 +118,9 @@ void Move::CalculateLegalMoves() {
 }
 
 bool Move::isKingChecked() {
-    bool atackedPools[8][8]{};
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            if (chessboard.grid[i][j] && chessboard.grid[i][j]->color == piece->color && chessboard.grid[i][j]->SetAtackedPools(chessboard.grid, atackedPools)) return true;
+            if (chessboard.grid[i][j] && chessboard.grid[i][j]->color == piece->color && chessboard.grid[i][j]->isAtackingKing(chessboard.grid)) return true;
         }
     }
     return false;

@@ -35,10 +35,9 @@ bool Piece::SafeMove(int x, int y, std::shared_ptr<Piece> grid[][8]) {
 }
 
 bool Piece::isKingChecked(std::shared_ptr<Piece> grid[][8]) {
-    bool AtackedPools[8][8]{};
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            if (grid[i][j] && grid[i][j]->color != color && grid[i][j]->SetAtackedPools(grid, AtackedPools)) return true;
+            if (grid[i][j] && grid[i][j]->color != color && grid[i][j]->isAtackingKing(grid)) return true;
         }
     }
     return false;

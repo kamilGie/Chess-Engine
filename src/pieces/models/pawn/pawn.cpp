@@ -19,17 +19,11 @@ void Pawn::SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]){
     en_passant = {0, 0};
 }
 
-bool Pawn::SetAtackedPools(std::shared_ptr<Piece> grid[][8], bool atackedPools[8][8]) {
+bool Pawn::isAtackingKing(std::shared_ptr<Piece> grid[][8]) {
     int moveDirection = color == PieceColor::white ? -1 : 1;
     int x = position.x;
     int y = position.y + moveDirection;
-    if (x > 0 && isInsideBoard(x - 1, y)) {
-        atackedPools[x - 1][y] = true;
-        if (grid[x - 1][y] && grid[x - 1][y]->color != color && grid[x - 1][y]->getValue() == 100) return true;
-    }
-    if (x < 7 && isInsideBoard(x + 1, y)) {
-        atackedPools[x + 1][y] = true;
-        if (grid[x + 1][y] && grid[x + 1][y]->color != color && grid[x + 1][y]->getValue() == 100) return true;
-    }
+    if (isInsideBoard(x - 1, y) && grid[x - 1][y] && grid[x - 1][y]->color != color && grid[x - 1][y]->getValue() == 100) return true;
+    if (isInsideBoard(x + 1, y) && grid[x + 1][y] && grid[x + 1][y]->color != color && grid[x + 1][y]->getValue() == 100) return true;
     return false;
 }

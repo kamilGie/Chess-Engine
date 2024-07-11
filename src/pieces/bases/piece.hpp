@@ -28,7 +28,7 @@ class Piece {
     virtual int getValue() = 0;
     static PieceFactory& Create();
     virtual void SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]) = 0;
-    virtual bool SetAtackedPools(std::shared_ptr<Piece> grid[][8], bool atackedPools[8][8]) = 0;
+    virtual bool isAtackingKing(std::shared_ptr<Piece> grid[][8]) = 0;
 
     Vector2 position;
     PieceColor color;
