@@ -12,7 +12,6 @@ void Pawn::SetMoves(std::shared_ptr<Piece> (&grid)[][8]){
     int y = position.y + moveDirection;
     if (!grid[x][y]) {
         addLegalMove(x, y);
-        std::cout<<grid[x][y + moveDirection]<<std::endl;
         if (moveCount == 0 && !grid[x][y + moveDirection]) addLegalMove(x, y + moveDirection);
     }
     if (x > 0 && grid[x - 1][y] && grid[x - 1][y]->color != color) addLegalMove(x - 1, y);

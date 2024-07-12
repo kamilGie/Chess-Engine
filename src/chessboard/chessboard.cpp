@@ -27,8 +27,8 @@ void Chessboard::initPieces() {
     grid[0][0] = Piece::Create().Rook.black().Position(0, 0);
     grid[1][0] = Piece::Create().Horse.black().Position(1, 0);
     grid[2][0] = Piece::Create().Bishop.black().Position(2, 0);
-    grid[4][0] = Piece::Create().Queen.black().Position(4, 0);
-    grid[3][0] = Piece::Create().King.black().Position(3, 0);
+    grid[3][0] = Piece::Create().Queen.black().Position(3, 0);
+    grid[4][0] = Piece::Create().King.black().Position(4, 0);
     grid[5][0] = Piece::Create().Bishop.black().Position(5, 0);
     grid[6][0] = Piece::Create().Horse.black().Position(6, 0);
     grid[7][0] = Piece::Create().Rook.black().Position(7, 0);
@@ -36,8 +36,8 @@ void Chessboard::initPieces() {
     grid[0][7] = Piece::Create().Rook.white().Position(0, 7);
     grid[1][7] = Piece::Create().Horse.white().Position(1, 7);
     grid[2][7] = Piece::Create().Bishop.white().Position(2, 7);
-    grid[4][7] = Piece::Create().Queen.white().Position(4, 7);
-    grid[3][7] = Piece::Create().King.white().Position(3, 7);
+    grid[3][7] = Piece::Create().Queen.white().Position(3, 7);
+    grid[4][7] = Piece::Create().King.white().Position(4, 7);
     grid[5][7] = Piece::Create().Bishop.white().Position(5, 7);
     grid[6][7] = Piece::Create().Horse.white().Position(6, 7);
     grid[7][7] = Piece::Create().Rook.white().Position(7, 7);
