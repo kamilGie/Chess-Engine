@@ -4,7 +4,7 @@
 
 class LimitedRangePiece : public Piece {
    public:
-    void SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]) override;
+    void SetMoves(std::shared_ptr<Piece> (&grid)[][8]) override;
     bool isAtackingKing(std::shared_ptr<Piece> grid[][8]) override;
 
    protected:

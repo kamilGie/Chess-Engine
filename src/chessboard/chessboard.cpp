@@ -42,16 +42,7 @@ void Chessboard::initPieces() {
     grid[6][7] = Piece::Create().Horse.white().Position(6, 7);
     grid[7][7] = Piece::Create().Rook.white().Position(7, 7);
     
-    // Set starting legal moves (pawn and horse)
-    for (int i = 0; i < 8; ++i) {
-        grid[i][1]->SetLegalMoves(grid);
-        grid[i][6]->SetLegalMoves(grid);
-    }
-    grid[1][0]->SetLegalMoves(grid);
-    grid[6][0]->SetLegalMoves(grid);
-    grid[1][7]->SetLegalMoves(grid);
-    grid[6][7]->SetLegalMoves(grid);
-
+    Move::SetMoves(grid, PieceColor::white);
 }
 
 void Chessboard::DrawSquares() {

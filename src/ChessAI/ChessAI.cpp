@@ -15,7 +15,7 @@ int totalMoves=0;
 
 Move* ChessAI::GetMove(Chessboard& chessboard) {
     struct BestMove {
-        float score = -1;
+        float score = -101;
         Vector2 from;
         Vector2 to;
     };
@@ -37,13 +37,8 @@ Move* ChessAI::GetMove(Chessboard& chessboard) {
         }
     }
     std::cout<<"Total moves: "<<totalMoves<<std::endl<<std::endl<<std::endl;
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            if (chessboard.grid[i][j] && chessboard.grid[i][j]->color != colorAI) {
-                chessboard.grid[i][j]->SetLegalMoves(chessboard.grid);
-            }
-        }
-    }
+    PieceColor enemyColor = (colorAI == PieceColor::white) ? PieceColor::black : PieceColor::white;
+    Move::SetMoves(chessboard.grid, enemyColor);
 
     return new Move(bestMove.from, bestMove.to, chessboard);
 }
@@ -53,22 +48,17 @@ float ChessAI::CalculateMove(Vector2 from, Vector2 to, std::shared_ptr<Piece> (&
     float score = 0;
     int x = to.x;
     int y = to.y;
+    PieceColor enemyColor = (colorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
     std::shared_ptr<Piece> pieceCaptured = grid[x][y];
     if (pieceCaptured) {
         score += pieceCaptured->getValue();
     }
-    if (depth == 2) return score;
+    if (depth == 1 || score == 100) return score;
 
     grid[x][y] = grid[(int)from.x][(int)from.y];
     grid[(int)from.x][(int)from.y] = nullptr;
 
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            if (grid[i][j] && grid[i][j]->color != colorTurn) {
-                grid[i][j]->SetLegalMoves(grid);
-            }
-        }
-    }
+    Move::SetMoves(grid, enemyColor);
 
 
     for (int i = 0; i < 8; i++) {
@@ -76,8 +66,7 @@ float ChessAI::CalculateMove(Vector2 from, Vector2 to, std::shared_ptr<Piece> (&
             if (grid[i][j] && grid[i][j]->color != colorTurn) {
                 for (auto& to : grid[i][j]->legalMoves) {
                     Vector2 from = {static_cast<float>(i), static_cast<float>(j)};
-                    if (colorTurn == PieceColor::white) score -= CalculateMove(from, to, grid,PieceColor::black,depth+1);
-                    else score -= CalculateMove(from, to, grid,PieceColor::white,depth+1);
+                    score -= CalculateMove(from, to, grid,enemyColor ,depth+1);
                 }
             }
         }

@@ -1,6 +1,7 @@
 #include "piece.hpp"
 #include "../factory/piece_factory.hpp"
 #include "../models/king/king.hpp"
+#include <iostream>
 
 Piece::Piece(float column, float row, const std::string& pieceName, PieceColor color) : position(Vector2{column, row}), color(color) {
     std::string fullPath = "../Graphics/" + pieceName + ".png";
@@ -26,7 +27,6 @@ bool Piece::SafeMove(int x, int y, std::shared_ptr<Piece> grid[][8]) {
     position = {static_cast<float>(x), static_cast<float>(y)};
 
     bool safe = !isKingChecked(grid);
-
     // Restore the original position of the moved piece
     position = BeforeMove;
     grid[(int)BeforeMove.x][(int)BeforeMove.y] = std::move(grid[x][y]);

@@ -27,8 +27,9 @@ class Piece {
     
     virtual int getValue() = 0;
     static PieceFactory& Create();
-    virtual void SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]) = 0;
+    virtual void SetMoves(std::shared_ptr<Piece> (&grid)[][8]) = 0;
     virtual bool isAtackingKing(std::shared_ptr<Piece> grid[][8]) = 0;
+    bool SafeMove(int x, int y, std::shared_ptr<Piece> grid[][8]);
 
     Vector2 position;
     PieceColor color;
@@ -42,5 +43,4 @@ class Piece {
     void addLegalMove(int x, int y);
     bool isInsideBoard(int x, int y);
     bool isKingChecked(std::shared_ptr<Piece> grid[][8]);
-    bool SafeMove(int x, int y, std::shared_ptr<Piece> grid[][8]);
 };

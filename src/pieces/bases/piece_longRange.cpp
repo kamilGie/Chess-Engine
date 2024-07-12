@@ -1,6 +1,6 @@
 #include "piece_longRange.hpp"
 
-void LongRangePiece::SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]) {
+void LongRangePiece::SetMoves(std::shared_ptr<Piece> (&grid)[][8]) {
     legalMoves.clear();
 
     for (Vector2 dir : moveDirections) {
@@ -10,7 +10,7 @@ void LongRangePiece::SetLegalMoves(std::shared_ptr<Piece> (&grid)[][8]) {
             x += dir.x;
             y += dir.y;
             bool isEmptyOrOpponent = isInsideBoard(x, y) && (!grid[x][y] || grid[x][y]->color != color);
-            if (isEmptyOrOpponent && SafeMove(x, y, grid)) addLegalMove(x, y);
+            if (isEmptyOrOpponent) addLegalMove(x, y);
         } while (!grid[x][y]);
     }
 }

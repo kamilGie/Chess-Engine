@@ -50,6 +50,19 @@ void Move::ExecuteMove() {
     CalculateLegalMoves();
 }
 
+void Move::SetMoves(std::shared_ptr<Piece> (&grid)[8][8], PieceColor color) {
+    std::shared_ptr<King> king=nullptr;
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (grid[i][j].get() && grid[i][j]->color == color) {
+                    grid[i][j]->SetMoves(grid);
+                    if (!king && grid[i][j]->getValue() == 100) king = std::static_pointer_cast<King>(grid[i][j]);
+            }
+        }
+    }
+    king->SetLegalMoves(grid);
+}
+
 void Move::enPassantCalculation() {
     int x = to.x;
     int y = to.y;
@@ -103,15 +116,11 @@ void Move::CapturePiece(std::shared_ptr<Piece>& p) {
 }
 
 void Move::CalculateLegalMoves() {
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            if (chessboard.grid[i][j].get() && chessboard.grid[i][j]->color != piece->color) chessboard.grid[i][j]->SetLegalMoves(chessboard.grid);
-        }
-    }
+    PieceColor eneymyColor = piece->color == PieceColor::white ? PieceColor::black : PieceColor::white;
+    SetMoves(chessboard.grid, eneymyColor);
 
     bool NoPossibleMoves = std::all_of(&chessboard.grid[0][0], &chessboard.grid[0][0] + 8 * 8, [&](auto& p) { return !p || p->color == piece->color || p->legalMoves.empty(); });
     if (isKingChecked()) {
-        std::cout<<"Check"<<std::endl;
         PlaySound(checkSound);
         if (NoPossibleMoves) winningMove = true;
     } else if (NoPossibleMoves) {
