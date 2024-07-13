@@ -21,26 +21,26 @@ void Chessboard::initPieces() {
     UnloadImage(Bimage);
 
     for (int i = 0; i < 8; ++i) {
-        grid[i][1] = Piece::Create().Pawn.black().Position(i,1);
-        grid[i][6] = Piece::Create().Pawn.white().Position(i,6);
+        grid[i+8]=Piece::Create().Pawn.black().Position(i, 1);
+        grid[i+48]=Piece::Create().Pawn.white().Position(i, 6);
     }
-    grid[0][0] = Piece::Create().Rook.black().Position(0, 0);
-    grid[1][0] = Piece::Create().Horse.black().Position(1, 0);
-    grid[2][0] = Piece::Create().Bishop.black().Position(2, 0);
-    grid[3][0] = Piece::Create().Queen.black().Position(3, 0);
-    grid[4][0] = Piece::Create().King.black().Position(4, 0);
-    grid[5][0] = Piece::Create().Bishop.black().Position(5, 0);
-    grid[6][0] = Piece::Create().Horse.black().Position(6, 0);
-    grid[7][0] = Piece::Create().Rook.black().Position(7, 0);
+    grid[0]=Piece::Create().Rook.black().Position(0, 0);
+    grid[1]=Piece::Create().Horse.black().Position(1, 0);
+    grid[2]=Piece::Create().Bishop.black().Position(2, 0);
+    grid[3]=Piece::Create().Queen.black().Position(3, 0);
+    grid[4]=Piece::Create().King.black().Position(4, 0);
+    grid[5]=Piece::Create().Bishop.black().Position(5, 0);
+    grid[6]=Piece::Create().Horse.black().Position(6, 0);
+    grid[7]=Piece::Create().Rook.black().Position(7, 0);
 
-    grid[0][7] = Piece::Create().Rook.white().Position(0, 7);
-    grid[1][7] = Piece::Create().Horse.white().Position(1, 7);
-    grid[2][7] = Piece::Create().Bishop.white().Position(2, 7);
-    grid[3][7] = Piece::Create().Queen.white().Position(3, 7);
-    grid[4][7] = Piece::Create().King.white().Position(4, 7);
-    grid[5][7] = Piece::Create().Bishop.white().Position(5, 7);
-    grid[6][7] = Piece::Create().Horse.white().Position(6, 7);
-    grid[7][7] = Piece::Create().Rook.white().Position(7, 7);
+    grid[56]=Piece::Create().Rook.white().Position(0, 7);
+    grid[57]=Piece::Create().Horse.white().Position(1, 7);
+    grid[58]=Piece::Create().Bishop.white().Position(2, 7);
+    grid[59]=Piece::Create().Queen.white().Position(3, 7);
+    grid[60]=Piece::Create().King.white().Position(4, 7);
+    grid[61]=Piece::Create().Bishop.white().Position(5, 7);
+    grid[62]=Piece::Create().Horse.white().Position(6, 7);
+    grid[63]=Piece::Create().Rook.white().Position(7, 7);
     
     Move::SetMoves(grid, PieceColor::white);
 }
@@ -77,7 +77,7 @@ void Chessboard::DrawLegalMoves(std::shared_ptr<Piece> piece) {
     for (auto move : piece->legalMoves) {
         float x = move.x * cellSize + cellSize / 2;
         float y = move.y * cellSize + cellSize / 2;
-        if (grid[(int)move.x][(int)move.y]) {
+        if (grid[(int)move.x+move.y*8]) {
             DrawRing({x, y}, 40, 50, 0, 360, 32, Fade(BLACK, 0.1f));
         } else {
             DrawCircle(x, y, 17, Fade(BLACK, 0.1f));
@@ -86,9 +86,7 @@ void Chessboard::DrawLegalMoves(std::shared_ptr<Piece> piece) {
 }
 
 void Chessboard::DrawPieces() {
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            if (grid[i][j]) grid[i][j]->Draw();
-        }
+    for(auto piece:grid){ 
+        if (piece) piece->Draw();
     }
 }

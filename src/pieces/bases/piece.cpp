@@ -19,31 +19,28 @@ bool Piece::isInsideBoard(int x, int y) { return x < 8 && y < 8 && x >= 0 && y >
 
 void Piece::addLegalMove(int x, int y) { legalMoves.push_back({static_cast<float>(x), static_cast<float>(y)}); }
 
-bool Piece::SafeMove(int x, int y, std::shared_ptr<Piece> grid[][8]) {
-    std::shared_ptr<Piece> tempCaptured = grid[x][y];
-    grid[x][y] = std::move(grid[(int)position.x][(int)position.y]);
+bool Piece::SafeMove(int x, int y, std::array<std::shared_ptr<Piece>,64> grid) {
+    std::shared_ptr<Piece> tempCaptured = grid[x+y*8];
+    grid[x+y*8] = std::move(grid[(int)position.x+position.y*8]);
     Vector2 BeforeMove = position;
-    grid[(int)position.x][(int)position.y] = nullptr;
+    grid[(int)position.x+position.y*8] = nullptr;
     position = {static_cast<float>(x), static_cast<float>(y)};
 
     bool safe = !isKingChecked(grid);
     // Restore the original position of the moved piece
     position = BeforeMove;
-    grid[(int)BeforeMove.x][(int)BeforeMove.y] = std::move(grid[x][y]);
-    grid[x][y] = tempCaptured;
+    grid[(int)BeforeMove.x+BeforeMove.y*8] = std::move(grid[x+y*8]);
+    grid[x+y*8] = tempCaptured;
 
     return safe;
 }
 
-bool Piece::isKingChecked(std::shared_ptr<Piece> grid[][8]) {
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            auto p = grid[i][j];
+bool Piece::isKingChecked(std::array<std::shared_ptr<Piece>,64> grid) {
+    for (auto p : grid){
             if (p && p->color == color && p->getValue()==100) {
                 if (std::static_pointer_cast<King>(p)->isGettingAtack(grid)) return true;
                 else return false;
             }
-        }
     }
     return false;
 }

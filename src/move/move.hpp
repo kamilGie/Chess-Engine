@@ -14,7 +14,7 @@ class Move {
     void PromoteAnimation();
     void Update();
     void ExecuteMove();
-    static void SetMoves(std::shared_ptr<Piece> (&grid)[8][8], PieceColor color);
+    static void SetMoves(std::array<std::shared_ptr<Piece>,64> grid, PieceColor color);
 
     bool winningMove = false;
     bool stalematingMove = false;

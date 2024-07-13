@@ -58,12 +58,12 @@ void Game::HandleInput() {
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !move && gameStatus == GameStatus::playing) {
         int x = GetMouseX() / cellSize;
         int y = GetMouseY() / cellSize;
-        bool isOwnPieceClick = chessboard.grid[x][y].get() && (chessboard.grid[x][y]->color == ColorTurn);
+        bool isOwnPieceClick = chessboard.grid[x+y*8].get() && (chessboard.grid[x+y*8]->color == ColorTurn);
         bool isLegalMove = (clickedPiece && std::any_of(clickedPiece->legalMoves.begin(), clickedPiece->legalMoves.end(), [&](auto move) { return Vector2Equals(move, {(float)x, (float)y}); }));
 
         // logic on click
         if (isOwnPieceClick) {
-            clickedPiece = chessboard.grid[x][y];
+            clickedPiece = chessboard.grid[x+y*8];
         } else if (clickedPiece && isLegalMove) {
             move = new Move{clickedPiece->position, {(float)x, (float)y}, chessboard};
             clickedPiece = nullptr;

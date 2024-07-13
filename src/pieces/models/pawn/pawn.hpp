@@ -7,8 +7,8 @@ class Pawn : public Piece {
     Vector2 en_passant = {0,0};
 
     int getValue() override { return 1; }
-    void SetMoves(std::shared_ptr<Piece> (&grid)[][8]) override;
-    bool isAtackingKing(std::shared_ptr<Piece> grid[][8]) override;
+    void SetMoves(std::array<std::shared_ptr<Piece>,64> grid) override;
+    bool isAtackingKing(std::array<std::shared_ptr<Piece>,64> grid) override;
 
     friend class PawnPieceFactory;
 };

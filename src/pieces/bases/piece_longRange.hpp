@@ -3,8 +3,8 @@
 
 class LongRangePiece : public Piece {
    public:
-    void SetMoves(std::shared_ptr<Piece> (&grid)[][8]) override;
-    bool isAtackingKing(std::shared_ptr<Piece> grid[][8]) override;
+    void SetMoves(std::array<std::shared_ptr<Piece>,64> grid) override;
+    bool isAtackingKing(std::array<std::shared_ptr<Piece>,64> grid) override;
 
    protected:
     LongRangePiece(float column, float row, const std::string& pieceName, std::vector<Vector2> moveDirections, PieceColor color) : Piece(column, row, pieceName, color), moveDirections(moveDirections){};

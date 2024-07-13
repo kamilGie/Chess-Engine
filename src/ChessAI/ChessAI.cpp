@@ -22,11 +22,10 @@ Move* ChessAI::GetMove(Chessboard& chessboard) {
     };
     totalMoves = 0;
     BestMove bestMove;
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            if (chessboard.grid[i][j] && chessboard.grid[i][j]->color == colorAI) {
-                for (auto& to : chessboard.grid[i][j]->legalMoves) {
-                    Vector2 from = {static_cast<float>(i), static_cast<float>(j)};
+    for(auto p : chessboard.grid){
+            if (p && p->color == colorAI) {
+                for (auto& to : p->legalMoves) {
+                    Vector2 from = {p->position.x, p->position.y};
                     float score = CalculateMove(from, to, chessboard.grid, colorAI);
                     if (score > bestMove.score) {
                         bestMove.score = score;
@@ -35,7 +34,7 @@ Move* ChessAI::GetMove(Chessboard& chessboard) {
                     }
                 }
             }
-        }
+        
     }
     std::cout << "Total moves:  " << totalMoves << "and best score "<<bestMove.score<<std::endl
               << std::endl
@@ -46,42 +45,41 @@ Move* ChessAI::GetMove(Chessboard& chessboard) {
     return new Move(bestMove.from, bestMove.to, chessboard);
 }
 
-float ChessAI::CalculateMove(Vector2 from, Vector2 to, std::shared_ptr<Piece> (&grid)[8][8], PieceColor colorTurn, int depth) {
+float ChessAI::CalculateMove(Vector2 from, Vector2 to, std::array<std::shared_ptr<Piece>,64> grid, PieceColor colorTurn, int depth) {
     totalMoves++;
     float score = 1.0/(Vector2Distance({4,4}, to)+1);
-    if (grid[(int)from.x][(int)from.y]->getValue()==1) score+=0.5;
+    if (grid[(int)from.x+from.y*8]->getValue()==1) score+=0.5;
     int x = to.x;
     int y = to.y;
     PieceColor enemyColor = (colorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
-    std::shared_ptr<Piece> pieceCaptured = grid[x][y];
+    std::shared_ptr<Piece> pieceCaptured = grid[x+y*8];
     if (pieceCaptured) {
         score += pieceCaptured->getValue();
     }
     if (depth == 1) return score;
 
-    grid[x][y] = grid[(int)from.x][(int)from.y];
-    grid[(int)from.x][(int)from.y] = nullptr;
+    grid[x+y*8] = grid[(int)from.x+from.y*8];
+    grid[(int)from.x+from.y*8] = nullptr;
 
     Move::SetMoves(grid, enemyColor);
-    bool NoPossibleMoves = std::all_of(&grid[0][0], &grid[0][0] + 8 * 8, [&](auto& p) { return !p || p->color == colorTurn || p->legalMoves.empty(); });
+    bool NoPossibleMoves = std::all_of(&grid[0], &grid[64], [colorTurn](auto p) { return !p || p->color == colorTurn ||  p->legalMoves.empty(); });
     if (NoPossibleMoves) score = 1000;
 
     float TheWortsScenario=0;
     if (!NoPossibleMoves) {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (grid[i][j] && grid[i][j]->color != colorTurn) {
-                    for (auto& to : grid[i][j]->legalMoves) {
-                        float EnemyMoveScore = CalculateMove({static_cast<float>(i), static_cast<float>(j)}, to, grid, enemyColor, depth + 1);
+        for(auto p : grid)
+                if (p && p->color != colorTurn) {
+                    for (auto& to : p->legalMoves) {
+                        float EnemyMoveScore = CalculateMove({p->position.x, p->position.y }, to, grid, enemyColor, depth + 1);
                         if(EnemyMoveScore>TheWortsScenario) TheWortsScenario=EnemyMoveScore;
                     }
                 }
-            }
+            
         }
-    }
+    
     score-=TheWortsScenario;
 
-    grid[(int)from.x][(int)from.y] = grid[x][y];
-    grid[x][y] = pieceCaptured;
+    grid[(int)from.x+from.y*8] = grid[x+y*8];
+    grid[x+y*8] = pieceCaptured;
     return score;
 }

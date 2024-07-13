@@ -1,5 +1,6 @@
 #pragma once
 #include <raylib.h>
+#include <array>
 #include <memory>
 
 extern int cellSize;
@@ -16,7 +17,7 @@ class Chessboard {
     void DrawSelectedPieceDetails(std::shared_ptr<Piece> piece);
     void SetLastMovePositions(Vector2 from, Vector2 to);
     int cellCount = 8;
-    std::shared_ptr<Piece> grid[8][8]{};
+    std::array<std::shared_ptr<Piece>,64> grid{};
     Vector2 lastMovePositions[2]{{9, 9}, {9, 9}};
 
    private:
