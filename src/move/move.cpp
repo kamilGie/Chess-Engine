@@ -31,8 +31,9 @@ void Move::PromoteAnimation() {
 }
 
 void Move::Update() {
-    if (Vector2Distance(AnimationPosition, Vector2Scale(to, cellSize)) > 0.1f) {
-        AnimationPosition = Vector2Lerp(AnimationPosition, Vector2Scale(to, cellSize), 20 * GetFrameTime());
+    if (Vector2Distance(AnimationPosition, Vector2Scale(to, cellSize)) > 0.1f ) {
+        if(GetFrameTime()>0.05)return;
+        AnimationPosition = Vector2Lerp(AnimationPosition, Vector2Scale(to, cellSize), GetFrameTime() * 20);
     } else if (promotion) {
         promote();
     } else {

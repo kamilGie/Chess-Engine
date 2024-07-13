@@ -20,7 +20,8 @@ class Game {
 
    private:
     Move* move = nullptr;
-    ChessAI* ai = nullptr;
+    ChessAI* ai1 = nullptr;
+    ChessAI* ai2 = nullptr;
     PieceColor ColorTurn;
     GameStatus gameStatus;
     Chessboard chessboard = Chessboard();

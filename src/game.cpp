@@ -29,9 +29,9 @@ Game::Game() {
             file >> text;
             if (text == "true") {
                 file >> text >> text;
-                ai = new ChessAI(text == "black" ? PieceColor::black : PieceColor::white);
+                ai1 = new ChessAI(text == "black" ? PieceColor::black : PieceColor::white);
             } else {
-                ai = nullptr;
+                ai1 = nullptr;
                 file >> text >> text;
             }
         } else if (text == "TargetFPS") {
@@ -42,6 +42,7 @@ Game::Game() {
     }
     file.close();
 
+    ai2 = new ChessAI(PieceColor::black);
     gameStatus = GameStatus::playing;
     ColorTurn = PieceColor::white;
     chessboard.initPieces();
@@ -49,7 +50,8 @@ Game::Game() {
 }
 
 Game::~Game() {
-    if (ai) delete ai;
+    if (ai1) delete ai1;
+    if (ai2) delete ai2;
     if (move) delete move;
     UnloadSounds();
 }
@@ -83,9 +85,17 @@ void Game::Update() {
             delete move;
             move = nullptr;
             ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
+            clickedPiece = nullptr;
         }
-    } else if (ai && ColorTurn == ai->colorAI){
-        move = ai->GetMove(chessboard);
+    } else if (ai1 && ColorTurn == ai1->colorAI){
+        double startTime = GetTime();
+        move = ai1->GetMove(chessboard);
+        std::cout << "AI1 move took: " <<  GetTime() - startTime << " seconds" << std::endl;
+        if (move->promotion) move->AI_promotion=true;
+    }else if (ai2 && ColorTurn == ai2->colorAI){
+        double startTime = GetTime();
+        move = ai2->GetMove(chessboard);
+        std::cout << "AI2 move took: " <<  GetTime() - startTime << " seconds" << std::endl;
         if (move->promotion) move->AI_promotion=true;
     }
 }
