@@ -8,28 +8,42 @@ Menu::Menu() {
     std::ifstream file("../src/GameSettings.txt");
     std::string text;
     while (file >> text) {
-        if (text == "ChessAI") {
+        if (text == "PvAI") {
             file >> text;
-            ChessAI = (text == "true") ? true : false;
+            isPvAI = (text == "true") ? true : false;
         } else if (text == "ChessAIColor") {
             file >> text;
-            AIBlack = (text == "black") ? true : false;
+            isAIBlack = (text == "black") ? true : false;
         } else if (text == "TargetFPS") {
             file >> fps;
-        }
+        } else if (text == "PvP") {
+            file >> text;
+            isPVP = (text == "true") ? true : false;
+        } else if (text == "AIvAI") {
+            file >> text;
+            isAIvsAI = (text == "true") ? true : false;
+        } 
     }
     file.close();
+
+    std::string fullPath = "../Graphics/menu.png";
+    Image image = LoadImage(fullPath.c_str());
+    MenuBackground = LoadTextureFromImage(image);
+    UnloadImage(image);
 
     SetTargetFPS(60);
 }
 
 Menu::~Menu() {
+    UnloadTexture(MenuBackground);
     if (!hasSettingsChanged) return;
 
     std::ofstream file("../src/GameSettings.txt");
     if (file.is_open()) {
-        file << "ChessAI " << (ChessAI ? "true\n" : "false\n");
-        file << "ChessAIColor " << (AIBlack ? "black\n" : "white\n");
+        file << "PvP " << (isPVP ? "true\n" : "false\n");
+        file << "PvAI " << (isPvAI ? "true\n" : "false\n");
+        file << "AIvAI " << (isAIvsAI ? "true\n" : "false\n");
+        file << "ChessAIColor " << (isAIBlack ? "black\n" : "white\n");
         file << "TargetFPS " << fps;
         file.close();
     }
@@ -37,18 +51,41 @@ Menu::~Menu() {
 
 void Menu::Draw() {
     BeginDrawing();
-    ClearBackground(RAYWHITE);
-    DrawText("Chess AI", 10, 10, 20, BLACK);
-    DrawText(ChessAI ? "ON" : "OFF", 200, 10, 20, BLACK);
-    if (ChessAI) {
-        DrawText("AI Color", 10, 40, 20, BLACK);
-        DrawText(AIBlack ? "Black" : "White", 200, 40, 20, BLACK);
-    }
-    DrawText("Target FPS", 10, 70 - (ChessAI ? 0 : 30), 20, BLACK);
-    DrawText(std::to_string(fps).c_str(), 200, 70 - (ChessAI ? 0 : 30), 20, BLACK);
+    DrawTexture(MenuBackground, 0, 0, WHITE);
 
-    DrawRectangle(GetScreenWidth() / 2 - 140, GetScreenHeight() - 100, 280, 50, GREEN);
-    DrawText("Start Game", GetScreenWidth() / 2 - 100, GetScreenHeight() - 90, 20, BLACK);
+    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+
+    DrawRectangleRounded(startButton, 0.2, 0, Color{108, 152, 63, 255});
+    DrawText("Start Game", GetScreenWidth() / 2 - MeasureText("Start Game", 30) / 2, GetScreenHeight() - 90, 30, Color{233, 235, 210, 255});
+    if (startButtonHover) {
+        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+        DrawRectangleRoundedLines(startButton, 0.3, 0, 3, Color{233, 235, 210, 255});
+    }
+
+    DrawRectangleRounded( PvP , 0.2, 0, Color{233, 235, 210, 255});
+    DrawText("PvP", GetScreenWidth() / 4 - MeasureText("PvP", 30) / 2-50 , 210, 30,  Color{108, 152, 63, 255});
+    if(!isPVP) DrawRectangle(GetScreenWidth() / 4 - 100-50,  200, 200, 50, Fade(BLACK, 0.7f));
+    if (PvPHover) {
+        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+        DrawRectangleRoundedLines(PvP, 0.3, 0, 3, Color{233, 235, 210, 255});
+    }
+
+    DrawRectangleRounded( PvAI , 0.2, 0, Color{233, 235, 210, 255});
+    DrawText("PvAI", GetScreenWidth() / 2 - MeasureText("PvAI", 30) / 2, 210, 30,  Color{108, 152, 63, 255});
+    if(!isPvAI) DrawRectangle(GetScreenWidth() / 2 - 100,  200, 200, 50, Fade(BLACK, 0.7f));
+    if (PvAIHover) {
+        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+        DrawRectangleRoundedLines(PvAI, 0.3, 0, 3, Color{233, 235, 210, 255});
+    }
+
+    DrawRectangleRounded( AIvsAI , 0.2, 0, Color{233, 235, 210, 255});
+    DrawText("AIvsAI", GetScreenWidth() / 4 * 3 - MeasureText("AIvsAI", 30) / 2+50, 210, 30,  Color{108, 152, 63, 255});
+    if(!isAIvsAI) DrawRectangle(GetScreenWidth() / 4 * 3 - 100+50,  200, 200, 50, Fade(BLACK, 0.7f));
+    if (AIvsAIHover) {
+        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+        DrawRectangleRoundedLines(AIvsAI, 0.3, 0, 3, Color{233, 235, 210, 255});
+    }
+
     EndDrawing();
 }
 
@@ -57,18 +94,41 @@ void Menu::Update() {
 
 void Menu::HandleInput() {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(GetMousePosition(), {(float)GetScreenWidth() / 2 - 140, (float)GetScreenHeight() - 100, 280, 50})) running = false;
-        if (CheckCollisionPointRec(GetMousePosition(), {10, 10, 280, 20})) {
-            ChessAI = !ChessAI;
+        if (CheckCollisionPointRec(GetMousePosition(), startButton)) running = false;
+        if (CheckCollisionPointRec(GetMousePosition(), PvP)) {
+            isPVP = true;
+            isPvAI = false;
+            isAIvsAI = false;
             hasSettingsChanged = true;
         }
-        if (ChessAI && CheckCollisionPointRec(GetMousePosition(), {10, 40, 280, 20})) {
-            AIBlack = !AIBlack;
+
+        if (CheckCollisionPointRec(GetMousePosition(), PvAI)) {
+            isPvAI = true;
+            isPVP = false;
+            isAIvsAI = false;
             hasSettingsChanged = true;
         }
-        if (CheckCollisionPointRec(GetMousePosition(), {10, 70 - float(ChessAI ? 0 : 30), 280, 20})) {
-            fps = (fps == 60) ? 120 : 60;
+
+        if (CheckCollisionPointRec(GetMousePosition(), AIvsAI)) {
+            isAIvsAI = true;
+            isPvAI = false;
+            isPVP = false;
             hasSettingsChanged = true;
         }
+    }
+
+    if (CheckCollisionPointRec(GetMousePosition(), startButton)){
+       startButtonHover = true;
+    }else if (CheckCollisionPointRec(GetMousePosition(), PvP)){
+       PvPHover = true;
+    }else if (CheckCollisionPointRec(GetMousePosition(), PvAI)){
+       PvAIHover = true;
+    }else if (CheckCollisionPointRec(GetMousePosition(), AIvsAI)){
+         AIvsAIHover = true;
+    }else{
+        startButtonHover = false;
+        PvPHover = false;
+        PvAIHover = false;
+        AIvsAIHover = false;
     }
 }
