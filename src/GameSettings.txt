@@ -1,5 +1,5 @@
-PvP true
+PvP false
 PvAI false
-AIvAI false
+AIvAI true
 ChessAIColor white
 TargetFPS 120

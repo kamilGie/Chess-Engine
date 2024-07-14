@@ -22,7 +22,7 @@ Menu::Menu() {
         } else if (text == "AIvAI") {
             file >> text;
             isAIvsAI = (text == "true") ? true : false;
-        } 
+        }
     }
     file.close();
 
@@ -62,25 +62,29 @@ void Menu::Draw() {
         DrawRectangleRoundedLines(startButton, 0.3, 0, 3, Color{233, 235, 210, 255});
     }
 
-    DrawRectangleRounded( PvP , 0.2, 0, Color{233, 235, 210, 255});
-    DrawText("PvP", GetScreenWidth() / 4 - MeasureText("PvP", 30) / 2-50 , 210, 30,  Color{108, 152, 63, 255});
-    if(!isPVP) DrawRectangle(GetScreenWidth() / 4 - 100-50,  200, 200, 50, Fade(BLACK, 0.7f));
+    DrawRectangleRounded(PvP, 0.2, 0, Color{233, 235, 210, 255});
+    DrawText("PvP", GetScreenWidth() / 4 - MeasureText("PvP", 30) / 2 - 50, 210, 30, Color{108, 152, 63, 255});
+    if (!isPVP) DrawRectangleRounded(PvP, 0.2, 0, Fade(BLACK, 0.7f));
     if (PvPHover) {
         SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
         DrawRectangleRoundedLines(PvP, 0.3, 0, 3, Color{233, 235, 210, 255});
     }
 
-    DrawRectangleRounded( PvAI , 0.2, 0, Color{233, 235, 210, 255});
-    DrawText("PvAI", GetScreenWidth() / 2 - MeasureText("PvAI", 30) / 2, 210, 30,  Color{108, 152, 63, 255});
-    if(!isPvAI) DrawRectangle(GetScreenWidth() / 2 - 100,  200, 200, 50, Fade(BLACK, 0.7f));
+    DrawRectangleRounded(PvAI, 0.2, 0, Color{233, 235, 210, 255});
+    DrawText("PvAI", GetScreenWidth() / 2 - MeasureText("PvAI", 30) / 2, 210, 30, Color{108, 152, 63, 255});
+    if (!isPvAI) DrawRectangleRounded(PvAI, 0.2, 0, Fade(BLACK, 0.7f));
     if (PvAIHover) {
+        DrawRectangleRounded(AIColor, 0.2, 0, isAIBlack ? BLACK : WHITE);
+        DrawText("AI Color", GetScreenWidth() / 2 - MeasureText("AI Color", 30) / 2, 150, 30, Color{108, 152, 63, 255});
+        if (!isPvAI) DrawRectangleRounded(AIColor, 0.2, 0, Fade(BLACK, 0.7f));
         SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-        DrawRectangleRoundedLines(PvAI, 0.3, 0, 3, Color{233, 235, 210, 255});
+        if(!AIColorHover) DrawRectangleRoundedLines(PvAI, 0.3, 0, 3, Color{233, 235, 210, 255});
+        else DrawRectangleRoundedLines(AIColor, 0.3, 0, 3, Color{233, 235, 210, 255});
     }
 
-    DrawRectangleRounded( AIvsAI , 0.2, 0, Color{233, 235, 210, 255});
-    DrawText("AIvsAI", GetScreenWidth() / 4 * 3 - MeasureText("AIvsAI", 30) / 2+50, 210, 30,  Color{108, 152, 63, 255});
-    if(!isAIvsAI) DrawRectangle(GetScreenWidth() / 4 * 3 - 100+50,  200, 200, 50, Fade(BLACK, 0.7f));
+    DrawRectangleRounded(AIvsAI, 0.2, 0, Color{233, 235, 210, 255});
+    DrawText("AIvsAI", GetScreenWidth() / 4 * 3 - MeasureText("AIvsAI", 30) / 2 + 50, 210, 30, Color{108, 152, 63, 255});
+    if (!isAIvsAI) DrawRectangleRounded(AIvsAI, 0.2, 0, Fade(BLACK, 0.7f));
     if (AIvsAIHover) {
         SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
         DrawRectangleRoundedLines(AIvsAI, 0.3, 0, 3, Color{233, 235, 210, 255});
@@ -115,20 +119,29 @@ void Menu::HandleInput() {
             isPVP = false;
             hasSettingsChanged = true;
         }
+
+        if (PvAIHover && CheckCollisionPointRec(GetMousePosition(), AiColorMargin)) {
+            isAIBlack = !isAIBlack;
+            hasSettingsChanged = true;
+        }
     }
 
-    if (CheckCollisionPointRec(GetMousePosition(), startButton)){
-       startButtonHover = true;
-    }else if (CheckCollisionPointRec(GetMousePosition(), PvP)){
-       PvPHover = true;
-    }else if (CheckCollisionPointRec(GetMousePosition(), PvAI)){
-       PvAIHover = true;
-    }else if (CheckCollisionPointRec(GetMousePosition(), AIvsAI)){
-         AIvsAIHover = true;
-    }else{
+    if (CheckCollisionPointRec(GetMousePosition(), startButton)) {
+        startButtonHover = true;
+    } else if (CheckCollisionPointRec(GetMousePosition(), PvP)) {
+        PvPHover = true;
+    } else if (CheckCollisionPointRec(GetMousePosition(), PvAI)) {
+        PvAIHover = true;
+        AIColorHover = false;
+    } else if (CheckCollisionPointRec(GetMousePosition(), AIvsAI)) {
+        AIvsAIHover = true;
+    } else if(PvAIHover && isPvAI &&   CheckCollisionPointRec(GetMousePosition(), AiColorMargin)) {
+        AIColorHover = true;
+    } else {
         startButtonHover = false;
         PvPHover = false;
         PvAIHover = false;
         AIvsAIHover = false;
+        AIColorHover = false;
     }
 }

@@ -27,7 +27,10 @@ Game::Game() {
     while (file >> text) {
         if (text == "PvAI") {
             file >> text;
-            if (text == "true") ai1 = new ChessAI(PieceColor::black);
+            if (text == "true"){
+                file >> text >> text;
+                 ai1 = new ChessAI(text == "black" ? PieceColor::black : PieceColor::white);
+            }
         } else if (text == "TargetFPS") {
             int fps;
             file >> fps;
@@ -43,6 +46,8 @@ Game::Game() {
         }
     }
     file.close();
+
+
 
     gameStatus = GameStatus::playing;
     ColorTurn = PieceColor::white;

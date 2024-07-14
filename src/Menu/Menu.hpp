@@ -24,6 +24,10 @@ class Menu {
     Rectangle AIvsAI = { ((float)GetScreenWidth() / 4 *3) - 100+50,  200, 200, 50 };
     bool AIvsAIHover = false;
 
+    Rectangle AIColor = { (float)GetScreenWidth() / 2 -100 ,  140, 200, 50 };
+    Rectangle AiColorMargin = { (float)GetScreenWidth() / 2 -100 ,  140, 200, 60 };
+    bool AIColorHover = false;
+
     int fps;
     bool isPVP=false;
     bool isPvAI=false;
