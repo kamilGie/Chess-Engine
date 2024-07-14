@@ -1,5 +1,5 @@
 #include "king.hpp"
-#include <iostream>
+#include "../../factory/piece_factory.hpp"
 
 void King::SetMoves(std::array<std::shared_ptr<Piece>,64> grid) {
     LimitedRangePiece::SetMoves(grid);
@@ -103,4 +103,10 @@ void King::SetLegalMoves(std::array<std::shared_ptr<Piece>,64> grid) {
             ++it;
         }
     }
+}
+
+std::shared_ptr<Piece> King::clone() {
+    std::shared_ptr<Piece> piece = color == PieceColor::black ? Piece::Create().King.black().Position(position.x, position.y) : Piece::Create().King.white().Position(position.x, position.y);
+    piece->legalMoves = legalMoves;
+    return piece;
 }

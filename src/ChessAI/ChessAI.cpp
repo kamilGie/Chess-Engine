@@ -12,11 +12,16 @@
 
 ChessAI::ChessAI(PieceColor colorAI) : colorAI(colorAI) {}
 
-ChessAI::~ChessAI() {
-}
+ChessAI::~ChessAI() {}
 int totalMoves = 0;
 
 Move* ChessAI::GetMove(Chessboard& chessboard) {
+    double startTime = GetTime();
+    std::array<std::shared_ptr<Piece>, 64> GridCoppy;
+    for (int i = 0; i < chessboard.grid.size(); i++) {
+        GridCoppy[i] = chessboard.grid[i]? chessboard.grid[i]->clone() : nullptr;
+    }
+
     struct BestMove {
         float score = -1001;
         Vector2 from;
@@ -24,11 +29,11 @@ Move* ChessAI::GetMove(Chessboard& chessboard) {
     };
     totalMoves = 0;
     BestMove bestMove;
-    for (auto p : chessboard.grid) {
+    for (auto p : GridCoppy) {
         if (p && p->color == colorAI) {
             for (int i = 0; i < p->legalMoves.size(); i++) {
                 Vector2 from = {p->position.x, p->position.y};
-                float score = CalculateMove(from, p->legalMoves[i], chessboard.grid, colorAI);
+                float score = CalculateMove(from, p->legalMoves[i], GridCoppy, colorAI);
                 if (score > bestMove.score) {
                     bestMove.score = score;
                     bestMove.from = from;
@@ -37,40 +42,34 @@ Move* ChessAI::GetMove(Chessboard& chessboard) {
             }
         }
     }
-    std::cout << "Total moves:  " << totalMoves << "and best score move  " << bestMove.from.x << bestMove.from.y << std::endl;
-
+    std::cout << "Total moves:  " << totalMoves << "and best score move  " << bestMove.from.x << bestMove.from.y << " and total time "<<  GetTime() - startTime <<  std::endl;
     return new Move(bestMove.from, bestMove.to, chessboard);
 }
 
 float ChessAI::CalculateMove(Vector2 from, Vector2 to, std::array<std::shared_ptr<Piece>, 64> grid, PieceColor colorTurn, int depth) {
-    if(GetRandomValue(0,8) ==2 ) return 0;
     totalMoves++;
-    float score = 1.0 / (Vector2Distance({(float)GetRandomValue(2,5), (float)GetRandomValue(2,5)}, to) + 1);
-    int x = static_cast<int>(to.x);
-    int y = static_cast<int>(to.y);
+    float score = 1.0 / (Vector2Distance({3,3}, to) + 1);
+    int indexTo = to.x + to.y * 8;
+    int indexFrom = from.x + from.y * 8;
 
     PieceColor enemyColor = (colorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
-    std::shared_ptr<Piece> pieceCaptured = grid[x + y * 8];
+    std::shared_ptr<Piece> pieceCaptured = grid[indexTo];
     if (pieceCaptured) score += pieceCaptured->getValue();
-    if (depth == 2) return score;
+    if (depth == 3) return score;
 
-    grid[x + y * 8] = grid[(int)from.x + from.y * 8];
-    grid[x + y * 8]->position = to;
-    grid[(int)from.x + from.y * 8] = nullptr;
+    grid[indexTo] = std::move(grid[indexFrom]);
+    grid[indexTo]->position = to;
 
     Move::SetMoves(grid, enemyColor);
-    bool NoPossibleMoves = std::all_of(&grid[0], &grid[64], [colorTurn](auto p) { return !p || p->color == colorTurn || p->legalMoves.empty(); });
 
-    if (NoPossibleMoves) {
+    if (bool NoPossibleMoves = std::all_of(&grid[0], &grid[64], [colorTurn](auto p) { return !p || p->color == colorTurn || p->legalMoves.empty(); })) {
         for (auto p : grid) {
             if (p && p->color == enemyColor && p->getValue() == 100) {
                 if (std::static_pointer_cast<King>(p)->isGettingAtack(grid)) score += 1000;
                 break;
             }
         }
-    }
-
-    if (!NoPossibleMoves) {
+    } else {
         float TheWortsScenario = -1000;
         for (int i = 0; i < grid.size(); i++) {
             auto p = grid[i];
@@ -87,9 +86,9 @@ float ChessAI::CalculateMove(Vector2 from, Vector2 to, std::array<std::shared_pt
         score -= TheWortsScenario;
     }
 
-    grid[(int)from.x + from.y * 8] = grid[x + y * 8];
-    grid[(int)from.x + from.y * 8]->position = from;
-    grid[x + y * 8] = pieceCaptured;
+    grid[indexFrom] = std::move(grid[indexTo]);
+    grid[indexFrom]->position = from;
+    grid[indexTo] = std::move(pieceCaptured);
     Move::SetMoves(grid, colorTurn);
     return score;
 }

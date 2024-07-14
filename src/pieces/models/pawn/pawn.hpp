@@ -9,6 +9,7 @@ class Pawn : public Piece {
     int getValue() override { return 1; }
     void SetMoves(std::array<std::shared_ptr<Piece>,64> grid) override;
     bool isAtackingKing(std::array<std::shared_ptr<Piece>,64> grid) override;
+    std::shared_ptr<Piece> clone() override;
 
     friend class PawnPieceFactory;
 };

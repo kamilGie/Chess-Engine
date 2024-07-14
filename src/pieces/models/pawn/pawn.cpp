@@ -1,5 +1,5 @@
 #include "pawn.hpp"
-#include <iostream>
+#include "../../factory/piece_factory.hpp"
 
 Pawn::Pawn(float column, float row, const std::string& pieceName, PieceColor color) : Piece(column, row, pieceName, color){};
 
@@ -33,4 +33,10 @@ bool Pawn::isAtackingKing(std::array<std::shared_ptr<Piece>,64> grid) {
     int right = x+1+y*8;
     if (isInsideBoard(x + 1, y) && grid[right] && grid[right]->color != color && grid[right]->getValue() == 100) return true;
     return false;
+}
+
+std::shared_ptr<Piece> Pawn::clone() {
+    std::shared_ptr<Piece> piece = color == PieceColor::black ? Piece::Create().Pawn.black().Position(position.x, position.y) : Piece::Create().Pawn.white().Position(position.x, position.y);
+    piece->legalMoves = legalMoves;
+    return piece;
 }

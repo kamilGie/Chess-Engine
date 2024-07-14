@@ -22,6 +22,7 @@ class Game {
     Move* move = nullptr;
     ChessAI* ai1 = nullptr;
     ChessAI* ai2 = nullptr;
+    bool AICalculateMove = false;
     PieceColor ColorTurn;
     GameStatus gameStatus;
     Chessboard chessboard = Chessboard();

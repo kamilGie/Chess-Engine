@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <thread>
 
 #include "ChessAI/ChessAI.hpp"
 #include "chessboard/chessboard.hpp"
@@ -27,9 +28,9 @@ Game::Game() {
     while (file >> text) {
         if (text == "PvAI") {
             file >> text;
-            if (text == "true"){
+            if (text == "true") {
                 file >> text >> text;
-                 ai1 = new ChessAI(text == "black" ? PieceColor::black : PieceColor::white);
+                ai1 = new ChessAI(text == "black" ? PieceColor::black : PieceColor::white);
             }
         } else if (text == "TargetFPS") {
             int fps;
@@ -46,8 +47,6 @@ Game::Game() {
         }
     }
     file.close();
-
-
 
     gameStatus = GameStatus::playing;
     ColorTurn = PieceColor::white;
@@ -93,16 +92,22 @@ void Game::Update() {
             ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
             clickedPiece = nullptr;
         }
-    } else if (ai1 && ColorTurn == ai1->colorAI) {
-        double startTime = GetTime();
-        move = ai1->GetMove(chessboard);
-        std::cout << "AI1 move took: " << GetTime() - startTime << " seconds" << std::endl;
-        if (move->promotion) move->AI_promotion = true;
-    } else if (ai2 && ColorTurn == ai2->colorAI) {
-        double startTime = GetTime();
-        move = ai2->GetMove(chessboard);
-        std::cout << "AI2 move took: " << GetTime() - startTime << " seconds" << std::endl;
-        if (move->promotion) move->AI_promotion = true;
+    } else if (ai1 &&  AICalculateMove == false &&  ColorTurn == ai1->colorAI) {
+        AICalculateMove = true;
+        std::thread aiThread([&]() {
+            move = ai1->GetMove(chessboard);
+            if (move->promotion) move->AI_promotion = true;
+            AICalculateMove = false;
+        });
+        aiThread.detach();
+    } else if (ai2 && AICalculateMove == false &&  ColorTurn == ai2->colorAI) {
+        AICalculateMove = true;
+        std::thread aiThread([&]() {
+            move = ai2->GetMove(chessboard);
+            if (move->promotion) move->AI_promotion = true;
+            AICalculateMove = false;
+        });
+        aiThread.detach();
     }
 }
 

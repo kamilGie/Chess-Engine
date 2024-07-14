@@ -8,6 +8,7 @@ class King : public LimitedRangePiece {
     void SetMoves(std::array<std::shared_ptr<Piece>,64> grid) override;
     bool isGettingAtack(std::array<std::shared_ptr<Piece>,64> grid);
     void SetLegalMoves(std::array<std::shared_ptr<Piece>,64> grid);
+    std::shared_ptr<Piece> clone() override;
 
     friend class KingPieceFactory;
 };

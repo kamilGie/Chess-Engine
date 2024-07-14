@@ -30,6 +30,7 @@ class Piece {
     virtual void SetMoves(std::array<std::shared_ptr<Piece>,64> grid) = 0;
     virtual bool isAtackingKing(std::array<std::shared_ptr<Piece>,64> grid) = 0;
     bool SafeMove(int x, int y, std::array<std::shared_ptr<Piece>,64> grid);
+    virtual std::shared_ptr<Piece> clone() = 0;
 
     Vector2 position;
     PieceColor color;

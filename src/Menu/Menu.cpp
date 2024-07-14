@@ -42,8 +42,8 @@ Menu::~Menu() {
     if (file.is_open()) {
         file << "PvP " << (isPVP ? "true\n" : "false\n");
         file << "PvAI " << (isPvAI ? "true\n" : "false\n");
-        file << "AIvAI " << (isAIvsAI ? "true\n" : "false\n");
         file << "ChessAIColor " << (isAIBlack ? "black\n" : "white\n");
+        file << "AIvAI " << (isAIvsAI ? "true\n" : "false\n");
         file << "TargetFPS " << fps;
         file.close();
     }

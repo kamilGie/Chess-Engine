@@ -1,5 +1,4 @@
 #pragma once    
-
 #include "../../bases/piece_longRange.hpp"
 
 class Bishop : public LongRangePiece {
@@ -7,6 +6,7 @@ class Bishop : public LongRangePiece {
 
    public:
     int getValue() override { return 3; }
+    std::shared_ptr<Piece> clone() override;
 
     friend class BishopPieceFactory;
 };

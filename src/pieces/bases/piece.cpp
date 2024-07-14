@@ -35,6 +35,8 @@ bool Piece::SafeMove(int x, int y, std::array<std::shared_ptr<Piece>,64> grid) {
     return safe;
 }
 
+
+
 bool Piece::isKingChecked(std::array<std::shared_ptr<Piece>,64> grid) {
     for (auto p : grid){
             if (p && p->color == color && p->getValue()==100) {
