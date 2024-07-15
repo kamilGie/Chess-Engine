@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <memory>
+#include <unordered_map>
 
 #include "../chessboard/chessboard.hpp"
 #include "../move/move.hpp"
@@ -19,7 +20,7 @@ Move* ChessAI::GetMove(Chessboard& chessboard) {
     double startTime = GetTime();
     std::array<std::shared_ptr<Piece>, 64> GridCoppy;
     for (int i = 0; i < chessboard.grid.size(); i++) {
-        GridCoppy[i] = chessboard.grid[i]? chessboard.grid[i]->clone() : nullptr;
+        GridCoppy[i] = chessboard.grid[i] ? chessboard.grid[i]->clone() : nullptr;
     }
 
     struct BestMove {
@@ -42,20 +43,27 @@ Move* ChessAI::GetMove(Chessboard& chessboard) {
             }
         }
     }
-    std::cout << "Total moves:  " << totalMoves << "and best score move  " << bestMove.from.x << bestMove.from.y << " and total time "<<  GetTime() - startTime <<  std::endl;
+    std::cout << "Total moves:  " << totalMoves << "and best score move  " << bestMove.from.x << bestMove.from.y << " and total time " << GetTime() - startTime << std::endl;
     return new Move(bestMove.from, bestMove.to, chessboard);
 }
 
 float ChessAI::CalculateMove(Vector2 from, Vector2 to, std::array<std::shared_ptr<Piece>, 64> grid, PieceColor colorTurn, int depth) {
     totalMoves++;
-    float score = 1.0 / (Vector2Distance({3,3}, to) + 1);
+    float score = 1.0 / (Vector2Distance({3, 3}, to) + 1);
     int indexTo = to.x + to.y * 8;
     int indexFrom = from.x + from.y * 8;
 
     PieceColor enemyColor = (colorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
-    std::shared_ptr<Piece> pieceCaptured = grid[indexTo];
+    std::shared_ptr<Piece> pieceCaptured = std::move(grid[indexTo]);
     if (pieceCaptured) score += pieceCaptured->getValue();
     if (depth == 3) return score;
+
+    std::unordered_map<int, std::vector<Vector2>> legalMovesMap;
+    for (int i = 0; i < grid.size(); i++) {
+        if (grid[i] && grid[i]->color == enemyColor) {
+                legalMovesMap[i] = std::move(grid[i]->legalMoves);
+        }
+    }
 
     grid[indexTo] = std::move(grid[indexFrom]);
     grid[indexTo]->position = to;
@@ -89,6 +97,10 @@ float ChessAI::CalculateMove(Vector2 from, Vector2 to, std::array<std::shared_pt
     grid[indexFrom] = std::move(grid[indexTo]);
     grid[indexFrom]->position = from;
     grid[indexTo] = std::move(pieceCaptured);
-    Move::SetMoves(grid, colorTurn);
+
+    for (auto& [index, legalMoves] : legalMovesMap) {
+        grid[index]->legalMoves = std::move(legalMoves);
+    }
+
     return score;
 }

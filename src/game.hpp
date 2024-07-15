@@ -17,12 +17,13 @@ class Game {
 
    private:
     void GameOver();
+    void LoadSettingsData();
 
    private:
-    Move* move = nullptr;
-    ChessAI* ai1 = nullptr;
-    ChessAI* ai2 = nullptr;
-    bool AICalculateMove = false;
+    Move* move=nullptr;
+    std::unique_ptr<ChessAI> ai1;
+    std::unique_ptr<ChessAI> ai2;
+    bool AIDoingMove = false;
     PieceColor ColorTurn;
     GameStatus gameStatus;
     Chessboard chessboard = Chessboard();

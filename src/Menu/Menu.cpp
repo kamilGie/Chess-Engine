@@ -36,6 +36,7 @@ Menu::Menu() {
 
 Menu::~Menu() {
     UnloadTexture(MenuBackground);
+    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
     if (!hasSettingsChanged) return;
 
     std::ofstream file("../src/GameSettings.txt");

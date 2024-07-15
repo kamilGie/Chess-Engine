@@ -23,31 +23,7 @@ enum class GameStatus {
 };
 
 Game::Game() {
-    std::ifstream file("../src/GameSettings.txt");
-    std::string text;
-    while (file >> text) {
-        if (text == "PvAI") {
-            file >> text;
-            if (text == "true") {
-                file >> text >> text;
-                ai1 = new ChessAI(text == "black" ? PieceColor::black : PieceColor::white);
-            }
-        } else if (text == "TargetFPS") {
-            int fps;
-            file >> fps;
-            SetTargetFPS(fps);
-        } else if (text == "PvP") {
-            file >> text;
-        } else if (text == "AIvAI") {
-            file >> text;
-            if (text == "true") {
-                ai1 = new ChessAI(PieceColor::white);
-                ai2 = new ChessAI(PieceColor::black);
-            }
-        }
-    }
-    file.close();
-
+    LoadSettingsData();
     gameStatus = GameStatus::playing;
     ColorTurn = PieceColor::white;
     chessboard.initPieces();
@@ -55,13 +31,12 @@ Game::Game() {
 }
 
 Game::~Game() {
-    if (ai1) delete ai1;
-    if (ai2) delete ai2;
     if (move) delete move;
     UnloadSounds();
 }
 
 void Game::HandleInput() {
+    if (AIDoingMove) return;
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !move && gameStatus == GameStatus::playing) {
         int x = GetMouseX() / cellSize;
         int y = GetMouseY() / cellSize;
@@ -91,21 +66,13 @@ void Game::Update() {
             move = nullptr;
             ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
             clickedPiece = nullptr;
+            AIDoingMove = false;
         }
-    } else if (ai1 &&  AICalculateMove == false &&  ColorTurn == ai1->colorAI) {
-        AICalculateMove = true;
-        std::thread aiThread([&]() {
-            move = ai1->GetMove(chessboard);
+    } else if (!AIDoingMove && ((ai1 && ColorTurn == ai1->colorAI) || ai2)) {
+        AIDoingMove = true;
+        std::thread aiThread([&](){
+            move = ColorTurn == ai1->colorAI ? ai1->GetMove(chessboard) : ai2->GetMove(chessboard);
             if (move->promotion) move->AI_promotion = true;
-            AICalculateMove = false;
-        });
-        aiThread.detach();
-    } else if (ai2 && AICalculateMove == false &&  ColorTurn == ai2->colorAI) {
-        AICalculateMove = true;
-        std::thread aiThread([&]() {
-            move = ai2->GetMove(chessboard);
-            if (move->promotion) move->AI_promotion = true;
-            AICalculateMove = false;
         });
         aiThread.detach();
     }
@@ -122,6 +89,38 @@ void Game::Draw() {
     if (gameStatus != GameStatus::playing) GameOver();
 
     EndDrawing();
+}
+
+void Game::LoadSettingsData() {
+    std::ifstream file("../src/GameSettings.txt");
+    std::string text;
+    while (file >> text) {
+        if (text == "PvP") {
+            file >> text;
+            if (text == "true") {
+                ai1 = nullptr;
+                ai2 = nullptr;
+            }
+        } else if (text == "PvAI") {
+            file >> text;
+            if (text == "true") {
+                file >> text >> text;  // skip "ChessAIColor"
+                ai1 = std::make_unique<ChessAI>(text == "black" ? PieceColor::black : PieceColor::white);
+                ai2 = nullptr;
+            }
+        } else if (text == "AIvAI") {
+            file >> text;
+            if (text == "true") {
+                ai1 = std::make_unique<ChessAI>(PieceColor::black);
+                ai2 = std::make_unique<ChessAI>(PieceColor::white);
+            }
+        } else if (text == "TargetFPS") {
+            int fps;
+            file >> fps;
+            SetTargetFPS(fps);
+        }
+    }
+    file.close();
 }
 
 void Game::GameOver() {
