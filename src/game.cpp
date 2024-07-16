@@ -44,7 +44,7 @@ void Game::HandleInput() {
         bool isLegalMove = (clickedPiece && std::any_of(clickedPiece->legalMoves.begin(), clickedPiece->legalMoves.end(), [&](auto move) { return Vector2Equals(move, {(float)x, (float)y}); }));
 
         // logic on click
-        if (isOwnPieceClick) {
+        if (isOwnPieceClick && time>0.1) {
             clickedPiece = chessboard.grid[x + y * 8];
         } else if (clickedPiece && isLegalMove) {
             move = new Move{clickedPiece->position, {(float)x, (float)y}, chessboard};
@@ -55,6 +55,8 @@ void Game::HandleInput() {
 
 void Game::Update() {
     if (gameStatus != GameStatus::playing) return;
+
+    time += GetFrameTime();
 
     if (move) {
         move->Update();

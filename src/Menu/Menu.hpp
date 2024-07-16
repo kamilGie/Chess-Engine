@@ -1,5 +1,6 @@
 #pragma once
 #include <raylib.h>
+#include "MenuButton.hpp"
 
 class Menu {
    public:
@@ -12,27 +13,14 @@ class Menu {
     bool quit = false;
     private:
 
-    Rectangle startButton = { (float)GetScreenWidth() / 2 - 140, (float)GetScreenHeight() - 100, 280, 50 };
-    bool startButtonHover = false;
-
-    Rectangle PvP = { (float)GetScreenWidth() / 4 - 100-50,  200, 200, 50 };
-    bool PvPHover = false;
-
-    Rectangle PvAI = { (float)GetScreenWidth() / 2 - 100,  200, 200, 50 };
-    bool PvAIHover = false;
-
-    Rectangle AIvsAI = { ((float)GetScreenWidth() / 4 *3) - 100+50,  200, 200, 50 };
-    bool AIvsAIHover = false;
-
-    Rectangle AIColor = { (float)GetScreenWidth() / 2 -100 ,  140, 200, 50 };
+    MenuButton startButton = MenuButton({ (float)GetScreenWidth() / 2 - 140, (float)GetScreenHeight() - 100, 280, 50 }, "Start Game");
+    MenuButton PvP = MenuButton({ (float)GetScreenWidth() / 4 - 150,  200, 200, 50 }, "PvP");
+    MenuButton PvAI = MenuButton({ (float)GetScreenWidth() / 2 - 100,  200, 200, 50 }, "PvAI");
+    MenuButton AIvAI = MenuButton({ ((float)GetScreenWidth() / 4 *3) - 50,  200, 200, 50 }, "AIvAI");
+    MenuButton AiColor = MenuButton({ (float)GetScreenWidth() / 2 - 100,  140, 200, 50 }, "AI Color");
     Rectangle AiColorMargin = { (float)GetScreenWidth() / 2 -100 ,  140, 200, 60 };
-    bool AIColorHover = false;
 
     int fps;
-    bool isPVP=false;
-    bool isPvAI=false;
-    bool isAIvsAI=false;
-    bool isAIBlack=false;
     bool hasSettingsChanged=false;
 
     Texture2D MenuBackground;

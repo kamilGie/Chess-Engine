@@ -28,4 +28,5 @@ class Game {
     GameStatus gameStatus;
     Chessboard chessboard = Chessboard();
     std::shared_ptr<Piece> clickedPiece = nullptr;
+    float time = 0;
 };

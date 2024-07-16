@@ -11,7 +11,7 @@ int main() {
         menu.Draw();
         if (WindowShouldClose() || menu.quit) return 0;
     }
-    
+
     Game game;
     while (!WindowShouldClose()) {
         game.HandleInput();
