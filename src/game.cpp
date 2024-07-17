@@ -4,7 +4,6 @@
 #include <raymath.h>
 
 #include <fstream>
-#include <iostream>
 #include <thread>
 
 #include "ChessAI/ChessAI.hpp"

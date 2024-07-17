@@ -2,7 +2,6 @@
 
 #include <raymath.h>
 
-#include <iostream>
 
 #include "../chessboard/chessboard.hpp"
 #include "../pieces/factory/piece_factory.hpp"

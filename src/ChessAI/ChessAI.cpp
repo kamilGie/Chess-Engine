@@ -2,8 +2,8 @@
 
 #include <raymath.h>
 
-#include <iostream>
 #include <memory>
+#include <iostream>
 #include <unordered_map>
 
 #include "../chessboard/chessboard.hpp"
