@@ -31,7 +31,19 @@ Menu::Menu() {
     MenuBackground = LoadTextureFromImage(image);
     UnloadImage(image);
 
+    InitButtons();
+    startButton.isActive = true;
     SetTargetFPS(60);
+}
+
+void Menu::InitButtons() {
+    PvsAIGroup.MainButtons.push_back(&PvAI);
+    PvsAIGroup.ButtonsAfterHover.push_back(&AiColor);
+
+    AllButtons.MainButtons.push_back(&PvP);
+    AllButtons.MainButtons.push_back(&AIvAI);
+    AllButtons.MainButtons.push_back(&PvsAIGroup);
+    AllButtons.MainButtons.push_back(&startButton);
 }
 
 Menu::~Menu() {
@@ -56,40 +68,7 @@ void Menu::Draw() {
 
     SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 
-    DrawRectangleRounded(startButton, 0.2, 0, Color{108, 152, 63, 255});
-    DrawText(startButton.text.c_str(), GetScreenWidth() / 2 - MeasureText(startButton.text.c_str(), 30) / 2, GetScreenHeight() - 90, 30, Color{233, 235, 210, 255});
-    if (startButton.hover) {
-        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-        DrawRectangleRoundedLines(startButton, 0.3, 0, 3, Color{233, 235, 210, 255});
-    }
-
-    DrawRectangleRounded(PvP, 0.2, 0, Color{233, 235, 210, 255});
-    DrawText(PvP.text.c_str(), GetScreenWidth() / 4 - MeasureText(PvP.text.c_str(), 30) / 2 - 50, 210, 30, Color{108, 152, 63, 255});
-    if (!PvP.isActive) DrawRectangleRounded(PvP, 0.2, 0, Fade(BLACK, 0.7f));
-    if (PvP.hover) { 
-        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-        DrawRectangleRoundedLines(PvP, 0.3, 0, 3, Color{233, 235, 210, 255});
-    }
-
-    DrawRectangleRounded(PvAI, 0.2, 0, Color{233, 235, 210, 255});
-    DrawText(PvAI.text.c_str(), GetScreenWidth() / 2 - MeasureText(PvAI.text.c_str(), 30) / 2, 210, 30, Color{108, 152, 63, 255});
-    if (!PvAI.isActive) DrawRectangleRounded(PvAI, 0.2, 0, Fade(BLACK, 0.7f));
-    if (PvAI.hover) {
-        DrawRectangleRounded(AiColor, 0.2, 0, AiColor.isActive ? BLACK : WHITE);
-        DrawText(AiColor.text.c_str(), GetScreenWidth() / 2 - MeasureText(AiColor.text.c_str(), 30) / 2, 150, 30, Color{108, 152, 63, 255});
-        if (!PvAI.isActive) DrawRectangleRounded(AiColor, 0.2, 0, Fade(BLACK, 0.7f));
-        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-        if(!AiColor.hover) DrawRectangleRoundedLines(PvAI, 0.3, 0, 3, Color{233, 235, 210, 255});
-        else DrawRectangleRoundedLines(AiColor, 0.3, 0, 3, Color{233, 235, 210, 255});
-    }
-
-    DrawRectangleRounded(AIvAI, 0.2, 0, Color{233, 235, 210, 255});
-    DrawText(AIvAI.text.c_str(), GetScreenWidth() / 4 * 3 - MeasureText(AIvAI.text.c_str(), 30) / 2 + 50, 210, 30, Color{108, 152, 63, 255});
-    if (!AIvAI.isActive) DrawRectangleRounded(AIvAI, 0.2, 0, Fade(BLACK, 0.7f));
-    if (AIvAI.hover ) {
-        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-        DrawRectangleRoundedLines(AIvAI, 0.3, 0, 3, Color{233, 235, 210, 255});
-    }
+    AllButtons.Draw();
 
     EndDrawing();
 }
@@ -134,6 +113,7 @@ void Menu::HandleInput() {
     } else if (CheckCollisionPointRec(GetMousePosition(), PvAI)) {
         PvAI.hover = true;
         AiColor.hover = false;
+        PvsAIGroup.hover = true;
     } else if (CheckCollisionPointRec(GetMousePosition(), AIvAI)) {
         AIvAI.hover = true;
     } else if(PvAI.hover && PvAI.isActive &&   CheckCollisionPointRec(GetMousePosition(), AiColorMargin)) {
@@ -144,5 +124,6 @@ void Menu::HandleInput() {
         PvAI.hover = false;
         AIvAI.hover = false;
         AiColor.hover = false;
+        PvsAIGroup.hover = false;
     }
 }
