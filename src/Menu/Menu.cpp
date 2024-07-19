@@ -33,7 +33,7 @@ Menu::Menu() {
 
     InitButtons();
     startButton.isActive = true;
-    SetTargetFPS(60);
+    SetTargetFPS(120);
 }
 
 void Menu::InitButtons() {
@@ -65,11 +65,8 @@ Menu::~Menu() {
 void Menu::Draw() {
     BeginDrawing();
     DrawTexture(MenuBackground, 0, 0, WHITE);
-
     SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-
     AllButtons.Draw();
-
     EndDrawing();
 }
 
