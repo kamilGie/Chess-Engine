@@ -18,11 +18,12 @@ class Menu {
     MenuButton PvP = MenuButton({ (float)GetScreenWidth() / 4 - 150,  200, 200, 50 }, "PvP");
     MenuButton PvAI = MenuButton({ (float)GetScreenWidth() / 2 - 100,  200, 200, 50 }, "PvAI");
     MenuButton AIvAI = MenuButton({ ((float)GetScreenWidth() / 4 *3) - 50,  200, 200, 50 }, "AIvAI");
-    MenuButton AiColor = MenuButton({ (float)GetScreenWidth() / 2 - 100,  140, 200, 50 }, "AI Color");
+    MenuButton AiColorBlack = MenuButton({ (float)GetScreenWidth() / 2 - 100,  140, 90, 50 }, "Black", BLACK, WHITE);
+    MenuButton AIColorWHite = MenuButton({ (float)GetScreenWidth() / 2 + 10,  140, 90,50 }, "White", WHITE, BLACK);
 
     MenuButtonsGroup PvsAIGroup;
     MenuButtonsGroup AllButtons;
-    Rectangle AiColorMargin = { (float)GetScreenWidth() / 2 -100 ,  140, 200, 60 };
+    
 
     int fps;
     bool hasSettingsChanged=false;

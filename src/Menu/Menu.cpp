@@ -13,7 +13,8 @@ Menu::Menu() {
             PvAI.isActive = (text == "true") ? true : false;
         } else if (text == "ChessAIColor") {
             file >> text;
-            AiColor.isActive = (text == "black") ? true : false;
+            AiColorBlack.isActive = (text == "black") ? true : false;
+            AIColorWHite.isActive = (text == "white") ? true : false;
         } else if (text == "TargetFPS") {
             file >> fps;
         } else if (text == "PvP") {
@@ -37,13 +38,13 @@ Menu::Menu() {
 }
 
 void Menu::InitButtons() {
-    PvsAIGroup.MainButtons.push_back(&PvAI);
-    PvsAIGroup.ButtonsAfterHover.push_back(&AiColor);
+    PvsAIGroup.AddMainButton(&PvAI);
+    PvsAIGroup.AddButtonAfterHover(&AiColorBlack);
+    PvsAIGroup.AddButtonAfterHover(&AIColorWHite);
 
-    AllButtons.MainButtons.push_back(&PvP);
-    AllButtons.MainButtons.push_back(&AIvAI);
-    AllButtons.MainButtons.push_back(&PvsAIGroup);
-    AllButtons.MainButtons.push_back(&startButton);
+    AllButtons.AddMainButton(&PvP);
+    AllButtons.AddMainButton(&AIvAI);
+    AllButtons.AddMainButton(&PvsAIGroup);
 }
 
 Menu::~Menu() {
@@ -55,7 +56,7 @@ Menu::~Menu() {
     if (file.is_open()) {
         file << "PvP " << (PvP.isActive ? "true\n" : "false\n");
         file << "PvAI " << (PvAI.isActive ? "true\n" : "false\n");
-        file << "ChessAIColor " << (AiColor.isActive ? "black\n" : "white\n");
+        file << "ChessAIColor " << (AiColorBlack.isActive ? "black\n" : "white\n");
         file << "AIvAI " << (AIvAI.isActive ? "true\n" : "false\n");
         file << "TargetFPS " << fps;
         file.close();
@@ -97,8 +98,15 @@ void Menu::HandleInput() {
             hasSettingsChanged = true;
         }
 
-        if (PvAI.hover && CheckCollisionPointRec(GetMousePosition(), AiColorMargin)) {
-            AiColor.isActive = !AiColor.isActive;
+        if (PvAI.hover && (CheckCollisionPointRec(GetMousePosition(), AIColorWHite ) || CheckCollisionPointRec(GetMousePosition(), AiColorBlack))) {
+            AiColorBlack.isActive = false;
+            AIColorWHite.isActive = true;
+            hasSettingsChanged = true;
+        }
+
+        if (CheckCollisionPointRec(GetMousePosition(), AiColorBlack)) {
+            AiColorBlack.isActive = true;
+            AIColorWHite.isActive = false;
             hasSettingsChanged = true;
         }
     }
@@ -109,18 +117,28 @@ void Menu::HandleInput() {
         PvP.hover = true;
     } else if (CheckCollisionPointRec(GetMousePosition(), PvAI)) {
         PvAI.hover = true;
-        AiColor.hover = false;
+        AiColorBlack.hover = false;
+        AIColorWHite.hover = false;
         PvsAIGroup.hover = true;
     } else if (CheckCollisionPointRec(GetMousePosition(), AIvAI)) {
         AIvAI.hover = true;
-    } else if(PvAI.hover && PvAI.isActive &&   CheckCollisionPointRec(GetMousePosition(), AiColorMargin)) {
-        AiColor.hover = true;
+    } else if(PvAI.hover && PvAI.isActive &&   CheckCollisionPointRec(GetMousePosition() , PvsAIGroup.area)) {
+        if (CheckCollisionPointRec(GetMousePosition(),AiColorBlack)) {
+            AiColorBlack.hover = true;
+            AIColorWHite.hover = false;
+        }else if (CheckCollisionPointRec(GetMousePosition(),AIColorWHite)) {
+            AIColorWHite.hover = true;
+            AiColorBlack.hover = false;
+        }
+    }else if (PvAI.hover && PvAI.isActive && CheckCollisionPointRec(GetMousePosition(), AiColorBlack)) {
+        AiColorBlack.hover = true;
     } else {
         startButton.hover = false;
         PvP.hover = false;
         PvAI.hover = false;
         AIvAI.hover = false;
-        AiColor.hover = false;
+        AiColorBlack.hover = false;
+        AIColorWHite.hover = false;
         PvsAIGroup.hover = false;
     }
 }
