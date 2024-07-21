@@ -1,7 +1,6 @@
 #include "MenuButton.hpp"
-#include <iostream>
 
-MenuButton::MenuButton(Rectangle area,const std::string& text,Color BackgroundColor, Color TextColor):BackgroundColor(BackgroundColor),TextColor(TextColor),text(text) {
+MenuButton::MenuButton(Rectangle area,const std::string& text):text(text) {
     this->area = area;
 }
 

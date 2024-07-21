@@ -13,11 +13,11 @@ class Drawable {
 
 class MenuButton : public Drawable {
    public:
-    MenuButton(Rectangle area, const std::string& text, Color BackgroundColor = Color{233, 235, 210, 255}, Color TextColor = Color{108, 152, 63, 255});
+    MenuButton(Rectangle area, const std::string& text);
     bool hover = false;
     bool isActive = false;
-    Color BackgroundColor;
-    Color TextColor;
+    Color BackgroundColor = Color{233, 235, 210, 255};
+    Color TextColor = Color{108, 152, 63, 255};
     std::string text;
 
     void Draw() override;

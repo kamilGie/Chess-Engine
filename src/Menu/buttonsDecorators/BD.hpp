@@ -2,9 +2,9 @@
 #include "../MenuButton.hpp"
 
 template <typename T>
-concept isADrawable = std::is_base_of<Drawable, T>::value;
+concept isAButton = std::is_base_of<MenuButton, T>::value;
 
-template <isADrawable T>
+template <isAButton T>
 class ButtonStateDecorator : public T { 
     public:
     template <typename...Args>
@@ -15,5 +15,15 @@ class ButtonStateDecorator : public T {
         if (!T::isActive) DrawRectangleRounded(T::area, 0.2, 0, Fade(BLACK, 0.7f));
     }
 
+};
+
+template <isAButton T>
+class ButtonColorDecorator : public T { 
+    public:
+    template <typename...Args>
+        ButtonColorDecorator(Color BackgroundColor, Color TextColor, Args ...args): T(std::forward<Args>(args)...) {
+            T::TextColor = TextColor;
+            T::BackgroundColor = BackgroundColor;
+        }
 };
 
