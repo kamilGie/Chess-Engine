@@ -25,6 +25,7 @@ class MenuButton : public Drawable {
     operator Rectangle() const { return area; }
 };
 
+
 class MenuButtonsGroup : public Drawable {
    public:
     void Draw() override;

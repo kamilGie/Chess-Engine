@@ -42,6 +42,7 @@ void Menu::InitButtons() {
     PvsAIGroup.AddButtonAfterHover(&AiColorBlack);
     PvsAIGroup.AddButtonAfterHover(&AIColorWHite);
 
+    AllButtons.AddMainButton(&startButton);
     AllButtons.AddMainButton(&PvP);
     AllButtons.AddMainButton(&AIvAI);
     AllButtons.AddMainButton(&PvsAIGroup);

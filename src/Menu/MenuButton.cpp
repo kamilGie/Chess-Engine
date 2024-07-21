@@ -8,7 +8,6 @@ MenuButton::MenuButton(Rectangle area,const std::string& text,Color BackgroundCo
 void MenuButton::Draw() {
     DrawRectangleRounded(area, 0.2, 0, BackgroundColor );
     DrawText(text.c_str(), area.x + area.width / 2 - MeasureText(text.c_str(), 30) / 2, area.y + area.height / 2 - 15, 30, TextColor);
-    if (!isActive) DrawRectangleRounded(area, 0.2, 0, Fade(BLACK, 0.7f));
     if (hover) { 
         SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
         DrawRectangleRoundedLines(area, 0.4, 0, 3, WHITE );

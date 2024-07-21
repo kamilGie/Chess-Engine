@@ -34,7 +34,7 @@ class Piece {
 
     Vector2 position;
     PieceColor color;
-    int moveCount = 0;
+    int moveCount = 0; 
     Texture2D texture;
     std::vector<Vector2> legalMoves = {};
 
