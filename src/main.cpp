@@ -3,7 +3,6 @@
 
 int main() {
     InitWindow(800, 800, "chess");
-
     // for loop to delete Menu object after it's scope
     for (Menu menu;menu.running;){
         menu.HandleInput();

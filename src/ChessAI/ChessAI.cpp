@@ -10,6 +10,7 @@
 #include "../move/move.hpp"
 #include "../pieces/bases/piece.hpp"
 #include "../pieces/models/king/king.hpp"
+#include "proxy/BestMove.hpp"
 
 #include "Façade/calculateMoveFaçade.hpp"
 
@@ -24,25 +25,17 @@ Move* ChessAI::GetMove(Chessboard& chessboard) {
         GridCoppy[i] = chessboard.grid[i] ? chessboard.grid[i]->clone() : nullptr;
     }
 
-    struct BestMove {
-        float score = -1001;
-        Vector2 from;
-        Vector2 to;
-    };
-    BestMove bestMove;
+
+    Max_BestMove max_bestMove;
     for (auto p : GridCoppy) {
         if (p && p->color == colorAI) {
             for (int i = 0; i < p->legalMoves.size(); i++) {
                 Vector2 from = {p->position.x, p->position.y};
                 float score = calculateMoveFaçade::get().CalculateMove(from, p->legalMoves[i], GridCoppy, colorAI);
-                if (score > bestMove.score) {
-                    bestMove.score = score;
-                    bestMove.from = from;
-                    bestMove.to = p->legalMoves[i];
-                }
+                max_bestMove = {score, from, p->legalMoves[i]};// assing if the score is better
             }
         }
     }
-    std::cout  << " best score move  " << bestMove.from.x << bestMove.from.y << " and total time " << GetTime() - startTime << std::endl;
-    return new Move(bestMove.from, bestMove.to, chessboard);
+    std::cout  << " best score move  " << max_bestMove.value.from.x << max_bestMove.value.from.y << " and total time " << GetTime() - startTime << std::endl;
+    return new Move(max_bestMove.value.from, max_bestMove.value.to, chessboard);
 }
