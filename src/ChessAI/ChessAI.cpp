@@ -3,7 +3,6 @@
 #include <raymath.h>
 
 #include <memory>
-#include <iostream>
 #include <unordered_map>
 
 #include "../chessboard/chessboard.hpp"
@@ -36,6 +35,5 @@ Move* ChessAI::GetMove(Chessboard& chessboard) {
             }
         }
     }
-    std::cout  << " best score move  " << max_bestMove.value.from.x << max_bestMove.value.from.y << " and total time " << GetTime() - startTime << std::endl;
     return new Move(max_bestMove.value.from, max_bestMove.value.to, chessboard);
 }
