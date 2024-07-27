@@ -1,6 +1,9 @@
 #include "calculateMoveFaçade.hpp"
+
 #include <raymath.h>
+
 #include <unordered_map>
+
 #include "../../chessboard/chessboard.hpp"
 #include "../../move/move.hpp"
 #include "../../pieces/bases/piece.hpp"
@@ -24,7 +27,7 @@ float calculateMoveFaçade::CalculateMove(Vector2 from, Vector2 to, std::array<s
     std::unordered_map<int, std::vector<Vector2>> legalMovesMap;
     for (int i = 0; i < grid.size(); i++) {
         if (grid[i] && grid[i]->color == enemyColor) {
-                legalMovesMap[i] = std::move(grid[i]->legalMoves);
+            legalMovesMap[i] = std::move(grid[i]->legalMoves);
         }
     }
 
