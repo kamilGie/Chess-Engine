@@ -50,7 +50,7 @@ void Game::HandleInput() {
             clickedPiece = nullptr;
         }
     }
-    if(IsKeyPressed(KEY_R)) {
+    if(IsKeyPressed(KEY_R) && !move && gameStatus == GameStatus::playing) {
         move = new Move{ chessboard};
     }
 }
