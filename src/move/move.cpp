@@ -14,8 +14,27 @@ Texture2D Move::whitePromotionTexture;
 Texture2D Move::blackPromotionTexture;
 std::vector<MomentoMove> Move::moveTokens;
 
+Move::Move(Chessboard& chessboard) : chessboard(chessboard) {
+    MomentoMove lastMove = moveTokens.back();
+    this->rebornPiece = lastMove.capturedPiece;
+    moveTokens.pop_back();
+    init(lastMove.to, lastMove.from, chessboard);
+}
+
+void Move::init(Vector2 from, Vector2 to, Chessboard& chessboard) {
+        this->from = from;
+        this->to = to;
+        this->AnimationPosition = Vector2Scale(from, cellSize);
+        this->chessboard = chessboard;
+        this->piece = std::move(chessboard.grid[(int)from.x + from.y * 8]);
+        chessboard.SetLastMovePositions(from, to);
+        PlaySound(moveSound);
+        if (piece->getValue() == 1 && (to.y == 0 || to.y == 7)) promotion = true;
+}
+
 Move::Move(Vector2 from, Vector2 to, Chessboard& chessboard)
     : from(from), to(to), AnimationPosition(Vector2Scale(from, cellSize)), chessboard(chessboard), piece(std::move(chessboard.grid[(int)from.x+from.y*8])) {
+    moveTokens.push_back(MomentoMove{from, to, chessboard.grid[(int)to.x+to.y*8]} );
     chessboard.SetLastMovePositions(from, to);
     PlaySound(moveSound);
     if (piece->getValue() == 1 && (to.y == 0 || to.y == 7)) promotion = true;
@@ -48,8 +67,8 @@ void Move::ExecuteMove() {
     if (chessboard.grid[(int)to.x+to.y*8]) CapturePiece(chessboard.grid[(int)to.x+to.y*8]);
     piece->position = to;
     piece->moveCount++;
-    moveTokens.push_back(MomentoMove{from, to, chessboard.grid[(int)to.x+to.y*8]} );
     chessboard.grid[(int)to.x+to.y*8] = piece;
+    chessboard.grid[(int)from.x+from.y*8] = rebornPiece;
     CalculateLegalMoves();
 }
 

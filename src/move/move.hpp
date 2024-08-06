@@ -10,6 +10,8 @@ enum class PieceColor;
 class Move {
    public:
     Move(Vector2 from, Vector2 to, Chessboard& chessboard);
+    Move(Chessboard& chessboard);//undo move
+    void init(Vector2 from, Vector2 to, Chessboard& chessboard);
     void MoveAnimation();
     void PromoteAnimation();
     void Update();
@@ -34,6 +36,7 @@ class Move {
     Vector2 AnimationPosition;
     Chessboard& chessboard;
     std::shared_ptr<Piece> piece;
+    std::shared_ptr<Piece> rebornPiece = nullptr;
     static std::vector<MomentoMove> moveTokens;
 
 
