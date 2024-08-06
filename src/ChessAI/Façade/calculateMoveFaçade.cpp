@@ -22,7 +22,7 @@ float calculateMoveFaçade::CalculateMove(Vector2 from, Vector2 to, std::array<s
     PieceColor enemyColor = (colorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
     std::shared_ptr<Piece> pieceCaptured = std::move(grid[indexTo]);
     if (pieceCaptured) score += pieceCaptured->getValue();
-    if (depth == 3) return score;
+    if (depth == 2) return score;
 
     std::unordered_map<int, std::vector<Vector2>> legalMovesMap;
     for (int i = 0; i < grid.size(); i++) {

@@ -2,7 +2,7 @@
 
 #include <raymath.h>
 
-
+#include "MomentoMove.hpp"
 #include "../chessboard/chessboard.hpp"
 #include "../pieces/factory/piece_factory.hpp"
 #include "../pieces/models/include.hpp"
@@ -12,6 +12,7 @@ Sound Move::captureSound;
 Sound Move::checkSound;
 Texture2D Move::whitePromotionTexture;
 Texture2D Move::blackPromotionTexture;
+std::vector<MomentoMove> Move::moveTokens;
 
 Move::Move(Vector2 from, Vector2 to, Chessboard& chessboard)
     : from(from), to(to), AnimationPosition(Vector2Scale(from, cellSize)), chessboard(chessboard), piece(std::move(chessboard.grid[(int)from.x+from.y*8])) {
@@ -47,6 +48,7 @@ void Move::ExecuteMove() {
     if (chessboard.grid[(int)to.x+to.y*8]) CapturePiece(chessboard.grid[(int)to.x+to.y*8]);
     piece->position = to;
     piece->moveCount++;
+    moveTokens.push_back(MomentoMove{from, to, chessboard.grid[(int)to.x+to.y*8]} );
     chessboard.grid[(int)to.x+to.y*8] = piece;
     CalculateLegalMoves();
 }

@@ -1,10 +1,10 @@
 #pragma once
 #include <raylib.h>
-
 #include <memory>
 
 class Piece;
 class Chessboard;
+class MomentoMove;
 enum class PieceColor;
 
 class Move {
@@ -34,6 +34,8 @@ class Move {
     Vector2 AnimationPosition;
     Chessboard& chessboard;
     std::shared_ptr<Piece> piece;
+    static std::vector<MomentoMove> moveTokens;
+
 
    private:
     void CalculateLegalMoves();
