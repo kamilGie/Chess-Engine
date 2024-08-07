@@ -37,6 +37,7 @@ class Move {
     Chessboard& chessboard;
     std::shared_ptr<Piece> piece;
     std::shared_ptr<Piece> rebornPiece = nullptr;
+    bool UndoMove = false;
     static std::vector<MomentoMove> moveTokens;
 
 

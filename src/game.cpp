@@ -51,7 +51,13 @@ void Game::HandleInput() {
         }
     }
     if(IsKeyPressed(KEY_R) && !move && gameStatus == GameStatus::playing) {
-        move = new Move{ chessboard};
+        if(ai1==nullptr) {
+            move = new Move{ chessboard};
+        }
+        else if(ai2==nullptr){
+            move = new Move{ chessboard};
+            undoMovevsAi=true;
+        }
     }
 }
 
@@ -68,6 +74,12 @@ void Game::Update() {
             if (move->stalematingMove) gameStatus = GameStatus::STALEMATE;
             delete move;
             move = nullptr;
+            if(undoMovevsAi){
+                undoMovevsAi=false;
+                move = new Move{ chessboard};
+                ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
+            }
+            else
             ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
             clickedPiece = nullptr;
             AIDoingMove = false;

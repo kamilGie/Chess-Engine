@@ -24,6 +24,7 @@ class Game {
     std::unique_ptr<ChessAI> ai1;
     std::unique_ptr<ChessAI> ai2;
     bool AIDoingMove = false;
+    bool undoMovevsAi=false;
     PieceColor ColorTurn;
     GameStatus gameStatus;
     Chessboard chessboard = Chessboard();

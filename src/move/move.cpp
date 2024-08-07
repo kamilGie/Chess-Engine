@@ -2,10 +2,10 @@
 
 #include <raymath.h>
 
-#include "MomentoMove.hpp"
 #include "../chessboard/chessboard.hpp"
 #include "../pieces/factory/piece_factory.hpp"
 #include "../pieces/models/include.hpp"
+#include "MomentoMove.hpp"
 
 Sound Move::moveSound;
 Sound Move::captureSound;
@@ -15,26 +15,29 @@ Texture2D Move::blackPromotionTexture;
 std::vector<MomentoMove> Move::moveTokens;
 
 Move::Move(Chessboard& chessboard) : chessboard(chessboard) {
-    MomentoMove lastMove = moveTokens.back();
+    UndoMove = true;
+    MomentoMove lastMove = moveTokens.empty() ? MomentoMove({0, 0}, {0, 0}, nullptr) : moveTokens.back();
+    if (!moveTokens.empty()) {
+        moveTokens.pop_back();
+    }
     this->rebornPiece = lastMove.capturedPiece;
-    moveTokens.pop_back();
     init(lastMove.to, lastMove.from, chessboard);
 }
 
 void Move::init(Vector2 from, Vector2 to, Chessboard& chessboard) {
-        this->from = from;
-        this->to = to;
-        this->AnimationPosition = Vector2Scale(from, cellSize);
-        this->chessboard = chessboard;
-        this->piece = std::move(chessboard.grid[(int)from.x + from.y * 8]);
-        chessboard.SetLastMovePositions(from, to);
-        PlaySound(moveSound);
-        if (piece->getValue() == 1 && (to.y == 0 || to.y == 7)) promotion = true;
+    this->from = from;
+    this->to = to;
+    this->AnimationPosition = Vector2Scale(from, cellSize);
+    this->chessboard = chessboard;
+    this->piece = std::move(chessboard.grid[(int)from.x + from.y * 8]);
+    chessboard.SetLastMovePositions(from, to);
+    PlaySound(moveSound);
+    if (piece->getValue() == 1 && (to.y == 0 || to.y == 7)) promotion = true;
 }
 
 Move::Move(Vector2 from, Vector2 to, Chessboard& chessboard)
-    : from(from), to(to), AnimationPosition(Vector2Scale(from, cellSize)), chessboard(chessboard), piece(std::move(chessboard.grid[(int)from.x+from.y*8])) {
-    moveTokens.push_back(MomentoMove{from, to, chessboard.grid[(int)to.x+to.y*8]} );
+    : from(from), to(to), AnimationPosition(Vector2Scale(from, cellSize)), chessboard(chessboard), piece(std::move(chessboard.grid[(int)from.x + from.y * 8])) {
+    moveTokens.push_back(MomentoMove{from, to, chessboard.grid[(int)to.x + to.y * 8]});
     chessboard.SetLastMovePositions(from, to);
     PlaySound(moveSound);
     if (piece->getValue() == 1 && (to.y == 0 || to.y == 7)) promotion = true;
@@ -50,8 +53,8 @@ void Move::PromoteAnimation() {
 }
 
 void Move::Update() {
-    if (Vector2Distance(AnimationPosition, Vector2Scale(to, cellSize)) > 0.1f ) {
-        if(GetFrameTime()>0.05)return;
+    if (Vector2Distance(AnimationPosition, Vector2Scale(to, cellSize)) > 0.1f) {
+        if (GetFrameTime() > 0.05) return;
         AnimationPosition = Vector2Lerp(AnimationPosition, Vector2Scale(to, cellSize), GetFrameTime() * 20);
     } else if (promotion) {
         promote();
@@ -64,11 +67,15 @@ void Move::ExecuteMove() {
     if (piece->getValue() == 1) enPassantCalculation();
     if (piece->getValue() == 100 && abs(from.x - to.x) > 1) castling();
 
-    if (chessboard.grid[(int)to.x+to.y*8]) CapturePiece(chessboard.grid[(int)to.x+to.y*8]);
+    if (chessboard.grid[(int)to.x + to.y * 8]) CapturePiece(chessboard.grid[(int)to.x + to.y * 8]);
     piece->position = to;
-    piece->moveCount++;
-    chessboard.grid[(int)to.x+to.y*8] = piece;
-    chessboard.grid[(int)from.x+from.y*8] = rebornPiece;
+
+    piece->moveCount = UndoMove ? piece->moveCount - 1 : piece->moveCount + 1;
+    chessboard.grid[(int)to.x + to.y * 8] = piece;
+    if (rebornPiece) {
+        chessboard.grid[(int)from.x + from.y * 8] = rebornPiece;
+        rebornPiece->position = from;
+    }
     CalculateLegalMoves();
 }
 
@@ -88,26 +95,26 @@ void Move::enPassantCalculation() {
     int y = to.y;
     int moveDirection = (piece->color == PieceColor::black) ? -1 : 1;
 
-    if (abs(from.x - to.x) > 0 && !chessboard.grid[x+y*8]) CapturePiece(chessboard.grid[x + ((y + moveDirection)*8)]);
+    if (abs(from.x - to.x) > 0 && !chessboard.grid[x + y * 8]) CapturePiece(chessboard.grid[x + ((y + moveDirection) * 8)]);
 
     if (abs(from.y - to.y) > 1) {
-        if (isEnemyPawnOn(x - 1, y)) std::static_pointer_cast<Pawn>(chessboard.grid[x - 1 + y*8])->en_passant = {to.x, to.y + moveDirection};
-        if (isEnemyPawnOn(x + 1, y)) std::static_pointer_cast<Pawn>(chessboard.grid[x + 1+y*8])->en_passant = {to.x, to.y + moveDirection};
+        if (isEnemyPawnOn(x - 1, y)) std::static_pointer_cast<Pawn>(chessboard.grid[x - 1 + y * 8])->en_passant = {to.x, to.y + moveDirection};
+        if (isEnemyPawnOn(x + 1, y)) std::static_pointer_cast<Pawn>(chessboard.grid[x + 1 + y * 8])->en_passant = {to.x, to.y + moveDirection};
     }
 }
 
 bool Move::isEnemyPawnOn(int x, int y) {
     if (x < 0 || x > 7 || y < 0 || y > 7) return false;
-    return chessboard.grid[x+y*8] && chessboard.grid[x+y*8]->getValue() == 1 && chessboard.grid[x+y*8]->color != piece->color;
+    return chessboard.grid[x + y * 8] && chessboard.grid[x + y * 8]->getValue() == 1 && chessboard.grid[x + y * 8]->color != piece->color;
 }
 
 void Move::castling() {
     int rookX = (to.x == 1) ? 0 : 7;
     int rookNewX = (to.x == 1) ? 2 : 4;
     int rookY = (piece->color == PieceColor::black) ? 0 : 7;
-    chessboard.grid[rookNewX + rookY*8] = std::move(chessboard.grid[rookX+rookY*8]);
-    chessboard.grid[rookNewX+rookY*8]->position = {(float)rookNewX, (float)rookY};
-    chessboard.grid[rookNewX+rookY*8]->moveCount++;
+    chessboard.grid[rookNewX + rookY * 8] = std::move(chessboard.grid[rookX + rookY * 8]);
+    chessboard.grid[rookNewX + rookY * 8]->position = {(float)rookNewX, (float)rookY};
+    chessboard.grid[rookNewX + rookY * 8]->moveCount++;
 }
 
 void Move::promote() {
@@ -137,9 +144,12 @@ void Move::CapturePiece(std::shared_ptr<Piece>& p) {
 
 void Move::CalculateLegalMoves() {
     PieceColor eneymyColor = piece->color == PieceColor::white ? PieceColor::black : PieceColor::white;
-    SetMoves(chessboard.grid, eneymyColor);
+    if (UndoMove)
+        SetMoves(chessboard.grid, piece->color);
+    else
+        SetMoves(chessboard.grid, eneymyColor);
 
-    bool NoPossibleMoves = std::all_of(&chessboard.grid[0], &chessboard.grid[64], [this](auto p) { return !p || p->color == piece->color ||  p->legalMoves.empty(); });
+    bool NoPossibleMoves = std::all_of(&chessboard.grid[0], &chessboard.grid[64], [this](auto p) { return !p || p->color == piece->color || p->legalMoves.empty(); });
 
     if (isKingChecked()) {
         PlaySound(checkSound);
@@ -150,13 +160,13 @@ void Move::CalculateLegalMoves() {
 }
 
 bool Move::isKingChecked() {
-    for(auto p : chessboard.grid){
-            if (p && p->color != piece->color && p->getValue() == 100) {
-                if (std::static_pointer_cast<King>(p)->isGettingAtack(chessboard.grid))
-                    return true;
-                else
-                    return false;
-            }
+    for (auto p : chessboard.grid) {
+        if (p && p->color != piece->color && p->getValue() == 100) {
+            if (std::static_pointer_cast<King>(p)->isGettingAtack(chessboard.grid))
+                return true;
+            else
+                return false;
         }
+    }
     return false;
 }
