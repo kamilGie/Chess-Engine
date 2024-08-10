@@ -154,7 +154,7 @@ void Game::GameOver() {
         default:
             break;
     }
-
+    
     DrawRectangle(0, 0, 800, 800, Fade(BLACK, 0.8f));
     DrawText("GAME OVER", (800 - MeasureText("GAME OVER", 50)) / 2, 300, 50, WHITE);
     DrawText(resultText.c_str(), (800 - MeasureText(resultText.c_str(), 50)) / 2, 380, 50, WHITE);
