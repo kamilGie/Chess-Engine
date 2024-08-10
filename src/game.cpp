@@ -21,7 +21,7 @@ enum class GameStatus {
     STALEMATE,
 };
 
-Game::Game() {
+Game::Game(StateMachine& sm) :State(sm) {
     LoadSettingsData();
     gameStatus = GameStatus::playing;
     ColorTurn = PieceColor::white;

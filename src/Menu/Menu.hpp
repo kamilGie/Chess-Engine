@@ -1,15 +1,16 @@
 #pragma once
 #include <raylib.h>
 #include "buttonsDecorators/BD.hpp"
+#include "../stateMachine/stateMahcine.hpp"
 
 
-class Menu {
+class Menu : public State{
    public:
-    Menu();
+    Menu(StateMachine & sm);
     ~Menu();
-    void Draw();
-    void Update();
-    void HandleInput();
+    void Draw() override;
+    void Update() override;
+    void HandleInput() override;
     bool running = true;
     bool quit = false;
     private:

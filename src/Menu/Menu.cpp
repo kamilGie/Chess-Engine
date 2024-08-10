@@ -1,10 +1,10 @@
 #include "Menu.hpp"
 
 #include <raylib.h>
-
 #include <fstream>
+#include "../game.hpp"
 
-Menu::Menu() {
+Menu::Menu(StateMachine& sm) :State(sm) {
     std::ifstream file("../src/GameSettings.txt");
     std::string text;
     while (file >> text) {
@@ -77,7 +77,9 @@ void Menu::Update() {
 
 void Menu::HandleInput() {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(GetMousePosition(), startButton)) running = false;
+        if (CheckCollisionPointRec(GetMousePosition(), startButton)) {
+            sm.SetState(std::make_unique<Game>(sm));
+        }
         if (CheckCollisionPointRec(GetMousePosition(), PvP)) {
             PvP.isActive = true;
             PvAI.isActive = false;

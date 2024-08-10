@@ -1,5 +1,6 @@
 #pragma once
 #include "chessboard/chessboard.hpp"
+#include "stateMachine/stateMahcine.hpp"
 
 class Piece;
 class Move;
@@ -7,13 +8,13 @@ class ChessAI;
 enum class PieceColor;
 enum class GameStatus;
 
-class Game {
+class Game :public State{
    public:
-    Game();
+    Game(StateMachine& sm);
     ~Game();
-    void Draw();
-    void Update();
-    void HandleInput();
+    void Draw() override;
+    void Update() override;
+    void HandleInput() override;
 
    private:
     void GameOver();
