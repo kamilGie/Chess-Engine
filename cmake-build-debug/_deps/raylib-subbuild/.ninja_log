@@ -1,0 +1,21 @@
+# ninja log v6
+0	12	1723389465114557299	raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-mkdir	b3ba382701ed0533
+0	12	1723389465114557299	/Users/koxu2115/Desktop/kody/chess/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-mkdir	b3ba382701ed0533
+1	19658	1723390032130606541	raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-download	93d1c3dc206e35d3
+1	19658	1723390032130606541	/Users/koxu2115/Desktop/kody/chess/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-download	93d1c3dc206e35d3
+19659	19671	1723390032143281973	raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-update	ee5e3615e767d6f4
+19659	19671	1723390032143281973	/Users/koxu2115/Desktop/kody/chess/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-update	ee5e3615e767d6f4
+19671	19682	1723390032154622098	raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-patch	6147eade9d0048cd
+19671	19682	1723390032154622098	/Users/koxu2115/Desktop/kody/chess/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-patch	6147eade9d0048cd
+19682	19694	1723390032166063265	raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-configure	b255696dba246118
+19682	19694	1723390032166063265	/Users/koxu2115/Desktop/kody/chess/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-configure	b255696dba246118
+19694	19705	1723390032177752728	raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-build	e80faab6dcc7f6a1
+19694	19705	1723390032177752728	/Users/koxu2115/Desktop/kody/chess/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-build	e80faab6dcc7f6a1
+19705	19716	1723390032188691765	raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-install	3ddcd976e4335a2c
+19705	19716	1723390032188691765	/Users/koxu2115/Desktop/kody/chess/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-install	3ddcd976e4335a2c
+19716	19727	1723390032199373174	raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-test	515b9ee1a9d00e8e
+19716	19727	1723390032199373174	/Users/koxu2115/Desktop/kody/chess/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-test	515b9ee1a9d00e8e
+19727	19743	1723390032215093639	CMakeFiles/raylib-populate-complete	ec7c193a3e07f8a7
+19727	19743	1723390032215093639	raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-done	ec7c193a3e07f8a7
+19727	19743	1723390032215093639	/Users/koxu2115/Desktop/kody/chess/cmake-build-debug/_deps/raylib-subbuild/CMakeFiles/raylib-populate-complete	ec7c193a3e07f8a7
+19727	19743	1723390032215093639	/Users/koxu2115/Desktop/kody/chess/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/raylib-populate-done	ec7c193a3e07f8a7
