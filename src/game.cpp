@@ -30,7 +30,7 @@ Game::Game(StateMachine& sm) :State(sm) {
 }
 
 Game::~Game() {
-    if (move) delete move;
+    delete move;
     UnloadSounds();
 }
 
@@ -40,7 +40,7 @@ void Game::HandleInput() {
         int x = GetMouseX() / cellSize;
         int y = GetMouseY() / cellSize;
         bool isOwnPieceClick = chessboard.grid[x + y * 8].get() && (chessboard.grid[x + y * 8]->color == ColorTurn);
-        bool isLegalMove = (clickedPiece && std::any_of(clickedPiece->legalMoves.begin(), clickedPiece->legalMoves.end(), [&](auto move) { return Vector2Equals(move, {(float)x, (float)y}); }));
+        bool isLegalMove = (clickedPiece && std::ranges::any_of(clickedPiece->legalMoves, [&](auto move) { return Vector2Equals(move, {(float)x, (float)y}); }));
 
         // logic on click
         if (isOwnPieceClick && time>0.1) {
@@ -139,7 +139,7 @@ void Game::LoadSettingsData() {
     file.close();
 }
 
-void Game::GameOver() {
+void Game::GameOver() const {
     std::string resultText;
     switch (gameStatus) {
         case GameStatus::whiteWin:

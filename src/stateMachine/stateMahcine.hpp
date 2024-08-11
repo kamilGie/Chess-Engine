@@ -1,11 +1,10 @@
 #pragma once
-#include <memory>
 class StateMachine;
 
 struct State {
     virtual ~State() = default;
     StateMachine& sm;
-    State(StateMachine& sm) : sm(sm) {};
+    explicit State(StateMachine& sm) : sm(sm) {};
     virtual void HandleInput() {};
     virtual void Update() {};
     virtual void Draw() {};
@@ -18,13 +17,13 @@ class StateMachine {
    void SetState(std::unique_ptr<State> state){
     this->state = std::move(state);
    }
-    void HandleInput() {
+    void HandleInput() const{
         state->HandleInput();
     };
-    void Update() {
+    void Update() const{
         state->Update();
     };
-    void Draw() {
+    void Draw() const{
         state->Draw();
     };
 };

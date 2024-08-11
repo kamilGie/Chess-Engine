@@ -10,14 +10,14 @@ enum class GameStatus;
 
 class Game :public State{
    public:
-    Game(StateMachine& sm);
-    ~Game();
+    explicit  Game(StateMachine& sm);
+    ~Game() final;
     void Draw() override;
     void Update() override;
     void HandleInput() override;
 
    private:
-    void GameOver();
+    void GameOver()  const;
     void LoadSettingsData();
 
    private:

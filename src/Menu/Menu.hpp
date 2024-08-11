@@ -6,8 +6,8 @@
 
 class Menu : public State{
    public:
-    Menu(StateMachine & sm);
-    ~Menu();
+    explicit  Menu(StateMachine & sm);
+    ~Menu() override;
     void Draw() override;
     void Update() override;
     void HandleInput() override;
@@ -18,7 +18,7 @@ class Menu : public State{
 
     ButtonColorDecorator<MenuButton> startButton{
         Color{108, 152, 63, 255}, Color{233, 235, 210, 255},
-        MenuButton{{ (float)GetScreenWidth() / 2 - 140, (float)GetScreenHeight() - 100, 280, 50 }, "Start Game"
+        MenuButton{{ static_cast<float>(GetScreenWidth()) / 2 - 140, (float)GetScreenHeight() - 100, 280, 50 }, "Start Game"
     }};
     ButtonStateDecorator<MenuButton> PvP{MenuButton{ { (float)GetScreenWidth() / 4 - 150,  200, 200, 50 }, "PvP"}};
     ButtonStateDecorator<MenuButton> PvAI{MenuButton{ { (float)GetScreenWidth() / 2 - 100,  200, 200, 50 }, "PvAI"}};
