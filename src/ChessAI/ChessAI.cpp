@@ -6,7 +6,6 @@
 #include "../chessboard/chessboard.hpp"
 #include "../move/move.hpp"
 #include "../pieces/bases/piece.hpp"
-#include "Façade/calculateMoveFaçade.hpp"
 #include "proxy/BestMove.hpp"
 #include "../pieces/models/king/king.hpp"
 
