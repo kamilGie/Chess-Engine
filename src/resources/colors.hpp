@@ -1,3 +1,4 @@
+#pragma once
 #include <raylib.h>
 extern const Color ClickedGreen;
 extern const Color ClickedWhite;

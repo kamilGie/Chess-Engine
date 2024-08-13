@@ -4,31 +4,31 @@
 #include <fstream>
 #include "../game.hpp"
 
-Menu::Menu(StateMachine& sm) :State(sm) {
+Menu::Menu(StateMachine& sm) :State(sm),fps(60) {
     std::ifstream file("../src/GameSettings.txt");
     std::string text;
     while (file >> text) {
         if (text == "PvAI") {
             file >> text;
-            PvAI.isActive = (text == "true") ? true : false;
+            PvAI.isActive = (text == "true");
         } else if (text == "ChessAIColor") {
             file >> text;
-            AiColorBlack.isActive = (text == "black") ? true : false;
-            AIColorWHite.isActive = (text == "white") ? true : false;
+            AiColorBlack.isActive = (text == "black");
+            AIColorWHite.isActive = (text == "white");
         } else if (text == "TargetFPS") {
             file >> fps;
         } else if (text == "PvP") {
             file >> text;
-            PvP.isActive = (text == "true") ? true : false;
+            PvP.isActive = (text == "true");
         } else if (text == "AIvAI") {
             file >> text;
-            AIvAI.isActive = (text == "true") ? true : false;
+            AIvAI.isActive = (text == "true");
         }
     }
     file.close();
 
-    std::string fullPath = "../Graphics/menu.png";
-    Image image = LoadImage(fullPath.c_str());
+    const std::string fullPath = "../Graphics/menu.png";
+    const Image image = LoadImage(fullPath.c_str());
     MenuBackground = LoadTextureFromImage(image);
     UnloadImage(image);
 
@@ -51,17 +51,6 @@ void Menu::InitButtons() {
 Menu::~Menu() {
     UnloadTexture(MenuBackground);
     SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-    if (!hasSettingsChanged) return;
-
-    std::ofstream file("../src/GameSettings.txt");
-    if (file.is_open()) {
-        file << "PvP " << (PvP.isActive ? "true\n" : "false\n");
-        file << "PvAI " << (PvAI.isActive ? "true\n" : "false\n");
-        file << "ChessAIColor " << (AiColorBlack.isActive ? "black\n" : "white\n");
-        file << "AIvAI " << (AIvAI.isActive ? "true\n" : "false\n");
-        file << "TargetFPS " << fps;
-        file.close();
-    }
 }
 
 void Menu::Draw() {
@@ -75,9 +64,22 @@ void Menu::Draw() {
 void Menu::Update() {
 }
 
+void Menu::UpdateParams() const {
+    if (std::ofstream file("../src/GameSettings.txt"); file.is_open()) {
+        file << "PvP " << (PvP.isActive ? "true\n" : "false\n");
+        file << "PvAI " << (PvAI.isActive ? "true\n" : "false\n");
+        file << "ChessAIColor " << (AiColorBlack.isActive ? "black\n" : "white\n");
+        file << "AIvAI " << (AIvAI.isActive ? "true\n" : "false\n");
+        file << "TargetFPS " << fps;
+        file.close();
+    }
+
+}
+
 void Menu::HandleInput() {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (CheckCollisionPointRec(GetMousePosition(), startButton)) {
+            if (hasSettingsChanged) UpdateParams();
             sm.SetState(std::make_unique<Game>(sm));
         }
         if (CheckCollisionPointRec(GetMousePosition(), PvP)) {

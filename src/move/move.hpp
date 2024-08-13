@@ -10,10 +10,10 @@ enum class PieceColor;
 class Move {
    public:
     Move(Vector2 from, Vector2 to, Chessboard& chessboard);
-    Move(Chessboard& chessboard);//undo move
+    explicit Move(Chessboard& chessboard);//undo move
     void init(Vector2 from, Vector2 to, Chessboard& chessboard);
-    void MoveAnimation();
-    void PromoteAnimation();
+    void MoveAnimation() const;
+    void PromoteAnimation() const;
     void Update();
     void ExecuteMove();
     static void SetMoves(std::array<std::shared_ptr<Piece>,64> grid, PieceColor color);

@@ -2,7 +2,6 @@
 #include <raylib.h>
 
 #include <memory>
-#include <string>
 #include <vector>
 
 #define ORTHOGONAL_MOVES \
@@ -23,7 +22,7 @@ extern int cellSize;
 
 class Piece {
    public:
-    void Draw();
+    void Draw() const;
     
     virtual int getValue() = 0;
     static PieceFactory& Create();

@@ -11,10 +11,10 @@ Chessboard::~Chessboard() {
 }
 
 void Chessboard::initPieces() {
-    std::string fullPathWhite = "../Graphics/promoteWhite.png";
-    std::string fullPathBlack = "../Graphics/promoteBlack.png";
-    Image Wimage = LoadImage(fullPathWhite.c_str());
-    Image Bimage = LoadImage(fullPathBlack.c_str());
+    const std::string fullPathWhite = "../Graphics/promoteWhite.png";
+    const std::string fullPathBlack = "../Graphics/promoteBlack.png";
+    const Image Wimage = LoadImage(fullPathWhite.c_str());
+    const Image Bimage = LoadImage(fullPathBlack.c_str());
     Move::whitePromotionTexture  = LoadTextureFromImage(Wimage);
     Move::blackPromotionTexture  = LoadTextureFromImage(Bimage);
     UnloadImage(Wimage);
@@ -45,7 +45,7 @@ void Chessboard::initPieces() {
     Move::SetMoves(grid, PieceColor::white);
 }
 
-void Chessboard::DrawSquares() {
+void Chessboard::DrawSquares() const {
     DrawRectangle(0, 0, cellSize * cellCount, cellSize * cellCount, Green);
 
     for (int row = 0; row < cellCount; row++) {
@@ -60,7 +60,7 @@ void Chessboard::DrawSquares() {
     DrawRectangle(lastMovePositions[1].x * cellSize, lastMovePositions[1].y * cellSize, cellSize, cellSize, SetClickedColor(lastMovePositions[1].x, lastMovePositions[1].y));
 }
 
-void Chessboard::DrawSelectedPieceDetails(std::shared_ptr<Piece> piece) {
+void Chessboard::DrawSelectedPieceDetails(const std::shared_ptr<Piece> &piece) const {
         int x = piece->position.x;
         int y = piece->position.y;
         DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, SetClickedColor(x, y));
@@ -68,25 +68,25 @@ void Chessboard::DrawSelectedPieceDetails(std::shared_ptr<Piece> piece) {
         DrawLegalMoves(piece);
 }
 
-void Chessboard::SetLastMovePositions(Vector2 from, Vector2 to) {
+void Chessboard::SetLastMovePositions(const Vector2 from, const Vector2 to) {
     lastMovePositions[0] = from;
     lastMovePositions[1] = to;
 }
 
-void Chessboard::DrawLegalMoves(std::shared_ptr<Piece> piece) {
+void Chessboard::DrawLegalMoves(const std::shared_ptr<Piece> &piece) const {
     for (auto move : piece->legalMoves) {
-        float x = move.x * cellSize + cellSize / 2;
-        float y = move.y * cellSize + cellSize / 2;
-        if (grid[(int)move.x+move.y*8]) {
+        const float x = move.x * cellSize + cellSize / 2;
+        const float y = move.y * cellSize + cellSize / 2;
+        if (grid[static_cast<int>(move.x)+move.y*8]) {
             DrawRing({x, y}, 40, 50, 0, 360, 32, Fade(BLACK, 0.1f));
         } else {
-            DrawCircle(x, y, 17, Fade(BLACK, 0.1f));
+            DrawCircle(x, y, 17., Fade(BLACK, 0.1f));
         }
     }
 }
 
-void Chessboard::DrawPieces() {
-    for(auto piece:grid){ 
+void Chessboard::DrawPieces() const {
+    for(const auto &piece:grid){
         if (piece) piece->Draw();
     }
 }

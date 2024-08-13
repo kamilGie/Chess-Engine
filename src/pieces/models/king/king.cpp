@@ -60,7 +60,7 @@ void King::SetLegalMoves(std::array<std::shared_ptr<Piece>,64> grid) {
                         }
                     }
                 } else if (p->isAtackingKing(grid)) {
-                    for(auto pc: grid){
+                    for(const auto &pc: grid){
                             if (pc && pc->color == color) {
                                 for (auto it = pc->legalMoves.begin(); it != pc->legalMoves.end();) {
                                     if (!pc->SafeMove(it->x, it->y, grid)) {
@@ -82,7 +82,7 @@ void King::SetLegalMoves(std::array<std::shared_ptr<Piece>,64> grid) {
         int x = position.x + dir.x;
         int y = position.y + dir.y;
         if (isInsideBoard(x, y) && grid[x+y*8] && grid[x+y*8]->color != color && grid[x+y*8]->getValue() == 4) {
-            for(auto pc: grid){
+            for(const auto &pc: grid){
                     if (pc && pc->color == color) {
                         for (auto it = pc->legalMoves.begin(); it != pc->legalMoves.end();) {
                             if (!pc->SafeMove(it->x, it->y, grid)) {

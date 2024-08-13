@@ -2,15 +2,15 @@
 #include "../factory/piece_factory.hpp"
 #include "../models/king/king.hpp"
 
-Piece::Piece(float column, float row, const std::string& pieceName, PieceColor color) : position(Vector2{column, row}), color(color) {
-    std::string fullPath = "../Graphics/" + pieceName + ".png";
-    Image image = LoadImage(fullPath.c_str());
+Piece::Piece(const float column, const float row, const std::string& pieceName, const PieceColor color) : position(Vector2{column, row}), color(color) {
+    const std::string fullPath = "../Graphics/" + pieceName + ".png";
+    const Image image = LoadImage(fullPath.c_str());
     texture = LoadTextureFromImage(image);
     PieceFactory::Get().addTexture(&texture);
     UnloadImage(image);
 }
 
-void Piece::Draw() { DrawTexture(texture, position.x * cellSize, position.y * cellSize, WHITE); }
+void Piece::Draw() const { DrawTexture(texture, position.x * cellSize, position.y * cellSize, WHITE); }
 
 PieceFactory& Piece::Create() { return PieceFactory::Get(); }
 

@@ -37,16 +37,18 @@ Game::~Game() {
 void Game::HandleInput() {
     if (AIDoingMove) return;
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !move && gameStatus == GameStatus::playing) {
-        int x = GetMouseX() / cellSize;
-        int y = GetMouseY() / cellSize;
-        bool isOwnPieceClick = chessboard.grid[x + y * 8].get() && (chessboard.grid[x + y * 8]->color == ColorTurn);
-        bool isLegalMove = (clickedPiece && std::ranges::any_of(clickedPiece->legalMoves, [&](auto move) { return Vector2Equals(move, {(float)x, (float)y}); }));
+        const int x = GetMouseX() / cellSize;
+        const int y = GetMouseY() / cellSize;
+        const bool isOwnPieceClick = chessboard.grid[x + y * 8].get() && (chessboard.grid[x + y * 8]->color == ColorTurn);
+        const bool isLegalMove = (clickedPiece && std::ranges::any_of(clickedPiece->legalMoves, [&](auto move) {
+            return Vector2Equals(move, {static_cast<float>(x), static_cast<float>(y)});
+        }));
 
         // logic on click
         if (isOwnPieceClick && time>0.1) {
             clickedPiece = chessboard.grid[x + y * 8];
         } else if (clickedPiece && isLegalMove) {
-            move = new Move{clickedPiece->position, {(float)x, (float)y}, chessboard};
+            move = new Move{clickedPiece->position, {static_cast<float>(x), static_cast<float>(y)}, chessboard};
             clickedPiece = nullptr;
         }
     }
@@ -79,8 +81,7 @@ void Game::Update() {
                 move = new Move{ chessboard};
                 ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
             }
-            else
-            ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
+            else ColorTurn = (ColorTurn == PieceColor::white) ? PieceColor::black : PieceColor::white;
             clickedPiece = nullptr;
             AIDoingMove = false;
         }

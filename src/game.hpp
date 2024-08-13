@@ -8,10 +8,10 @@ class ChessAI;
 enum class PieceColor;
 enum class GameStatus;
 
-class Game :public State{
+class Game final :public State{
    public:
     explicit  Game(StateMachine& sm);
-    ~Game() final;
+    ~Game();
     void Draw() override;
     void Update() override;
     void HandleInput() override;

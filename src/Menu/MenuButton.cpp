@@ -1,7 +1,9 @@
 #include "MenuButton.hpp"
 
-MenuButton::MenuButton(Rectangle area,const std::string& text):text(text) {
+MenuButton::MenuButton(const Rectangle area,std::string text){
     this->area = area;
+    this->text = std::move(text);
+
 }
 
 void MenuButton::Draw() {

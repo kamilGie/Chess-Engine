@@ -13,7 +13,7 @@ class Drawable {
 
 class MenuButton : public Drawable {
    public:
-    MenuButton(Rectangle area, const std::string& text);
+    MenuButton(Rectangle area,std::string text);
     bool hover = false;
     bool isActive = false;
     Color BackgroundColor = Color{233, 235, 210, 255};

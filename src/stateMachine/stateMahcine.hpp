@@ -3,6 +3,7 @@ class StateMachine;
 
 struct State {
     virtual ~State() = default;
+
     StateMachine& sm;
     explicit State(StateMachine& sm) : sm(sm) {};
     virtual void HandleInput() {};
