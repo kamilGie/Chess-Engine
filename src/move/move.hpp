@@ -10,12 +10,12 @@ enum class PieceColor;
 class Move {
    public:
     Move(Vector2 from, Vector2 to, Chessboard& chessboard);
-    explicit Move(Chessboard& chessboard);//undo move
     void init(Vector2 from, Vector2 to, Chessboard& chessboard);
     void MoveAnimation() const;
     void PromoteAnimation() const;
     void Update();
     void ExecuteMove();
+    static Move* GetUndoMove(Chessboard &chessboard);
     static void SetMoves(const std::array<std::shared_ptr<Piece>,64> &grid, PieceColor color);
 
     bool winningMove = false;
@@ -29,8 +29,10 @@ class Move {
     static Sound checkSound;
     static Texture2D whitePromotionTexture;
     static Texture2D blackPromotionTexture;
+    static std::vector<MomentoMove> moveTokens;
 
    private:
+    explicit Move(Chessboard& chessboard);//undo move
     Vector2 from;
     Vector2 to;
     Vector2 AnimationPosition;
@@ -38,7 +40,6 @@ class Move {
     std::shared_ptr<Piece> piece;
     std::shared_ptr<Piece> rebornPiece = nullptr;
     bool UndoMove = false;
-    static std::vector<MomentoMove> moveTokens;
 
 
    private:

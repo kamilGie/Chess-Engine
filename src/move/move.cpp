@@ -16,28 +16,30 @@ std::vector<MomentoMove> Move::moveTokens;
 
 Move::Move(Chessboard& chessboard) : chessboard(chessboard) {
     UndoMove = true;
-    const MomentoMove lastMove = moveTokens.empty() ? MomentoMove({0, 0}, {0, 0}, nullptr) : moveTokens.back();
-    if (!moveTokens.empty()) moveTokens.pop_back();
-
+    const MomentoMove lastMove =  moveTokens.back();
     this->rebornPiece = lastMove.capturedPiece;
     this->from = lastMove.to;
     this->to = lastMove.from;
     this->AnimationPosition = Vector2Scale(from, cellSize);
     this->chessboard = chessboard;
     this->piece = std::move(chessboard.grid[static_cast<int>(from.x) + from.y * 8]);
+    piece->moveCount-=1;
     chessboard.SetLastMovePositions(from, to);
     PlaySound(moveSound);
-    if (piece->getValue() == 1 && (to.y == 0 || to.y == 7)) promotion = true;
+    if (moveTokens.back().promotion) piece = piece->color == PieceColor::white ? Piece::Create().Pawn.white().Position(to.x, to.y) : Piece::Create().Pawn.black().Position(to.x, to.y);
+    moveTokens.pop_back();
 }
 
 Move::Move(Vector2 from, Vector2 to, Chessboard& chessboard)
     : from(from), to(to), AnimationPosition(Vector2Scale(from, cellSize)), chessboard(chessboard),
       piece(std::move(chessboard.grid[static_cast<int>(from.x) + from.y * 8])) {
 
-    moveTokens.emplace_back(MomentoMove{from, to, chessboard.grid[static_cast<int>(to.x) + to.y * 8]});
+    moveTokens.emplace_back(MomentoMove{from, to});
     chessboard.SetLastMovePositions(from, to);
     PlaySound(moveSound);
-    if (piece->getValue() == 1 && (to.y == 0 || to.y == 7)) promotion = true;
+    if (piece->getValue() == 1 && (to.y == 0 || to.y == 7)) {
+        promotion =moveTokens.back().promotion = true;
+    }
 }
 
 void Move::MoveAnimation() const{
@@ -65,17 +67,21 @@ void Move::ExecuteMove() {
     if (piece->getValue() == 1) enPassantCalculation();
     if (piece->getValue() == 100 && abs(from.x - to.x) > 1) castling();
 
-    if (chessboard.grid[(int)to.x + to.y * 8]) CapturePiece(chessboard.grid[(int)to.x + to.y * 8]);
+    if (chessboard.grid[static_cast<int>(to.x) + to.y * 8]) CapturePiece(chessboard.grid[static_cast<int>(to.x) + to.y * 8]);
     piece->position = to;
 
-    piece->moveCount = UndoMove ? piece->moveCount - 1 : piece->moveCount + 1;
-    chessboard.grid[(int)to.x + to.y * 8] = piece;
+    piece->moveCount = UndoMove ? piece->moveCount  : piece->moveCount + 1;
+    chessboard.grid[static_cast<int>(to.x) + to.y * 8] = piece;
     if (rebornPiece) {
-        chessboard.grid[(int)from.x + from.y * 8] = rebornPiece;
-        rebornPiece->position = from;
+        chessboard.grid[static_cast<int>(rebornPiece->position.x) + rebornPiece->position.y * 8] = rebornPiece;
     }
     CalculateLegalMoves();
 }
+
+Move * Move::GetUndoMove(Chessboard& chessboard) {
+    return new Move(chessboard);
+}
+
 
 void Move::SetMoves(const std::array<std::shared_ptr<Piece>, 64> &grid, PieceColor color) {
     std::shared_ptr<King> king = nullptr;
@@ -89,9 +95,9 @@ void Move::SetMoves(const std::array<std::shared_ptr<Piece>, 64> &grid, PieceCol
 }
 
 void Move::enPassantCalculation() {
-    int x = to.x;
-    int y = to.y;
-    int moveDirection = (piece->color == PieceColor::black) ? -1 : 1;
+    const int x = to.x;
+    const int y = to.y;
+    const int moveDirection = (piece->color == PieceColor::black) ? -1 : 1;
 
     if (abs(from.x - to.x) > 0 && !chessboard.grid[x + y * 8]) CapturePiece(chessboard.grid[x + ((y + moveDirection) * 8)]);
 
@@ -107,11 +113,11 @@ bool Move::isEnemyPawnOn(int x, int y) const {
 }
 
 void Move::castling() const {
-    int rookX = (to.x == 1) ? 0 : 7;
-    int rookNewX = (to.x == 1) ? 2 : 4;
-    int rookY = (piece->color == PieceColor::black) ? 0 : 7;
+    const int rookX = (to.x == 1) ? 0 : 7;
+    const int rookNewX = (to.x == 1) ? 2 : 4;
+    const int rookY = (piece->color == PieceColor::black) ? 0 : 7;
     chessboard.grid[rookNewX + rookY * 8] = std::move(chessboard.grid[rookX + rookY * 8]);
-    chessboard.grid[rookNewX + rookY * 8]->position = {(float)rookNewX, (float)rookY};
+    chessboard.grid[rookNewX + rookY * 8]->position = {static_cast<float>(rookNewX), static_cast<float>(rookY)};
     chessboard.grid[rookNewX + rookY * 8]->moveCount++;
 }
 
@@ -136,12 +142,13 @@ void Move::promote() {
 }
 
 void Move::CapturePiece(std::shared_ptr<Piece>& p) {
+    moveTokens.back().capturedPiece = p;
     PlaySound(captureSound);
     p = nullptr;
 }
 
 void Move::CalculateLegalMoves() {
-    PieceColor eneymyColor = piece->color == PieceColor::white ? PieceColor::black : PieceColor::white;
+    const PieceColor eneymyColor = piece->color == PieceColor::white ? PieceColor::black : PieceColor::white;
     if (UndoMove)
         SetMoves(chessboard.grid, piece->color);
     else

@@ -9,5 +9,6 @@ class MomentoMove {
     Vector2 from;
     Vector2 to;
     std::shared_ptr<Piece> capturedPiece=nullptr;
-    MomentoMove(Vector2 from, Vector2 to, std::shared_ptr<Piece> capturedPiece);
+    bool promotion = false;
+    MomentoMove(Vector2 from, Vector2 to, std::shared_ptr<Piece> capturedPiece=nullptr);
 };
