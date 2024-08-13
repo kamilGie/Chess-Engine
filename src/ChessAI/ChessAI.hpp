@@ -12,7 +12,7 @@ class ChessAI {
    public:
     explicit ChessAI(PieceColor colorAI);
     ~ChessAI();
-    Move* GetMove(Chessboard& chessboard) ;
+    Move* GetMove(Chessboard& chessboard) const;
 
     PieceColor colorAI;
 

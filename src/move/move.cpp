@@ -32,7 +32,7 @@ Move::Move(Chessboard& chessboard) : chessboard(chessboard) {
 
 Move::Move(Vector2 from, Vector2 to, Chessboard& chessboard)
     : from(from), to(to), AnimationPosition(Vector2Scale(from, cellSize)), chessboard(chessboard),
-      piece(std::move(chessboard.grid[(int) from.x + from.y * 8])) {
+      piece(std::move(chessboard.grid[static_cast<int>(from.x) + from.y * 8])) {
 
     moveTokens.emplace_back(MomentoMove{from, to, chessboard.grid[static_cast<int>(to.x) + to.y * 8]});
     chessboard.SetLastMovePositions(from, to);
@@ -77,7 +77,7 @@ void Move::ExecuteMove() {
     CalculateLegalMoves();
 }
 
-void Move::SetMoves(std::array<std::shared_ptr<Piece>, 64> grid, PieceColor color) {
+void Move::SetMoves(const std::array<std::shared_ptr<Piece>, 64> &grid, PieceColor color) {
     std::shared_ptr<King> king = nullptr;
     for (auto p : grid) {
         if (p && p->color == color) {
@@ -101,12 +101,12 @@ void Move::enPassantCalculation() {
     }
 }
 
-bool Move::isEnemyPawnOn(int x, int y) {
+bool Move::isEnemyPawnOn(int x, int y) const {
     if (x < 0 || x > 7 || y < 0 || y > 7) return false;
     return chessboard.grid[x + y * 8] && chessboard.grid[x + y * 8]->getValue() == 1 && chessboard.grid[x + y * 8]->color != piece->color;
 }
 
-void Move::castling() {
+void Move::castling() const {
     int rookX = (to.x == 1) ? 0 : 7;
     int rookNewX = (to.x == 1) ? 2 : 4;
     int rookY = (piece->color == PieceColor::black) ? 0 : 7;
@@ -157,7 +157,7 @@ void Move::CalculateLegalMoves() {
     }
 }
 
-bool Move::isKingChecked() {
+bool Move::isKingChecked(){
     for (auto p : chessboard.grid) {
         if (p && p->color != piece->color && p->getValue() == 100) {
             if (std::static_pointer_cast<King>(p)->isGettingAtack(chessboard.grid))

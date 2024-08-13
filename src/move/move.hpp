@@ -16,7 +16,7 @@ class Move {
     void PromoteAnimation() const;
     void Update();
     void ExecuteMove();
-    static void SetMoves(std::array<std::shared_ptr<Piece>,64> grid, PieceColor color);
+    static void SetMoves(const std::array<std::shared_ptr<Piece>,64> &grid, PieceColor color);
 
     bool winningMove = false;
     bool stalematingMove = false;
@@ -45,8 +45,8 @@ class Move {
     void CalculateLegalMoves();
     bool isKingChecked();
     void enPassantCalculation();
-    bool isEnemyPawnOn(int x, int y);
-    void castling();
+    bool isEnemyPawnOn(int x, int y) const;
+    void castling() const;
     void promote();
     void CapturePiece(std::shared_ptr<Piece>& p);
 };

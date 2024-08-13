@@ -13,7 +13,7 @@ ChessAI::ChessAI(PieceColor colorAI) : colorAI(colorAI) {}
 
 ChessAI::~ChessAI() =default;
 
-Move* ChessAI::GetMove(Chessboard& chessboard)  {
+Move* ChessAI::GetMove(Chessboard& chessboard) const {
     std::array<std::shared_ptr<Piece>, 64> GridCoppy;
     for (int i = 0; i < chessboard.grid.size(); i++) {
         GridCoppy[i] = chessboard.grid[i] ? chessboard.grid[i]->clone() : nullptr;
